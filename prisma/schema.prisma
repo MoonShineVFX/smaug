@@ -20,6 +20,7 @@ model User {
   uploaded_rep   Representation[]
 }
 
+// 資產
 model Asset {
   id       String           @id @default(cuid())
   name     String
@@ -29,17 +30,16 @@ model Asset {
   reqs     Representation[]
 }
 
+// 資產可以有多種格式，代表模型的檔案格式
 model Representation {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   path       String?
   type_      String?
   assetId    String
-  asset      Asset  @relation(fields: [assetId], references: [id])
+  asset      Asset   @relation(fields: [assetId], references: [id])
   uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id])
+  uploader   User    @relation(fields: [uploaderId], references: [id])
 }
-
-// 代表模型的檔案格式
 
 enum Role {
   BOT
