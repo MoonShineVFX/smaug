@@ -9,3 +9,40 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             String           @id @default(cuid())
+  email          String           @unique
+  name           String
+  emp_id         String           @unique
+  role           Role             @default(USER)
+  created_assets Asset[]
+  uploaded_rep   Representation[]
+}
+
+model Asset {
+  id       String           @id @default(cuid())
+  name     String
+  model    String
+  createId String
+  creator  User             @relation(fields: [createId], references: [id])
+  reqs     Representation[]
+}
+
+model Representation {
+  id         String @id @default(cuid())
+  path       String?
+  type_      String?
+  assetId    String
+  asset      Asset  @relation(fields: [assetId], references: [id])
+  uploaderId String
+  uploader   User   @relation(fields: [uploaderId], references: [id])
+}
+
+// 代表模型的檔案格式
+
+enum Role {
+  BOT
+  USER
+  ADMIN
+}
