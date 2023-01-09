@@ -3,13 +3,13 @@ interface ILoginParams {
     password: string;
 }
 
-interface ILoginResponse {
+interface ILoginedData {
     id: number;
     name: string;
     email: string;
 }
 
-function auth(credential: ILoginParams): ILoginResponse {
+function auth(credential: ILoginParams): ILoginedData {
     if (credential.username === "admin" && credential.password === "admin") {
         return {
             id: 1,
@@ -23,4 +23,4 @@ function auth(credential: ILoginParams): ILoginResponse {
 }
 
 export { auth };
-export type { ILoginResponse };
+export type { ILoginedData };
