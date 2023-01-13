@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { ILoginedData } from '../../libs/server/auth';
+import { ILoginedReturn } from '../../libs/server/auth';
 
 type ResponseData = {
     message: string,
-    data: ILoginedData | null
+    data: ILoginedReturn | null
 }
 
 import { auth } from '../../libs/server/auth'

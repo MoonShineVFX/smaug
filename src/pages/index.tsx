@@ -1,5 +1,14 @@
 import React from 'react';
+import Typography from '@mui/material/Typography';
+import Header from '../components/Header';
 
-function Home() { return <h1 className="title"> Welcome to Smaug </h1> }
 
-export default Home
+export default function Home() {
+  return (
+    <Header>
+        <Typography variant="h1" component="h2" gutterBottom>
+            Welcome to Next.js!
+        </Typography>
+    </Header>
+  )
+}

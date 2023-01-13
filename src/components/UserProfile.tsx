@@ -1,29 +1,36 @@
 import Raect, { useState } from 'react';
-import { Button, Popover, Typography } from '@mui/material';
+import { Avatar, Button, Container, Popover, Typography } from '@mui/material';
+import { UserInfo } from '../libs/common';
+
 
 function UserProfile() {
-    const [userInfo, setUserInfo] = useState({});
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const [userProfile, setUserProfile] = useState<UserInfo>(
+        {
+            id: '',
+            name: '',
+            email: '',
+            picture: ''
+        });
+    const showLoginForm = (event: React.MouseEvent) => {
+        console.log(' show form is pressed')
 
     };
-    
-    return (<div>
-        <Button aria-describedby={userInfo.id} variant="contained" onClick={handleClick}>
-            Open Popover
-        </Button>
-        <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-        >
-            <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-        </Popover>
-    </div>)
 
-    export default UserProfile;
+    if (userProfile.id == '') {
+        return (<>
+            <Avatar sx={{ width: 48, height: 48, m: 1 }}>N</Avatar>
+            <Button onClick={showLoginForm}>Login</Button>
+        </>)
+    }
+    else {
+        return (<>
+            <Avatar sx={{ width: 48, height: 48, m: 1 }} src={userProfile.picture}>
+                {userProfile.name[0]}
+            </Avatar>
+            <Button> Logout</Button>
+        </>)
+    }
+};
+
+
+export default UserProfile;
