@@ -9,12 +9,13 @@ export default function Header() {
             sx={{
                 my: 4,
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
+                flexDirection: 'row-reverse',
+                justifyContent: 'right',
                 alignItems: 'center',
                 bgcolor: '#45464f',
                 color: 'white',
-                margin: 0,
+                m: 0,
+                p:1,
             }}>
             <UserProfile />
         </Container>
