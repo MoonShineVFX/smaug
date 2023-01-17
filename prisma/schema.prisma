@@ -30,17 +30,17 @@ model User {
 
 // 資產
 model Asset {
-  id         String           @id @default(cuid())
-  name       String
-  model      String
-  createId   String
-  creator    User             @relation(fields: [createId], references: [id])
-  reqs       Representation[]
-  category   Category         @relation(fields: [categoryId], references: [id])
-  categoryId String
-  tags       Tag[]          
-  createAt   DateTime         @default(now())
-  updateAt   DateTime?        @updatedAt
+  id             String           @id @default(cuid())
+  name           String
+  model          String
+  createId       String
+  creator        User             @relation(fields: [createId], references: [id])
+  representation Representation[]
+  category       Category         @relation(fields: [categoryId], references: [id])
+  categoryId     String
+  tags           Tag[]
+  createAt       DateTime         @default(now())
+  updateAt       DateTime?        @updatedAt
 }
 
 // 資產可以有多種格式，代表模型的檔案格式
@@ -67,11 +67,10 @@ model Category {
   updateAt DateTime?  @updatedAt
 }
 
-
 model Tag {
-  id       String    @id @default(cuid())
-  name     String
-  assets   Asset[]
-  createAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  name      String
+  assets    Asset[]
+  createAt  DateTime  @default(now())
   uopdateAt DateTime? @updatedAt
 }
