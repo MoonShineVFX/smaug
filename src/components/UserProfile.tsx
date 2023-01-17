@@ -3,16 +3,18 @@ import { Avatar, Stack, Button, Container, Popover, Typography, Popper, Grow, Pa
 import { UserInfo } from '../libs/common';
 import React from 'react';
 
+interface UserProfileProps {
+    props: {
+        userProfile: UserInfo,
+        setUserProfile: (user: UserInfo) => void,
+        loginHandler: () => Promise<Response>
+    },
+    children?: React.ReactNode
+}
 
-function UserProfile() {
-
-    const [userProfile, setUserProfile] = useState<UserInfo>(
-        {
-            id: '',
-            name: '',
-            email: '',
-            picture: ''
-        });
+function UserProfile(props: UserProfileProps): JSX.Element {
+    const { userProfile, setUserProfile, loginHandler } = props.props;
+    const [logginFeedback, setLogginFeedback] = useState<string>('');
     const [open, setOpen] = useState(false);
     const anchorRef = useRef<HTMLButtonElement | null>(null);
 
@@ -42,23 +44,6 @@ function UserProfile() {
         }
     };
 
-    async function loginHandler() {
-        const username = document.getElementById('username') as HTMLInputElement;
-        const password = document.getElementById('password') as HTMLInputElement;
-
-        const authString = `${username.value}:${password.value}`;
-        const encodedAuthString = Buffer.from(authString).toString('base64');
-
-        const resp = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${encodedAuthString}`
-            }
-        });
-        console.log(resp);
-    }
-
     const prevOpen = useRef(open);
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
@@ -67,6 +52,23 @@ function UserProfile() {
 
         prevOpen.current = open;
     }, [open]);
+
+    const logProc = () => {
+        console.log('logProc');
+        loginHandler().then((res) => {
+            if (res.status === 200) {
+                res.json().then((payload) => {
+                    const {msg, data} = payload;
+                    console.log(data);
+                    setUserProfile(data);
+                    setOpen(false);
+                });
+            } else {
+                setLogginFeedback('Login failed');
+            }
+        }
+        );
+    }
 
     const logged_menu = (
         <Paper>
@@ -81,7 +83,7 @@ function UserProfile() {
                 <MenuItem onClick={handleClose}>Logout</MenuItem>
             </MenuList>
         </Paper>
-    )
+    );
 
     const loggin_form = (
         <Paper
@@ -104,7 +106,7 @@ function UserProfile() {
                 />
                 <Button
                     id='login'
-                    onClick={loginHandler}>Login</Button>
+                    onClick={logProc}>login</Button>
             </Stack>
         </Paper>
 
@@ -120,7 +122,7 @@ function UserProfile() {
                 aria-expanded={open ? 'true' : undefined}
                 aria-haspopup="true"
                 onClick={handleToggle}
-            >{userProfile.id ? userProfile.name : "log-in"}</Button>
+            >{userProfile.id === '' ? "log-in" : userProfile.name}</Button>
             <Popper
                 open={open}
                 anchorEl={anchorRef.current}
@@ -137,13 +139,12 @@ function UserProfile() {
                                 placement === "bottom-start" ? "left bottom" : "left top"
                         }}
                     >
-                        {userProfile.id ? logged_menu : loggin_form}
+                        {userProfile.id !== '' ? logged_menu : loggin_form}
                     </Grow>
                 )}
             </Popper>
         </Stack>
-    )
-};
-
+    );
+}
 
 export default UserProfile;
