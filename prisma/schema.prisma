@@ -10,6 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  BOT
+  USER
+  ADMIN
+}
+
+
 model User {
   id             String           @id @default(cuid())
   email          String           @unique
@@ -22,12 +29,14 @@ model User {
 
 // 資產
 model Asset {
-  id       String           @id @default(cuid())
-  name     String
-  model    String
-  createId String
-  creator  User             @relation(fields: [createId], references: [id])
-  reqs     Representation[]
+  id         String           @id @default(cuid())
+  name       String
+  model      String
+  createId   String
+  creator    User             @relation(fields: [createId], references: [id])
+  reqs       Representation[]
+  category   Category       @relation(fields: [categoryId], references: [id])
+  categoryId String
 }
 
 // 資產可以有多種格式，代表模型的檔案格式
@@ -41,8 +50,12 @@ model Representation {
   uploader   User    @relation(fields: [uploaderId], references: [id])
 }
 
-enum Role {
-  BOT
-  USER
-  ADMIN
+model Category {
+  id       String    @id @default(cuid())
+  name     String?
+  parentId String?
+  parent   Category? @relation("categoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("categoryTree")
+  assets   Asset[]
+  
 }
