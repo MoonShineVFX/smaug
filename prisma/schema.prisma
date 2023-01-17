@@ -16,7 +16,6 @@ enum Role {
   ADMIN
 }
 
-
 model User {
   id             String           @id @default(cuid())
   email          String           @unique
@@ -35,7 +34,7 @@ model Asset {
   createId   String
   creator    User             @relation(fields: [createId], references: [id])
   reqs       Representation[]
-  category   Category       @relation(fields: [categoryId], references: [id])
+  category   Category         @relation(fields: [categoryId], references: [id])
   categoryId String
 }
 
@@ -51,11 +50,10 @@ model Representation {
 }
 
 model Category {
-  id       String    @id @default(cuid())
+  id       String     @id @default(cuid())
   name     String?
   parentId String?
-  parent   Category? @relation("categoryTree", fields: [parentId], references: [id])
+  parent   Category?  @relation("categoryTree", fields: [parentId], references: [id])
   children Category[] @relation("categoryTree")
   assets   Asset[]
-  
 }
