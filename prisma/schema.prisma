@@ -11,21 +11,28 @@ datasource db {
 }
 
 enum Role {
-  BOT
+  CREATOR
   USER
   ADMIN
 }
 
+enum UserType {
+  HUMAN
+  BOT
+}
+
 model User {
-  id             String           @id @default(cuid())
-  email          String           @unique
-  name           String
-  emp_id         String           @unique
-  role           Role             @default(USER)
-  created_assets Asset[]
-  uploaded_rep   Representation[]
-  createAt       DateTime         @default(now())
-  updateAt       DateTime?        @updatedAt
+  id                     String           @id @default(cuid())
+  email                  String           @unique
+  name                   String
+  role                   Role             @default(USER)
+  type                   UserType         @default(HUMAN)
+  createdAssets          Asset[]
+  uploadedRepresentation Representation[]
+  createAt               DateTime         @default(now())
+  updateAt               DateTime?        @updatedAt
+  extenData              Json?
+  permissions            Permission[]
 }
 
 // 資產
@@ -47,7 +54,7 @@ model Asset {
 model Representation {
   id         String    @id @default(cuid())
   path       String?
-  type_      String?
+  type       String?
   assetId    String
   asset      Asset     @relation(fields: [assetId], references: [id])
   uploaderId String
@@ -73,4 +80,13 @@ model Tag {
   assets    Asset[]
   createAt  DateTime  @default(now())
   uopdateAt DateTime? @updatedAt
+}
+
+
+model Permission {
+  codeName  String    @id // add, change, delete
+  name      String
+  createAt  DateTime  @default(now())
+  updateAt  DateTime? @updatedAt
+  users      User[]
 }
