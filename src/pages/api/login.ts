@@ -19,7 +19,6 @@ function login(req: NextApiRequest, resp: NextApiResponse<ResponseData>): void {
     const [username, password] = credentials.split(':');
     const user = auth({ username: username, password: password });
     if (user) {
-
         resp.status(200).json({ message: "", data: user });
         return;
     } else {
