@@ -21,6 +21,23 @@ enum UserType {
   BOT
 }
 
+enum RepresentationUsage {
+  THUMBNAIL
+  PREVIEW
+  GALLARY
+  MODEL
+}
+
+enum RepresentationType {
+  IMG
+  TEXTURE
+  FBX
+  GLB
+  MAX
+  Maya
+  OBJ
+}
+
 model User {
   id                     String           @id @default(cuid())
   email                  String           @unique
@@ -52,15 +69,16 @@ model Asset {
 
 // 資產可以有多種格式，代表模型的檔案格式
 model Representation {
-  id         String    @id @default(cuid())
+  id         String              @id @default(cuid())
   path       String?
-  type       String?
+  type       RepresentationType
+  usage      RepresentationUsage
   assetId    String
-  asset      Asset     @relation(fields: [assetId], references: [id])
+  asset      Asset               @relation(fields: [assetId], references: [id])
   uploaderId String
-  uploader   User      @relation(fields: [uploaderId], references: [id])
-  createAt   DateTime  @default(now())
-  updateAt   DateTime? @updatedAt
+  uploader   User                @relation(fields: [uploaderId], references: [id])
+  createAt   DateTime            @default(now())
+  updateAt   DateTime?           @updatedAt
 }
 
 model Category {
@@ -82,11 +100,10 @@ model Tag {
   uopdateAt DateTime? @updatedAt
 }
 
-
 model Permission {
-  codeName  String    @id // add, change, delete
-  name      String
-  createAt  DateTime  @default(now())
-  updateAt  DateTime? @updatedAt
-  users      User[]
+  codeName String    @id // add, change, delete
+  name     String
+  createAt DateTime  @default(now())
+  updateAt DateTime? @updatedAt
+  users    User[]
 }
