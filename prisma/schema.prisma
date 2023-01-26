@@ -57,8 +57,8 @@ model Asset {
   id             String           @id @default(cuid())
   name           String
   model          String
-  createId       String
-  creator        User             @relation(fields: [createId], references: [id])
+  creatorId       String
+  creator        User             @relation(fields: [creatorId], references: [id])
   representation Representation[]
   category       Category         @relation(fields: [categoryId], references: [id])
   categoryId     String
