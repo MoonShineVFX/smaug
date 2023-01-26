@@ -1,4 +1,4 @@
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 import { PrismaClient, Role, UserType } from '@prisma/client'
 import { faker } from '@faker-js/faker/locale/zh_TW'
 
@@ -32,7 +32,7 @@ async function main() {
     //create 50 user
     const usersData = Array.from({ length: 50 }).map((_, i) => {
         return {
-            id: cuid(),
+            id: createId(),
             email: faker.internet.email(),
             name: faker.name.fullName(),
             role: i == 0 ? Role.ADMIN : (i < 40 ? Role.CREATOR : Role.USER),
@@ -44,7 +44,7 @@ async function main() {
         { data: usersData }
     )
 
-    const rootId = cuid()
+    const rootId = createId()
     // Create Root Category
     await prisma.category.create({
         data: {
@@ -57,7 +57,7 @@ async function main() {
     // Create 20 categories
     const categoriesLv1 = Array.from({ length: 4 }).map((_, i) => {
         return {
-            id: cuid(),
+            id: createId(),
             parentId: rootId,
             name: faker.commerce.productName(),
             createAt: faker.date.past(),
@@ -66,7 +66,7 @@ async function main() {
 
     const categoriesLv2 = Array.from({ length: 16 }).map((_, i) => {
         return {
-            id: cuid(),
+            id: createId(),
             parentId: categoriesLv1[Math.trunc(i/4)].id,
             name: faker.commerce.productName(),
             createAt: faker.date.past(),
@@ -80,7 +80,7 @@ async function main() {
     // Create 100 assets
     const assets = Array.from({ length: 100 }).map((_, i) => {
         return {
-            id: cuid(),
+            id: createId(),
             name: faker.commerce.productName(),
             categoryId: categories[Math.trunc(i/5)].id,
 
