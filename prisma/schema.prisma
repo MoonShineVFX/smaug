@@ -55,16 +55,16 @@ model User {
 
 // 資產
 model Asset {
-  id             String           @id @default(cuid())
-  name           String
-  creatorId      String
-  creator        User             @relation(fields: [creatorId], references: [id])
-  representation Representation[]
-  category       Category         @relation(fields: [categoryId], references: [id])
-  categoryId     String
-  tags           Tag[]
-  createAt       DateTime         @default(now())
-  updateAt       DateTime?        @updatedAt
+  id              String           @id @default(cuid())
+  name            String
+  creatorId       String
+  creator         User             @relation(fields: [creatorId], references: [id])
+  representations Representation[]
+  category        Category         @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  tags            Tag[]
+  createAt        DateTime         @default(now())
+  updateAt        DateTime?        @updatedAt
 }
 
 // 資產可以有多種格式，代表模型的檔案格式
