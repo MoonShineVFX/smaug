@@ -112,7 +112,7 @@ async function main() {
 
     // Create 50 representations ->preview
     await prisma.representation.createMany({
-        data: Array.from({ length: 50 }).map((_, i) => {
+        data: Array.from({ length: 1 }).map((_, i) => {
             return {
                 id: createId(),
                 path: faker.image.imageUrl(320, 160),
@@ -120,14 +120,20 @@ async function main() {
                 format: RepresentationFormat.IMG,
                 type: RepresentationType.PREVIEW,
                 uploaderId: assetsData[i].creatorId,
-                createAt: faker.date.past()
+                createAt: faker.date.past(),
+                tags:{
+                    create:[
+                        {name: faker.word.noun()},
+                        {name: faker.word.noun()}
+                    ]
+                }
             }
         })
     })
     console.log(`representations PREVIEW created`)
 
 
-    // Create 25 representations ->model
+    // Create 25 representations ->model and texture
     for (let i = 0; i < 25; i++) {
         let texture = await prisma.representation.create({
             data: {
