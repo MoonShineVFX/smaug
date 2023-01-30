@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/zh_TW'
-import { PrismaClient, Role, UserType, Representation, RepresentationFormat, RepresentationType } from '@prisma/client'
+import { PrismaClient, Role, UserType, RepresentationFormat, RepresentationType } from '@prisma/client'
 import { createId } from '@paralleldrive/cuid2'
 import { connect } from 'http2'
 
@@ -19,13 +19,29 @@ async function main() {
         ['TAG_DELETE', '刪除標籤'],
     ]
 
+    const rolesData = [{
+        roleName: 'Admin',
+        permissions: ['CATEGORY_CREATE', 'CATEGORY_UPDATE', 'CATEGORY_DELETE', 'ASSET_CREATE', 'ASSET_UPDATE', 'ASSET_DELETE', 'ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']
+    },
+    {
+        roleName: 'Creator',
+        permissions: ['ASSET_CREATE', 'ASSET_UPDATE', 'ASSET_DELETE', 'ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']
+
+    },
+    {
+        roleName: 'User',
+        permissions: ['ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']
+    }]
+
+
     // 刪除現有資料
     await prisma.$transaction([
-        prisma.permission.deleteMany({}),
         prisma.representation.deleteMany({}),
         prisma.asset.deleteMany({}),
         prisma.category.deleteMany({}),
-        prisma.user.deleteMany({})
+        prisma.user.deleteMany({}),
+        prisma.permission.deleteMany({}),
+        prisma.role.deleteMany({}),
     ])
 
 
@@ -41,13 +57,43 @@ async function main() {
         })
     })
 
+    // 建立 Role
+    const rolePermissions = rolesData.map((roleItem) => {
+        return {
+            name: roleItem.roleName,
+            permissions: {
+                connect: roleItem.permissions.map((permissionItem) => {
+                    return { codeName: permissionItem }
+                })
+            }
+        }
+    })
+    for (let rolePermission of rolePermissions) {
+        await prisma.role.create({ data: rolePermission })
+    }
+
+
     //create 50 user
+    const roleAdmin = await prisma.role.findFirstOrThrow({
+        where: { name: { contains: 'Admin' } },
+        select: { id: true }
+    })
+    const roleCreator = await prisma.role.findFirstOrThrow({
+        where: { name: { contains: 'Creator' } },
+        select: { id: true }
+    })
+    const roleUser = await prisma.role.findFirstOrThrow({
+        where: { name: { contains: 'User' } },
+        select: { id: true }
+    })
+
+
     const usersData = Array.from({ length: 50 }).map((_, i) => {
         return {
             id: createId(),
             email: faker.internet.email(),
             name: faker.name.fullName(),
-            role: i == 0 ? Role.ADMIN : (i < 40 ? Role.CREATOR : Role.USER),
+            roleId: i == 0 ? roleAdmin.id : (i < 40 ? roleCreator.id : roleUser.id),
             type: i == 0 ? UserType.BOT : UserType.HUMAN,
             createAt: faker.date.past(),
         }
@@ -93,40 +139,38 @@ async function main() {
 
     // Create 100 assets
     let creators = usersData.splice(0, 40)
-    const assetsData = Array.from({ length: 100 }).map((_, i) => {
+    for (let i = 0; i < 100; i++) {
         let creator = creators[Math.floor(Math.random() * 40)]
-        // console.log(`creator id: ${creator.id}`)
-        let asset = {
-            id: createId(),
-            name: faker.commerce.productName(),
-            categoryId: categories[Math.trunc(i / 5)].id,
-            creatorId: creator.id,
-            createAt: faker.date.past(),
-        }
-        // console.log(`asset: ${asset}`)
-        return asset
-    })
-    await prisma.asset.createMany({ data: assetsData })
+        await prisma.asset.create({
+            data: {
+                name: faker.commerce.productName(),
+                categoryId: categories[Math.trunc(i / 5)].id,
+                creatorId: creator.id,
+                createAt: faker.date.past(),
+                tags: {
+                    create: [
+                        { name: faker.word.noun() },
+                        { name: faker.word.noun() }
+                    ]
+                }
+            }
+        })
+    }
     console.log(`assets created`)
 
 
     // Create 50 representations ->preview
+    const assets = await prisma.asset.findMany()
     await prisma.representation.createMany({
         data: Array.from({ length: 1 }).map((_, i) => {
             return {
                 id: createId(),
                 path: faker.image.imageUrl(320, 160),
-                assetId: assetsData[i].id,
+                assetId: assets[i].id,
                 format: RepresentationFormat.IMG,
                 type: RepresentationType.PREVIEW,
-                uploaderId: assetsData[i].creatorId,
+                uploaderId: assets[i].creatorId,
                 createAt: faker.date.past(),
-                tags:{
-                    create:[
-                        {name: faker.word.noun()},
-                        {name: faker.word.noun()}
-                    ]
-                }
             }
         })
     })
@@ -139,10 +183,10 @@ async function main() {
             data: {
                 id: createId(),
                 path: faker.image.imageUrl(320, 160),
-                assetId: assetsData[i].id,
+                assetId: assets[i].id,
                 format: RepresentationFormat.IMG,
                 type: RepresentationType.TEXTURE,
-                uploaderId: assetsData[i].creatorId,
+                uploaderId: assets[i].creatorId,
                 createAt: faker.date.past()
             }
         })
@@ -151,12 +195,12 @@ async function main() {
             data: {
                 id: createId(),
                 path: faker.image.imageUrl(320, 160),
-                assetId: assetsData[i].id,
+                assetId: assets[i].id,
                 format: RepresentationFormat.MAX,
                 type: RepresentationType.MODEL,
-                uploaderId: assetsData[i].creatorId,
+                uploaderId: assets[i].creatorId,
                 createAt: faker.date.past(),
-                linkTo:{connect:{id: texture.id}}
+                linkTo: { connect: { id: texture.id } }
             }
         })
         console.log(`texture: ${texture.id} link by asset: ${asset.id}`)
