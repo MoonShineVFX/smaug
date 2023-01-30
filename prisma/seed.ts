@@ -136,9 +136,21 @@ async function main() {
     await prisma.$transaction([create_root, create_cate_tree])
     console.log(`categories created`)
 
+    // Create 10 tag
+    await prisma.tag.createMany({
+        data: Array.from({ length: 10 }).map((_, i) => {
+            return {
+                name: faker.word.noun(),
+                createAt: faker.date.past(),
+            }
+        })
+    })
+    console.log(`tags created`)
 
+    
     // Create 100 assets
     let creators = usersData.splice(0, 40)
+    const tags = await prisma.tag.findMany()
     for (let i = 0; i < 100; i++) {
         let creator = creators[Math.floor(Math.random() * 40)]
         await prisma.asset.create({
@@ -148,9 +160,8 @@ async function main() {
                 creatorId: creator.id,
                 createAt: faker.date.past(),
                 tags: {
-                    create: [
-                        { name: faker.word.noun() },
-                        { name: faker.word.noun() }
+                    connect: [
+                        { id: tags[Math.floor(Math.random() * 10)].id },
                     ]
                 }
             }
@@ -191,7 +202,7 @@ async function main() {
             }
         })
 
-        let asset = await prisma.representation.create({
+        await prisma.representation.create({
             data: {
                 id: createId(),
                 path: faker.image.imageUrl(320, 160),
@@ -203,7 +214,7 @@ async function main() {
                 linkTo: { connect: { id: texture.id } }
             }
         })
-        console.log(`texture: ${texture.id} link by asset: ${asset.id}`)
+        console.log(`representations MODEL and TEXTURE created`)
     }
 }
 
