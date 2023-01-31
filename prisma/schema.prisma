@@ -10,12 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  CREATOR
-  USER
-  ADMIN
-}
-
 enum UserType {
   HUMAN
   BOT
@@ -23,7 +17,7 @@ enum UserType {
 
 enum RepresentationType {
   PREVIEW
-  GALLARY
+  RENDER
   MODEL
   TEXTURE
 }
@@ -39,18 +33,28 @@ enum RepresentationFormat {
   UNREAL
 }
 
+model Role {
+  id          String       @id @default(cuid())
+  name        String
+  users       User[]
+  createAt    DateTime     @default(now())
+  updateAt    DateTime?    @updatedAt
+  isDeleted   Boolean      @default(false)
+  permissions Permission[]
+}
+
 model User {
   id                     String           @id @default(cuid())
   email                  String           @unique
   name                   String
-  role                   Role             @default(USER)
+  roleId                 String
+  role                   Role             @relation(fields: [roleId], references: [id])
   type                   UserType         @default(HUMAN)
   createdAssets          Asset[]
   uploadedRepresentation Representation[]
   createAt               DateTime         @default(now())
   updateAt               DateTime?        @updatedAt
   extenData              Json?
-  permissions            Permission[]
 }
 
 // 資產
@@ -65,6 +69,7 @@ model Asset {
   tags            Tag[]
   createAt        DateTime         @default(now())
   updateAt        DateTime?        @updatedAt
+  isDeleted       Boolean          @default(false)
 }
 
 // 資產可以有多種格式，代表模型的檔案格式
@@ -84,14 +89,15 @@ model Representation {
 }
 
 model Category {
-  id       String     @id @default(cuid())
-  name     String?
-  parentId String?
-  parent   Category?  @relation("categoryTree", fields: [parentId], references: [id])
-  children Category[] @relation("categoryTree")
-  assets   Asset[]
-  createAt DateTime   @default(now())
-  updateAt DateTime?  @updatedAt
+  id        String     @id @default(cuid())
+  name      String?
+  parentId  String?
+  parent    Category?  @relation("categoryTree", fields: [parentId], references: [id])
+  children  Category[] @relation("categoryTree")
+  assets    Asset[]
+  createAt  DateTime   @default(now())
+  updateAt  DateTime?  @updatedAt
+  isDeleted Boolean    @default(false)
 }
 
 model Tag {
@@ -103,9 +109,9 @@ model Tag {
 }
 
 model Permission {
-  codeName String    @id // add, change, delete
+  codeName String    @id // create, update, delete
   name     String
   createAt DateTime  @default(now())
   updateAt DateTime? @updatedAt
-  users    User[]
+  Role     Role[]
 }
