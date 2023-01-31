@@ -96,6 +96,7 @@ describe('Categories API', () => {
         )
         await handlerCategories(req, res);
         expect(res._getStatusCode()).toBe(200);
+        expect(res._getJSONData().name).toBe("Test Category")
     })
 });
 
