@@ -1,37 +1,11 @@
 import { faker } from '@faker-js/faker/locale/zh_TW'
 import { PrismaClient, Role, UserType, RepresentationFormat, RepresentationType } from '@prisma/client'
 import { createId } from '@paralleldrive/cuid2'
-import { connect } from 'http2'
+import { permission, rolesData } from '../src/libs/common'
 
 const prisma = new PrismaClient()
 async function main() {
-    //create Permission
-    const permission = [
-        ['CATEGORY_CREATE', '建立分類'],
-        ['CATEGORY_UPDATE', '更新分類'],
-        ['CATEGORY_DELETE', '刪除分類'],
-        ['ASSET_CREATE', '建立資源'],
-        ['ASSET_UPDATE', '更新資源'],
-        ['ASSET_DELETE', '刪除資源'],
-        ['ASSET_DOWNLOAD', '下載資源'],
-        ['TAG_CREATE', '建立標籤'],
-        ['TAG_UPDATE', '更新標籤'],
-        ['TAG_DELETE', '刪除標籤'],
-    ]
 
-    const rolesData = [{
-        roleName: 'Admin',
-        permissions: ['CATEGORY_CREATE', 'CATEGORY_UPDATE', 'CATEGORY_DELETE', 'ASSET_CREATE', 'ASSET_UPDATE', 'ASSET_DELETE', 'ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']
-    },
-    {
-        roleName: 'Creator',
-        permissions: ['ASSET_CREATE', 'ASSET_UPDATE', 'ASSET_DELETE', 'ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']
-
-    },
-    {
-        roleName: 'User',
-        permissions: ['ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']
-    }]
 
 
     // 刪除現有資料
@@ -147,7 +121,7 @@ async function main() {
     })
     console.log(`tags created`)
 
-    
+
     // Create 100 assets
     let creators = usersData.splice(0, 40)
     const tags = await prisma.tag.findMany()
@@ -214,8 +188,8 @@ async function main() {
                 linkTo: { connect: { id: texture.id } }
             }
         })
-        console.log(`representations MODEL and TEXTURE created`)
     }
+    console.log(`representations MODEL and TEXTURE created`)
 }
 
 main()
