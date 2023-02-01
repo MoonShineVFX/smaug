@@ -35,7 +35,7 @@ enum RepresentationFormat {
 
 model Role {
   id          String       @id @default(cuid())
-  name        String
+  name        String       @unique
   users       User[]
   createAt    DateTime     @default(now())
   updateAt    DateTime?    @updatedAt
@@ -46,6 +46,8 @@ model Role {
 model User {
   id                     String           @id @default(cuid())
   email                  String           @unique
+  account                String           @unique
+  password               String
   name                   String
   roleId                 String
   role                   Role             @relation(fields: [roleId], references: [id])
@@ -54,6 +56,7 @@ model User {
   uploadedRepresentation Representation[]
   createAt               DateTime         @default(now())
   updateAt               DateTime?        @updatedAt
+  authTokens             AuthToken[]
   extenData              Json?
 }
 
@@ -90,7 +93,7 @@ model Representation {
 
 model Category {
   id        String     @id @default(cuid())
-  name      String?
+  name      String?    @unique
   parentId  String?
   parent    Category?  @relation("categoryTree", fields: [parentId], references: [id])
   children  Category[] @relation("categoryTree")
@@ -114,4 +117,11 @@ model Permission {
   createAt DateTime  @default(now())
   updateAt DateTime? @updatedAt
   Role     Role[]
+}
+
+model AuthToken {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  createAt DateTime @default(now())
 }
