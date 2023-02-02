@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
 import { prisma } from './prisma';
+import { User } from '@prisma/client'
 import { settings } from '../common';
+import { NextRequest } from 'next/server';
 
 
 type UserInfo = {
@@ -23,7 +24,32 @@ interface IUser {
 }
 
 
-export async function auth(credential: ILoginParams): Promise<String | null> {
+export async function authenticated(req: NextRequest): Promise<User | null> {
+
+  const auth_str = req.headers.get('authorization');
+  if (auth_str == null) {
+    return null;
+  }
+
+  const [auth_header, token] = auth_str.split(' ')
+  if (auth_header != 'Bearer') {
+    return null;
+  }
+
+  const user = await prisma.authToken.findUnique({
+    where: { id: token }
+  }).user();
+
+  if (user != null && user.active) {
+    return user;
+  }
+  else {
+    return null;
+  }
+};
+
+
+export async function authenticate(credential: ILoginParams): Promise<string | null> {
 
   const user = await findUserByAccount(credential.username);
 
