@@ -10,6 +10,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  await prisma.authToken.deleteMany({});
   await prisma.$disconnect();
 });
 

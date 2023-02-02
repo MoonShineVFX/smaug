@@ -1,5 +1,4 @@
 import { createMocks } from 'node-mocks-http';
-// import { createId } from '@paralleldrive/cuid2';
 import { PrismaClient } from '@prisma/client';
 import handlerCategories from '../../../pages/api/categories';
 
@@ -11,6 +10,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  await prisma.authToken.deleteMany({});
   await prisma.$disconnect();
 })
 
@@ -28,24 +28,36 @@ describe('Categories API', () => {
       { method: 'GET', query: { name: "Root" } }
     )
     await handlerCategories(req, res);
-    const rootCate = res._getJSONData()[0]
-    expect(rootCate.name).toBe("Root")
+    const rootCate = res._getJSONData()[0];
+    expect(rootCate.name).toBe("Root");
   })
 
-  // test('should be able to create a category when caller authenticated', async () => {
-  //   const { req, res } = createMocks(
-  //     {
-  //       method: 'POST',
-  //       headers: {
-  //         authorization: "!1"
-  //       },
-  //       body: { name: "Test Category" }
-  //     }
-  //   )
-  //   await handlerCategories(req, res);
-  //   expect(res._getStatusCode()).toBe(200);
-  //   expect(res._getJSONData().name).toBe("Test Category")
-  // })
+  test('should be able to create a category when caller authenticated', async () => {
+    // fake a token
+    const adminUser = await prisma.user.findFirst({
+      where: {
+        account: "admin"
+      }
+    })
+    const token = await prisma.authToken.create({
+      data: {
+        user: { connect: { id: adminUser!.id } }
+      }
+    })
+
+    const { req, res } = createMocks(
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${token.id}`
+        },
+        body: { name: "Test Category" }
+      }
+    )
+    await handlerCategories(req, res);
+    expect(res._getStatusCode()).toBe(200);
+    expect(res._getJSONData().name).toBe("Test Category");
+  })
 });
 
 export { }
