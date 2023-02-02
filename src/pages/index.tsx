@@ -14,7 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import List from '@mui/material/List';
-import { mainListItems, secondaryListItems } from '../components/listItems';
+import { MainListItems, secondaryListItems } from '../components/listItems';
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -115,7 +115,7 @@ export default function Home() {
           <Divider />
 
           <List component="nav">
-            {mainListItems}
+            <MainListItems />
             <Divider sx={{ my: 1 }} />
             {secondaryListItems}
           </List>
