@@ -57,6 +57,7 @@ model User {
   createAt               DateTime         @default(now())
   updateAt               DateTime?        @updatedAt
   authTokens             AuthToken[]
+  active                 Boolean          @default(true)
   extenData              Json?
 }
 
