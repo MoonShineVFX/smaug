@@ -51,11 +51,19 @@ describe('Categories API', () => {
         headers: {
           authorization: `Bearer ${token.id}`
         },
-        body: { name: "Test Category" }
+        body: {
+          parentId: null,
+          name: "Test Category"
+        }
       }
     )
     await handlerCategories(req, res);
-    expect(res._getStatusCode()).toBe(200);
+    await prisma.category.delete({
+      where: {
+        name: "Test Category"
+      }
+    });
+    expect(res._getStatusCode()).toBe(201);
     expect(res._getJSONData().name).toBe("Test Category");
   })
 });

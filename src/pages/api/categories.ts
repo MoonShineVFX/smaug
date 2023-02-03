@@ -105,6 +105,10 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse<Category[] |
       parentId: parentId,
       isDeleted: false,
     }
+  }).catch((err) => {
+    console.log(err)
+    res.status(500).json({ message: "Internal Server Error" })
+    return
   })
   res.status(201).json(newCategory)
   return

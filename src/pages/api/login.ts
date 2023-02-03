@@ -1,8 +1,9 @@
-import cookie from 'cookie'
+// import cookie from 'cookie'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { authenticate } from '../../libs/server/auth'
 
 async function handleLogin(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+
   const auth_str = req.headers.authorization;
   if (auth_str == null) {
     res.status(401).json({ message: "please provide username and password", data: null })

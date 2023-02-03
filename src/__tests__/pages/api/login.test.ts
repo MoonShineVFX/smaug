@@ -1,5 +1,5 @@
 import { createMocks } from 'node-mocks-http';
-import handleLogin from '../../../pages/api/categories';
+import handleLogin from '../../../pages/api/login';
 import { PrismaClient } from '@prisma/client';
 
 
