@@ -17,7 +17,10 @@ export const mainList = [
         name: "Surfaces",
       }
     ]
-  },
+  }
+]
+
+export const tagList =[
   {
     id:"2",
     title:"標籤 TAGS",
@@ -34,12 +37,18 @@ export const mainList = [
       {
         id: 3,
         name: "Surfaces",
+      },
+      {
+        id: 3,
+        name: "tag004",
+      },
+      {
+        id: 3,
+        name: "tag005",
       }
     ]
   }
 ]
-
-
 export const memberList = [
   {
     id:"1",
