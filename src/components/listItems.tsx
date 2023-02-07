@@ -46,7 +46,7 @@ const CustomListWithCollapse = ({listData}:typesListData) =>{
             {
               listData.subitems.map((item,index)=>{
                 return(
-                  <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemButton sx={{ pl: 4 }} key={item.name}>
                     <ListItemText primary={item.name}/>
                   </ListItemButton>
                 )
@@ -91,7 +91,7 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
             {
               listData.subitems.map((item,index)=>{
                 return(
-                  <Chip label={item.name} onClick={handleTagClick} sx={{m: .5, fontSize:'12px'}}/>
+                  <Chip key={item.name} label={item.name} onClick={handleTagClick} sx={{m: .5, fontSize:'12px'}}/>
                 )
               })
             }
@@ -111,7 +111,7 @@ export const MainListItems =()=> {
       {
         mainList.map((item,index)=>{
           return(
-            <CustomListWithCollapse listData={item} />
+            <CustomListWithCollapse listData={item} key={index} />
           )
         })
       }
@@ -126,7 +126,7 @@ export const TagListItems =()=> {
       {
         tagList.map((item,index)=>{
           return(
-            <CustomListWithCollapseForTag listData={item} />
+            <CustomListWithCollapseForTag listData={item} key={index} />
           )
         })
       }
@@ -144,7 +144,7 @@ export const MemberListItems = () =>{
     {
        memberList.map((item,index)=>{
         return(
-          <ListItemButton>
+          <ListItemButton key={index}>
             <ListItemIcon>
               <AssignmentIcon />
             </ListItemIcon>
