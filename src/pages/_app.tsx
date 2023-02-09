@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { AppProps } from 'next/app';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
-
+import Main from '../components/Layout/Main'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -14,7 +14,7 @@ import '../styles/globals.css';
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
-
+import Head from 'next/head'
 const clientSideEmotionCache = createEmotionCache();
 
 const darkTheme = createTheme(darkThemeOptions);
@@ -25,8 +25,22 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
   return (
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={darkTheme}>
+        
         <CssBaseline />
-        <Component {...pageProps} />
+        <Head>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
+          <meta property="og:site_name" content="SMAUG" />
+          <meta property="og:image" content="/card.png" />
+          <meta name="description" content="SMAUG Asset HomePage" />
+          <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+          <title>SMAUG</title>
+        </Head>
+        <Main>
+          <Component {...pageProps} />
+        </Main>
       </ThemeProvider>
     </CacheProvider>
   );

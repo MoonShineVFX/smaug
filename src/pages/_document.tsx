@@ -9,10 +9,7 @@ export default class MyDocument extends Document {
     return (
       <Html lang="zh_hant">
         <Head>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
+
         </Head>
         <body>
           <Main />

@@ -1,147 +1,84 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import Header from '../components/Header';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Container from '@mui/material/Container';
-import MuiDrawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
+import { modalItemData,modalItemData2 } from '../components/listItemData'
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import ListSubheader from '@mui/material/ListSubheader';
+import Image from 'next/image'
+import img1 from '../public/images/p1.jpg'
+import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import List from '@mui/material/List';
-import { mainListItems, secondaryListItems } from '../components/listItems';
-const drawerWidth: number = 240;
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== 'open',})<AppBarProps>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
-        },
-      }),
-    },
-  }),
-);
-
+import Box from '@mui/material/Box';
 export default function Home() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
   return (
-      <Box sx={{ display: 'flex' }}>
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: '24px', // keep right padding when drawer closed
-            }}
-          >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{
-                marginRight: '36px',
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              Dashboard
-            </Typography>
-            <Box sx={{ flexGrow: 1 }}>
-              <Header />
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Typography variant="h1" component="h2" gutterBottom>
-              Welcome to Next.js!
-            </Typography>
-          </Container>
-
-
-        </Box>
+    <>
+      <Drawer
+        anchor="right"
+        open={open}
+        variant="persistent"
+        PaperProps={{
+          sx:{ width:'25%'}
+        }}
+      > 
+      <Toolbar
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          px: [1],
+        }}
+      >
+      </Toolbar>
+        <img src="https://ddinktqu5prvc.cloudfront.net/rmyxk/Grid_render_thumb_thumb.jpg" alt="" />
+        <div>Sea star</div>
+        <div>title</div>
+        <div>tag</div>
+        <div>tag</div>
+        <div>tag</div>
+        <div>tag</div>
+        <div>tag</div>
         
-      </Box>
+      </Drawer>
+      <ImageList sx={{}}  cols={4} gap={8}  sx={{mx:2 , my:2}} variant="standad" >
+        <ImageListItem key="Subheader" cols={4}>
+          <ListSubheader component="div">3D Assets</ListSubheader>
+        </ImageListItem>
+        {modalItemData2.map((item) => {
+          return(
+            <ImageListItem key={item.img} 
+              sx={{
+                bgcolor:'#202020', p:5,borderRadius: "5px",border:"2px #202020 solid", transition:'all 0.3s',
+                ':hover':{
+                  border:"2px grey solid"
+                } 
+              }}
+              onClick={toggleDrawer}
+            
+            >
+
+            <img
+              src={item.img}
+              alt={item.title}
+              loading="lazy"
+              style={{borderRadius: "5px" , objectFit:'contain', aspectRatio:1/1  }}
+              
+            />
+            <ImageListItemBar
+              title={item.title}
+            />
+
+            </ImageListItem>
+          )
+        }
+          
+      )}
+      </ImageList>
+    </>
+
+
   )
 }
