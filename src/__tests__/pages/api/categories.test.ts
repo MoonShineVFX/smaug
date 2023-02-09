@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { PrismaClient } from '@prisma/client';
-import handlerCategories from '../../../pages/api/categories';
+import handlerCategories from '../../../pages/api/categories'
 
 
 let prisma: PrismaClient;

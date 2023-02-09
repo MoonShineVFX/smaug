@@ -9,33 +9,37 @@ import Collapse from '@mui/material/Collapse';
 import List from '@mui/material/List';
 import Chip from '@mui/material/Chip';
 import Box, { BoxProps } from '@mui/material/Box';
-import { mainList , memberList ,tagList } from './listItemData'
-import {MdViewModule,MdLabel , } from 'react-icons/md';
-interface typesListData {
-  listData:{
-    title: string;
-    iconname?: string;
-    subitems?:[{}]
-  }
+import { mainList, memberList, tagList } from './listItemData'
+import { MdViewModule, MdLabel, } from 'react-icons/md';
+import internal from 'stream';
 
+interface typesListData {
+  listData: {
+    id: string;
+    title: string;
+    iconname?: 'ViewModule' | 'Label';
+    subitems?: { id: string, name: string }[]
+  }
 }
+
 const components = {
   MdViewModule,
   MdLabel,
 }
-const CustomListWithCollapse = ({listData}:typesListData) =>{
+
+const CustomListWithCollapse = ({ listData }: typesListData) => {
   const [open, setOpen] = React.useState(true);
-  const { title,iconname } = listData
-  const Icon = components[`Md${iconname}`]
+  const { title, iconname } = listData;
+  const Icon = components[`Md${iconname!}`];
   const handleClick = () => {
     setOpen(!open);
   };
 
   return (
     <>
-      <ListItemButton  onClick={handleClick}>
+      <ListItemButton onClick={handleClick}>
         <ListItemIcon>
-          <Icon  size="22px"/>
+          <Icon size="22px" />
         </ListItemIcon>
         <ListItemText primary={title} />
       </ListItemButton>
@@ -44,10 +48,10 @@ const CustomListWithCollapse = ({listData}:typesListData) =>{
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {
-              listData.subitems.map((item,index)=>{
-                return(
+              listData.subitems.map((item, index) => {
+                return (
                   <ListItemButton sx={{ pl: 4 }} key={item.name}>
-                    <ListItemText primary={item.name}/>
+                    <ListItemText primary={item.name} />
                   </ListItemButton>
                 )
               })
@@ -60,22 +64,24 @@ const CustomListWithCollapse = ({listData}:typesListData) =>{
     </>
   )
 }
-const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
+
+
+const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
   const [open, setOpen] = React.useState(true);
-  const { title,iconname } = listData
-  const Icon = components[`Md${iconname}`]
+  const { title, iconname } = listData
+  const Icon = components[`Md${iconname!}`]
   const handleClick = () => {
     setOpen(!open);
   };
-  const handleTagClick=()=>{
+  const handleTagClick = () => {
     console.log('click')
   }
 
   return (
     <>
-      <ListItemButton  onClick={handleClick}>
+      <ListItemButton onClick={handleClick}>
         <ListItemIcon>
-          <Icon  size="22px"/>
+          <Icon size="22px" />
         </ListItemIcon>
         <ListItemText primary={title} />
       </ListItemButton>
@@ -83,15 +89,15 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
         listData.subitems &&
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{
-              display: 'flex',
-              flexWrap:"wrap",
-              p: 1,
-              m: 1,
+            display: 'flex',
+            flexWrap: "wrap",
+            p: 1,
+            m: 1,
           }}>
             {
-              listData.subitems.map((item,index)=>{
-                return(
-                  <Chip key={item.name} label={item.name} onClick={handleTagClick} sx={{m: .5, fontSize:'12px'}}/>
+              listData.subitems.map((item, index) => {
+                return (
+                  <Chip key={item.name} label={item.name} onClick={handleTagClick} sx={{ m: .5, fontSize: '12px' }} />
                 )
               })
             }
@@ -104,13 +110,13 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
   )
 }
 
-export const MainListItems =()=> {
+export const MainListItems = () => {
 
   return (
     <React.Fragment>
       {
-        mainList.map((item,index)=>{
-          return(
+        mainList.map((item, index) => {
+          return (
             <CustomListWithCollapse listData={item} key={index} />
           )
         })
@@ -118,14 +124,14 @@ export const MainListItems =()=> {
 
     </React.Fragment>
   );
-} 
-export const TagListItems =()=> {
+}
+export const TagListItems = () => {
 
   return (
     <React.Fragment>
       {
-        tagList.map((item,index)=>{
-          return(
+        tagList.map((item, index) => {
+          return (
             <CustomListWithCollapseForTag listData={item} key={index} />
           )
         })
@@ -133,26 +139,26 @@ export const TagListItems =()=> {
 
     </React.Fragment>
   );
-} 
+}
 
-export const MemberListItems = () =>{
-  return(
+export const MemberListItems = () => {
+  return (
     <React.Fragment>
-    <ListSubheader component="div" inset>
-      會員功能（如有登入)
-    </ListSubheader>
-    {
-       memberList.map((item,index)=>{
-        return(
-          <ListItemButton key={index}>
-            <ListItemIcon>
-              <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary={item.title} />
-          </ListItemButton>
-        )
-       })
-    }
-  </React.Fragment>
+      <ListSubheader component="div" inset>
+        會員功能（如有登入)
+      </ListSubheader>
+      {
+        memberList.map((item, index) => {
+          return (
+            <ListItemButton key={index}>
+              <ListItemIcon>
+                <AssignmentIcon />
+              </ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItemButton>
+          )
+        })
+      }
+    </React.Fragment>
   )
 }

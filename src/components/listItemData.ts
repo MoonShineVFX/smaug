@@ -1,49 +1,57 @@
-export const mainList = [
+type ListItem = {
+  id: string,
+  title: string,
+  iconname?: 'ViewModule' | 'Label',
+  subitems?: { id: string, name: string }[]
+}
+
+
+export const mainList: ListItem[] = [
   {
-    id:"1",
-    title:"素材類別",
+    id: "1",
+    title: "素材類別",
     iconname: "ViewModule",
-    subitems:[
+    subitems: [
       {
-        id: 1,
+        id: "素材類別-1",
         name: "3D Assets",
       },
       {
-        id: 2,
+        id: "素材類別-2",
         name: "3D Plants",
       },
       {
-        id: 3,
+        id: "素材類別-3",
         name: "Surfaces",
       }
     ]
   }
 ]
 
-export const tagList =[
+export const tagList: ListItem[] = [
   {
-    id:"2",
-    title:"標籤 TAGS",
+    id: "2",
+    title: "標籤 TAGS",
     iconname: "Label",
-    subitems:[
+    subitems: [
       {
-        id: 1,
+        id: "標籤 TAGS-1",
         name: "3D Assets",
       },
       {
-        id: 2,
+        id: "標籤 TAGS-2",
         name: "3D Plants",
       },
       {
-        id: 3,
+        id: "標籤 TAGS-3",
         name: "Surfaces",
       },
       {
-        id: 3,
+        id: "標籤 TAGS-4",
         name: "tag004",
       },
       {
-        id: 3,
+        id: "標籤 TAGS-5",
         name: "tag005",
       }
     ]
@@ -51,30 +59,30 @@ export const tagList =[
 ]
 export const memberList = [
   {
-    id:"1",
-    title:"已下載",
+    id: "1",
+    title: "已下載",
   },
   {
-    id:"2",
-    title:"我的最愛",
+    id: "2",
+    title: "我的最愛",
   }
 ]
 export const modalItemData = [
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: '',title: 'Breakfast'},
-  {img: 'p10.jpg',title: 'Breakfast'},
-  {img: 'p11.jpg',title: 'Breakfast'},
-  {img: 'p12.jpg',title: 'Breakfast'},
-  {img: 'p13.jpg',title: 'Breakfast'},
-  {img: 'p15.jpg',title: 'Breakfast'},
-  {img: 'p16.jpg',title: 'Breakfast'},
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: '', title: 'Breakfast' },
+  { img: 'p10.jpg', title: 'Breakfast' },
+  { img: 'p11.jpg', title: 'Breakfast' },
+  { img: 'p12.jpg', title: 'Breakfast' },
+  { img: 'p13.jpg', title: 'Breakfast' },
+  { img: 'p15.jpg', title: 'Breakfast' },
+  { img: 'p16.jpg', title: 'Breakfast' },
 ]
 
 
@@ -130,7 +138,7 @@ export const modalItemData2 = [
     title: "Sea star",
   },
   {
-    img:"https://ddinktqu5prvc.cloudfront.net/vjrgdcz/vjrgdcz_Thumb_HighPoly_thumb.jpg",
-    title:"test Col2",
+    img: "https://ddinktqu5prvc.cloudfront.net/vjrgdcz/vjrgdcz_Thumb_HighPoly_thumb.jpg",
+    title: "test Col2",
   }
 ];

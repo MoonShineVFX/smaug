@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Category } from '@prisma/client';
-import { prisma } from '../../libs/server/prisma';
+import { prisma } from '../../../libs/server/prisma';
 
 
 export default async function handlerCategories(req: NextApiRequest, res: NextApiResponse<Category[] | any>): Promise<void> {
@@ -99,17 +99,19 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse<Category[] |
     return
   }
   const { name, parentId, } = req.body
-  const newCategory = await prisma.category.create({
-    data: {
-      name: name,
-      parentId: parentId,
-      isDeleted: false,
-    }
-  }).catch((err) => {
+  try {
+    const newCategory = await prisma.category.create({
+      data: {
+        name,
+        parentId,
+        isDeleted: false,
+      },
+    })
+    res.status(201).json(newCategory)
+    return
+  } catch (err) {
     console.log(err)
     res.status(500).json({ message: "Internal Server Error" })
     return
-  })
-  res.status(201).json(newCategory)
-  return
+  }
 }
