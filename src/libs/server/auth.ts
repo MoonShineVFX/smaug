@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from './prisma';
 import { User } from '@prisma/client'
 import { settings } from '../common';
+import { NextApiRequest } from 'next'
 import { NextRequest } from 'next/server';
 
 
@@ -107,7 +108,6 @@ export async function createToken(user: IUser): Promise<string> {
   return token.id;
 }
 
-
 export async function limitedTokenNumber(user: IUser): Promise<void> {
   if (user.authTokens.length > settings.TOKEN_PER_USER) {
     let tokens = await prisma.authToken.findMany({ where: { userId: user.id }, orderBy: { createAt: 'desc' } });
@@ -116,4 +116,22 @@ export async function limitedTokenNumber(user: IUser): Promise<void> {
     await prisma.authToken.deleteMany({ where: { id: { in: tokenIds } } });
   }
 }
+
+export function getToken(req: NextApiRequest): string {
+  let auth_str: string | undefined;
+  if (req.headers) {
+    auth_str = req.headers['authorization'];
+  }
+
+  if (!auth_str) {
+    return "";
+  }
+
+  const [auth_header, token] = auth_str.split(' ')
+  if (auth_header != 'Bearer') {
+    return "";
+  }
+  return token;
+}
+
 export type { UserInfo };
