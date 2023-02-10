@@ -92,7 +92,7 @@ export default function Main({children}) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              SMAUG
             </Typography>
             <Box sx={{ flexGrow: 1 }}>
               <Header />

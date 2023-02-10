@@ -15,6 +15,7 @@ interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
 import Head from 'next/head'
+import { RecoilRoot } from 'recoil';
 const clientSideEmotionCache = createEmotionCache();
 
 const darkTheme = createTheme(darkThemeOptions);
@@ -25,22 +26,24 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
   return (
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={darkTheme}>
+        <RecoilRoot>
         
-        <CssBaseline />
-        <Head>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
-          <meta property="og:site_name" content="SMAUG" />
-          <meta property="og:image" content="/card.png" />
-          <meta name="description" content="SMAUG Asset HomePage" />
-          <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-          <title>SMAUG</title>
-        </Head>
-        <Main>
-          <Component {...pageProps} />
-        </Main>
+          <CssBaseline />
+          <Head>
+            <link
+              rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+            />
+            <meta property="og:site_name" content="SMAUG" />
+            <meta property="og:image" content="/card.png" />
+            <meta name="description" content="SMAUG Asset HomePage" />
+            <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+            <title>SMAUG</title>
+          </Head>
+          <Main>
+            <Component {...pageProps} />
+          </Main>
+        </RecoilRoot>
       </ThemeProvider>
     </CacheProvider>
   );
