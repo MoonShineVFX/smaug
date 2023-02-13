@@ -1,10 +1,10 @@
 //這邊都是假資料用途
 export const mainList = [
   {
-    id: "1",
-    name: "素材類別",
-    iconname: "ViewModule",
-    children: [
+    id:"1",
+    name:"素材類別",
+    iconName: "ViewModule",
+    children:[
       {
         id: "a1",
         name: "3D Assets",
@@ -26,7 +26,12 @@ export const mainList = [
               {
                 id: "a1-1-3",
                 name: "Combined",
-                children: []
+                children:[]
+              },
+              {
+                id: "a1-1-4",
+                name: "A1234",
+                children:[]
               }
             ]
           },
@@ -69,10 +74,10 @@ export const mainList = [
 
 export const tagList: ListItem[] = [
   {
-    id: "2",
-    name: "標籤 TAGS",
-    iconname: "Label",
-    children: [
+    id:"2",
+    name:"標籤 TAGS",
+    iconName: "Label",
+    children:[
       {
         id: "1",
         name: "3D Assets",

@@ -43,8 +43,12 @@ const CustomerNav = styled(List)<{ component?: React.ElementType }>({
     marginLeft: 16,
   }
 });
-
-const CollapseTree = ({ child, open, isVisible }) => {
+interface ICollapseTree {
+  child:any,
+  open?: boolean;
+  isVisible:string
+}
+const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
   console.log(child)
   const [subOpen, setSubOpen] = React.useState('');
   const handleClick = (id) => {
@@ -88,8 +92,8 @@ const CollapseTree = ({ child, open, isVisible }) => {
 }
 const CustomListWithCollapse = ({ listData }: typesListData) => {
   const [open, setOpen] = React.useState(true);
-  const { name, iconname } = listData
-  const Icon = components[`Md${iconname}`]
+  const { name,iconName } = listData
+  const Icon = components[`Md${iconName}`]
   const handleClick = () => {
     setOpen(!open);
   };
@@ -111,8 +115,8 @@ const CustomListWithCollapse = ({ listData }: typesListData) => {
 
 const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
   const [open, setOpen] = React.useState(true);
-  const { name, iconname } = listData
-  const Icon = components[`Md${iconname}`]
+  const { name,iconName } = listData
+  const Icon = components[`Md${iconName}`]
   const handleClick = () => {
     setOpen(!open);
   };
