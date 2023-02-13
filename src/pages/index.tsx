@@ -61,7 +61,7 @@ export default function Home() {
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                {model?.title}
+                {model?.name}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {model?.category}
@@ -103,13 +103,13 @@ export default function Home() {
             >
               <img
                 src={item.thumbnails}
-                alt={item.title}
+                alt={item.name}
                 loading="lazy"
                 style={{borderRadius: "5px" , objectFit:'contain', aspectRatio:1/1  }}
                 
               />
               <ImageListItemBar
-                title={item.title}
+                title={item.name}
                 position="bottom"
                 sx={{
                   background:

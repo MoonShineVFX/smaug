@@ -40,9 +40,52 @@ const CustomerNav = styled(List)<{ component?: React.ElementType }>({
     marginLeft:16,
   }
 });
+
+const CollapseTree = ({child,open,isVisible})=>{
+  console.log(child)
+  const [subOpen, setSubOpen] = React.useState('');
+  const handleClick = (id)=>{
+    console.log('click')
+    setSubOpen(id)
+  }
+  
+  return(
+
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ my:0}}>
+          {
+            child?.map((child,index)=>{
+              return(
+                <Box component="div" key={child.id} >
+                  <ListItemButton 
+                    sx={{
+                      pl:2,py:.3 , color:'grey',
+                      ':hover':{
+                        color:'white'
+                      },
+                      ...(subOpen ===  child.id ? {
+                        color:'white'
+                      } : {color:'grey'})
+                    }} 
+                    onClick={()=>handleClick(child.id)}
+                  >
+                    <ListItemText primary={child.name}/>
+                  </ListItemButton>
+                  {subOpen ===  child.id ?  <CollapseTree child={child.children} open={true} isVisible={subOpen}/> : <></>}
+                </Box>
+ 
+              )
+            })
+          }
+
+        </List>
+      </Collapse>
+   
+  )
+}
 const CustomListWithCollapse = ({listData}:typesListData) =>{
   const [open, setOpen] = React.useState(true);
-  const { title,iconname } = listData
+  const { name,iconname } = listData
   const Icon = components[`Md${iconname}`]
   const handleClick = () => {
     setOpen(!open);
@@ -54,32 +97,16 @@ const CustomListWithCollapse = ({listData}:typesListData) =>{
         <ListItemIcon >
           <Icon  size="22px"/>
         </ListItemIcon>
-        <ListItemText primary={title} />
+        <ListItemText primary={name} />
       </ListItemButton>
-      {
-        listData.subitems &&
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {
-              listData.subitems.map((item,index)=>{
-                return(
-                  <ListItemButton sx={{ pl: 4 }} key={item.name}>
-                    <ListItemText primary={item.name}/>
-                  </ListItemButton>
-                )
-              })
-            }
 
-          </List>
-        </Collapse>
-      }
-
+      <CollapseTree child={listData.children} open={open}/>
     </CustomerNav>
   )
 }
 const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
   const [open, setOpen] = React.useState(true);
-  const { title,iconname } = listData
+  const { name,iconname } = listData
   const Icon = components[`Md${iconname}`]
   const handleClick = () => {
     setOpen(!open);
@@ -94,10 +121,10 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
         <ListItemIcon>
           <Icon  size="22px"/>
         </ListItemIcon>
-        <ListItemText primary={title} />
+        <ListItemText primary={name} />
       </ListItemButton>
       {
-        listData.subitems &&
+        listData.children &&
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{
               display: 'flex',
@@ -106,7 +133,7 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
               m: 1,
           }}>
             {
-              listData.subitems.map((item,index)=>{
+              listData.children.map((item,index)=>{
                 return(
                   <Chip key={item.name} label={item.name} onClick={handleTagClick} sx={{m: .5, fontSize:'12px'}}/>
                 )
