@@ -88,16 +88,17 @@ model Representation {
   uploader   User                 @relation(fields: [uploaderId], references: [id])
   createAt   DateTime             @default(now())
   updateAt   DateTime?            @updatedAt
-  linkTo     Representation[]     @relation("RepresentationLink")
-  linkBy     Representation[]     @relation("RepresentationLink")
+  textureId  String?              @unique
+  texture    Representation?      @relation("ModelTexture", fields: [textureId], references: [id])
+  models     Representation[]     @relation("ModelTexture")
 }
 
 model Category {
   id        String     @id @default(cuid())
   name      String?    @unique
   parentId  String?
-  parent    Category?  @relation("categoryTree", fields: [parentId], references: [id])
-  children  Category[] @relation("categoryTree")
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryTree")
   assets    Asset[]
   createAt  DateTime   @default(now())
   updateAt  DateTime?  @updatedAt
