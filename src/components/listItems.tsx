@@ -12,15 +12,14 @@ import Chip from '@mui/material/Chip';
 import Box, { BoxProps } from '@mui/material/Box';
 import { mainList, memberList, tagList } from './listItemData'
 import { MdViewModule, MdLabel, } from 'react-icons/md';
-import internal from 'stream';
+import { useRouter } from "next/router";
+
 
 interface typesListData {
-  listData: {
     id: string;
     title: string;
     iconname?: 'ViewModule' | 'Label';
     subitems?: { id: string, name: string }[]
-  }
 }
 
 const components = {
@@ -50,12 +49,18 @@ interface ICollapseTree {
 }
 const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
   console.log(child)
+  const router = useRouter();
   const [subOpen, setSubOpen] = React.useState('');
   const handleClick = (id) => {
+    if(subOpen === id){
+      setSubOpen('')
+      return
+    }
     console.log('click')
+    //需要做成多層路徑分類＋分類＋分類
+    router.push({pathname: '/' , query: {categoryId:id} }, undefined, { shallow: true });
     setSubOpen(id)
   }
-
   return (
 
     <Collapse in={open} timeout="auto" unmountOnExit>
@@ -66,7 +71,7 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
               <Box component="div" key={child.id} >
                 <ListItemButton
                   sx={{
-                    pl: 2, py: .3, color: 'grey',
+                    pl: 2, py: .3,
                     ':hover': {
                       color: 'white'
                     },
@@ -107,7 +112,7 @@ const CustomListWithCollapse = ({ listData }: typesListData) => {
         <ListItemText primary={name} />
       </ListItemButton>
 
-      <CollapseTree child={listData.children} open={open} />
+      <CollapseTree child={listData.children} open={open} isVisible={false} />
     </CustomerNav>
   )
 }

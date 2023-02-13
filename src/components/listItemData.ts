@@ -1,5 +1,11 @@
 //這邊都是假資料用途
-export const mainList = [
+interface ListItem {
+  id:string;
+  name: string;
+  iconName: string;
+  children:{}[]
+}
+export const mainList : ListItem[]= [
   {
     id:"1",
     name:"素材類別",
