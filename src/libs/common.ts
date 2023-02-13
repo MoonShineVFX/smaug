@@ -38,3 +38,11 @@ export const settings = {
   TOKEN_PER_USER: Number(process.env.TOKEN_PER_USER),
   TOKEN_EXPIRE_TIME: process.env.TOKEN_EXPIRE_TIME,
 }
+
+
+export const representationJsonSchema = {
+  previewFields: [],
+  renderFields: ["Render Size", "Renderer"],
+  modelFields: ["Vertext Count", "Face Count", "Bone Count", "Texture Count"],
+  textureFields: ["Texture Size", "Texture Format"],
+}
