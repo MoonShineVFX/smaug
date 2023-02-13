@@ -85,15 +85,7 @@ export default function Main({children}) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              SMAUG
-            </Typography>
+            
             <Box sx={{ flexGrow: 1 }}>
               <Header />
             </Box>
@@ -104,13 +96,22 @@ export default function Main({children}) {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justifyContent: 'center',
               px: [1],
             }}
           >
-            <IconButton onClick={toggleDrawer}>
+            {/* <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
-            </IconButton>
+            </IconButton> */}
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              sx={{ flexGrow: 1 }}
+            >
+              SMAUG
+            </Typography>
+            
           </Toolbar>
           <Divider />
 

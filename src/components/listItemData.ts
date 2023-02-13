@@ -1,28 +1,67 @@
-type ListItem = {
-  id: string,
-  title: string,
-  iconname?: 'ViewModule' | 'Label',
-  subitems?: { id: string, name: string }[]
-}
-
-
-export const mainList: ListItem[] = [
+//這邊都是假資料用途
+export const mainList = [
   {
     id: "1",
-    title: "素材類別",
+    name: "素材類別",
     iconname: "ViewModule",
-    subitems: [
+    children: [
       {
-        id: "素材類別-1",
+        id: "a1",
         name: "3D Assets",
+        children: [
+          {
+            id: "a1-1",
+            name: "Building",
+            children: [
+              {
+                id: "a1-1-1",
+                name: "Balcony",
+                children: []
+              },
+              {
+                id: "a1-1-2",
+                name: "Beam",
+                children: []
+              },
+              {
+                id: "a1-1-3",
+                name: "Combined",
+                children: []
+              }
+            ]
+          },
+          {
+            id: "a2",
+            name: "Food",
+            children: []
+          },
+          {
+            id: "a3",
+            name: "Historical",
+            children: []
+          },
+          {
+            id: "a4",
+            name: "Industrial",
+            children: []
+          },
+          {
+            id: "a5",
+            name: "Interior",
+            children: []
+          }
+
+        ]
       },
       {
-        id: "素材類別-2",
+        id: "2",
         name: "3D Plants",
+        children: []
       },
       {
-        id: "素材類別-3",
+        id: "3",
         name: "Surfaces",
+        children: []
       }
     ]
   }
@@ -31,27 +70,27 @@ export const mainList: ListItem[] = [
 export const tagList: ListItem[] = [
   {
     id: "2",
-    title: "標籤 TAGS",
+    name: "標籤 TAGS",
     iconname: "Label",
-    subitems: [
+    children: [
       {
-        id: "標籤 TAGS-1",
+        id: "1",
         name: "3D Assets",
       },
       {
-        id: "標籤 TAGS-2",
+        id: "2",
         name: "3D Plants",
       },
       {
-        id: "標籤 TAGS-3",
+        id: "3",
         name: "Surfaces",
       },
       {
-        id: "標籤 TAGS-4",
+        id: "3",
         name: "tag004",
       },
       {
-        id: "標籤 TAGS-5",
+        id: "3",
         name: "tag005",
       }
     ]
@@ -60,19 +99,20 @@ export const tagList: ListItem[] = [
 export const memberList = [
   {
     id: "1",
-    title: "已下載",
+    name: "已下載",
   },
   {
     id: "2",
-    title: "我的最愛",
+    name: "我的最愛",
   }
 ]
 
 export const modalItemData2 = [
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wldhdhxva/wldhdhxva_Thumb_HighPoly_thumb.jpg",
-    title: "Breakfast",
+    name: "Breakfast",
     category: '3D assets',
     tages: [
       {
@@ -88,62 +128,72 @@ export const modalItemData2 = [
 
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wdelca0/wdelca0_Thumb_HighPoly_thumb.jpg",
-    title: "Tasty burger",
+    name: "Tasty burger",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wjvsbay/wjvsbay_Thumb_HighPoly_thumb.jpg",
-    title: "Camera",
+    name: "Camera",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wjehcjb/wjehcjb_Grid_360_thumb.jpg",
-    title: "Morning",
+    name: "Morning",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wj3keakqx/wj3keakqx_Thumb_HighPoly_thumb.jpg",
-    title: "Hats",
+    name: "Hats",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wj3keaaqx/wj3keaaqx_Thumb_HighPoly_thumb.jpg",
-    title: "Honey",
+    name: "Honey",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wffnebus/wffnebus_Thumb_HighPoly_thumb.jpg",
-    title: "Vegetables",
+    name: "Vegetables",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wd1xedc/wd1xedc_Thumb_HighPoly_thumb.jpg",
-    title: "Mushrooms",
+    name: "Mushrooms",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/vgkwebl/vgkwebl_Thumb_HighPoly_thumb.jpg",
-    title: "Olive oil",
+    name: "Olive oil",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/rmyxk/Grid_render_thumb_thumb.jpg",
-    title: "Sea star",
+    name: "Sea star",
     category: '3D assets'
   },
   {
+    id: "1",
     thumbnails: "https://ddinktqu5prvc.cloudfront.net/vjrgdcz/vjrgdcz_Thumb_HighPoly_thumb.jpg",
-    title: "test Col2",
+    name: "test Col2",
     category: '3D assets'
   }
 ];
