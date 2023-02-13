@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -23,6 +24,22 @@ const components = {
   MdViewModule,
   MdLabel,
 }
+const CustomerNav = styled(List)<{ component?: React.ElementType }>({
+  '& .MuiListItemButton-root': {
+    paddingLeft: 24,
+    paddingRight: 24,
+  },
+  '& .MuiListItemIcon-root': {
+    minWidth: 0,
+    marginRight: 16,
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: 20,
+  },
+  '& .MuiCollapse-root':{
+    marginLeft:16,
+  }
+});
 const CustomListWithCollapse = ({listData}:typesListData) =>{
   const [open, setOpen] = React.useState(true);
   const { title,iconname } = listData
@@ -32,9 +49,9 @@ const CustomListWithCollapse = ({listData}:typesListData) =>{
   };
 
   return (
-    <>
+    <CustomerNav>
       <ListItemButton  onClick={handleClick}>
-        <ListItemIcon>
+        <ListItemIcon >
           <Icon  size="22px"/>
         </ListItemIcon>
         <ListItemText primary={title} />
@@ -57,7 +74,7 @@ const CustomListWithCollapse = ({listData}:typesListData) =>{
         </Collapse>
       }
 
-    </>
+    </CustomerNav>
   )
 }
 const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
@@ -72,7 +89,7 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
   }
 
   return (
-    <>
+    <CustomerNav>
       <ListItemButton  onClick={handleClick}>
         <ListItemIcon>
           <Icon  size="22px"/>
@@ -100,7 +117,7 @@ const CustomListWithCollapseForTag = ({listData}:typesListData) =>{
         </Collapse>
       }
 
-    </>
+    </CustomerNav>
   )
 }
 
@@ -137,7 +154,7 @@ export const TagListItems =()=> {
 
 export const MemberListItems = () =>{
   return(
-    <React.Fragment>
+    <CustomerNav>
     <ListSubheader component="div" inset>
       會員功能（如有登入)
     </ListSubheader>
@@ -153,6 +170,6 @@ export const MemberListItems = () =>{
         )
        })
     }
-  </React.Fragment>
+  </CustomerNav>
   )
 }

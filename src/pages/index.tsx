@@ -90,26 +90,34 @@ export default function Home() {
                 bgcolor:'#202020', p:5,borderRadius: "5px",border:"2px #202020 solid", transition:'all 0.3s',
                 ':hover':{
                   border:"2px grey solid"
-                } 
+                },
+                ':hover .MuiImageListItemBar-root':{
+                  display:"block"
+                }  
               }}
               onClick={()=>{
                   setShowDrawer(true);
                   setCurrentModel(item);
                 }
               }
-            
             >
-
-            <img
-              src={item.thumbnails}
-              alt={item.title}
-              loading="lazy"
-              style={{borderRadius: "5px" , objectFit:'contain', aspectRatio:1/1  }}
-              
-            />
-            <ImageListItemBar
-              title={item.title}
-            />
+              <img
+                src={item.thumbnails}
+                alt={item.title}
+                loading="lazy"
+                style={{borderRadius: "5px" , objectFit:'contain', aspectRatio:1/1  }}
+                
+              />
+              <ImageListItemBar
+                title={item.title}
+                position="bottom"
+                sx={{
+                  background:
+                    'linear-gradient(to top, rgba(0,0,0,0.7) 0%, ' +
+                    'rgba(0,0,0,0.3) 20%, rgba(0,0,0,0) 50%)',
+                  display:'none'
+                }}
+              />
 
             </ImageListItem>
           )
