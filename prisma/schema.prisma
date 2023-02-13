@@ -104,6 +104,7 @@ model Category {
   createAt  DateTime   @default(now())
   updateAt  DateTime?  @updatedAt
   isDeleted Boolean    @default(false)
+  isVisible Boolean    @default(true)
 }
 
 model Tag {
