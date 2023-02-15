@@ -5,6 +5,69 @@ import { permission, rolesData } from '../src/libs/common'
 import { hashPassword } from '../src/libs/server/auth'
 
 
+export const defaultCategoriesAssets = [
+  { name: "2D Asset", parent: null },
+  { name: "FX", parent: "2D Asset" },
+  { name: "3D Asset", parent: null },
+  {
+    name: "Accessories", parent: "3D Asset",
+    assets: [
+      { name: "Hat", creator: 'admin', tags: ['asus', 'rog'] },
+    ]
+  },
+  { name: "Animal", parent: "3D Asset" },
+  {
+    name: "Fish", parent: "Animal",
+    assets: [
+      { name: "Fish 001", creator: 'admin', tags: ['taiwan'] },
+      { name: "Fish 002", creator: 'admin', tags: ['taiwan'] },
+    ]
+  },
+
+  {
+    name: "Building", parent: "3D Asset",
+    assets: [
+      { name: "Building 1", creator: 'admin', tags: ['cyperpunk'] },
+      { name: "Building 2", creator: 'admin', tags: ['east'] },
+    ]
+  },
+
+  { name: "Char", parent: "3D Asset" },
+  { name: "Male", parent: "Char" },
+  { anem: "Female", parent: "Char" },
+  { name: "Parts", parent: "Char" },
+  { name: "Indoor", parent: "3D Asset" },
+  { name: "Exterior", parent: "3D Asset" },
+  { name: "Naturel", parent: "3D Asset" },
+  { name: "Rocks", parent: "Naturel" },
+  { name: "Scene", parent: "3D Asset" },
+  { name: "Product", parent: "3D Asset" },
+  { name: "Weapon", parent: "3D Asset" },
+  { name: "3D Plants", parent: null },
+  { name: "Bushes", parent: "3D Plants" },
+  { name: "Flower", parent: "3D Plants" },
+  { name: "Grass", parent: "3D Plants" },
+  { name: "Tree", parent: "3D Plants" },
+  { name: "Surfaces", parent: null },
+  { name: "Brick", parent: "Surfaces" },
+  { name: "Concrete", parent: "Surfaces" },
+  { name: "Fabric", parent: "Surfaces" },
+  { name: "Grass", parent: "Surfaces" },
+  { name: "Ground", parent: "Surfaces" },
+  { name: "Marble", parent: "Surfaces" },
+  { name: "Metal", parent: "Surfaces" },
+  { name: "Rock", parent: "Surfaces" },
+  { name: "Roofing", parent: "Surfaces" },
+  { name: "Sand", parent: "Surfaces" },
+  { name: "Snow", parent: "Surfaces" },
+  { name: "Soil", parent: "Surfaces" },
+  { name: "Stone", parent: "Surfaces" },
+  { name: "Tile", parent: "Surfaces" },
+  { name: "Wood", parent: "Surfaces" },
+  { name: "Other", parent: "Surfaces" },
+];
+
+
 const prisma = new PrismaClient()
 async function main() {
 
