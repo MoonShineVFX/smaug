@@ -79,6 +79,7 @@ model Asset {
 // 資產可以有多種格式，代表模型的檔案格式
 model Representation {
   id         String               @id @default(cuid())
+  name       String
   path       String?
   format     RepresentationFormat
   type       RepresentationType
