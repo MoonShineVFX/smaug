@@ -109,11 +109,11 @@ model Category {
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String
-  assets    Asset[]
-  createAt  DateTime  @default(now())
-  uopdateAt DateTime? @updatedAt
+  id       String    @id @default(cuid())
+  name     String
+  assets   Asset[]
+  createAt DateTime  @default(now())
+  updateAt DateTime? @updatedAt
 }
 
 model Permission {
