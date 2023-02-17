@@ -96,7 +96,7 @@ model Representation {
 
 model Category {
   id        String     @id @default(cuid())
-  name      String?    @unique
+  name      String?
   iconName  String?
   parentId  String?
   parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])

@@ -8,15 +8,20 @@ import { defaultCategories, defaultAssets, defaultRepresentations, defaultTags }
 import { sourceItems } from './defaultData'
 
 
+// utitlties function
+function replaceBankWithUnderscore(str: string) {
+  return str.replace(/\s/g, '_')
+}
+
 const prisma = new PrismaClient()
 async function main() {
 
   // 刪除現有資料
 
-
   await prisma.$transaction([
     prisma.representation.deleteMany({}),
     prisma.asset.deleteMany({}),
+    prisma.tag.deleteMany({}),
     prisma.category.deleteMany({}),
     prisma.user.deleteMany({}),
     prisma.permission.deleteMany({}),
@@ -61,7 +66,7 @@ async function main() {
     select: { id: true }
   })
 
-  await prisma.user.create({
+  let userAdmin = await prisma.user.create({
     data: {
       name: '管理員',
       account: 'admin',
@@ -76,7 +81,7 @@ async function main() {
 
   // Create Root Category
   const rootId = createId()
-  const create_root = await prisma.category.create({
+  const rootCate = await prisma.category.create({
     data: {
       id: rootId,
       name: "Root",
@@ -86,23 +91,54 @@ async function main() {
   console.log(`categort Root created`)
 
   // Create 20 categories
-  const categoriesData = defaultCategories.map((cate, i) => {
+  type categoryData = {
+    id: string
+    iconName: string | null
+    name: string | null
+    parent: string
+    parentId: string
+    createAt: Date
+    isDeleted: boolean
+    isVisible: boolean
+    updateAt: Date | null
+  }
+
+  const categoriesData: categoryData[] = defaultCategories.map((cate, i) => {
+    // console.log(`convert category: ${cate.name} to categoryData`)
     return {
       id: createId(),
       iconName: "ViewModule",
-      name: cate.name,
+      name: cate.name as string,
       parent: cate.parent,
       parentId: '',
       createAt: faker.date.past(),
       isDeleted: false,
-      isVisiable: true,
+      isVisible: true,
+      updateAt: null
     }
   })
 
-  const categoryDict = {}
+  const categoryDict: { [key: string]: categoryData } = {}
+  categoryDict['Root'] = {
+    id: rootCate.id,
+    iconName: rootCate.iconName,
+    name: rootCate.name,
+    parent: '',
+    parentId: '',
+    createAt: rootCate.createAt,
+    isDeleted: rootCate.isDeleted,
+    isVisible: rootCate.isVisible,
+    updateAt: rootCate.updateAt
+  }
+
   for (let category of categoriesData) {
     categoryDict[category.name as string] = category
-    if (category.parent) {
+  }
+
+  //update parentId
+  for (let categoryKey in categoryDict) {
+    const category = categoryDict[categoryKey]
+    if (category.parent !== '') {
       category.parentId = categoryDict[category.parent].id
     }
   }
@@ -114,13 +150,13 @@ async function main() {
       name: cate.name as string,
       createAt: cate.createAt,
       isDeleted: cate.isDeleted,
-      isVisible: cate.isVisiable,
+      isVisible: cate.isVisible,
       parentId: cate.parentId,
       updateAt: null
     }
   })
 
-  const create_cate_tree = await prisma.category.createMany({ data: categories })
+  await prisma.category.createMany({ data: categories })
   console.log(`categories created`)
 
   // create assets
@@ -129,18 +165,17 @@ async function main() {
       id: createId(),
       name: asset.name,
       categoryId: categoryDict[asset.category].id,
-      creatorId: roleAdmin.id,
+      creatorId: userAdmin.id,
       createAt: faker.date.past(),
       isDeleted: false,
       updateAt: null
     }
   })
 
-  const assetsDict = {}
+  const assetsDict: { [key: string]: Asset } = {}
   for (let asset of assetsData) {
     assetsDict[asset.name as string] = asset
   }
-
   await prisma.asset.createMany({ data: assetsData })
 
   // create tags
@@ -158,7 +193,9 @@ async function main() {
     }
   })
 
-  await prisma.tag.createMany({ data: tagsData })
+  for (let tagData of tagsData) {
+    await prisma.tag.create({ data: tagData })
+  }
   console.log(`tags created`)
 
   // create representations
@@ -170,7 +207,7 @@ async function main() {
       type: rep.type,
       assetId: assetsDict[rep.asset].id,
       path: "",
-      uploaderId: roleAdmin.id,
+      uploaderId: userAdmin.id,
       createAt: faker.date.past(),
       updateAt: null,
       textureId: null,
@@ -178,9 +215,16 @@ async function main() {
   }
   )
 
-  const representationsDict = {}
+  const representationsDict: { [key: string]: Representation } = {}
   for (let rep of representationsData) {
     representationsDict[rep.name as string] = rep
+  }
+  // update representations relation
+  for (let defaultRep of defaultRepresentations) {
+    const rep = representationsDict[defaultRep.name]
+    if (defaultRep.texture) {
+      rep.textureId = representationsDict[defaultRep.texture].id
+    }
   }
 
   await prisma.representation.createMany({ data: representationsData })
@@ -189,12 +233,35 @@ async function main() {
 
   // 操作檔案
   const sourceFolder = process.env.SOURCE_DATA_FOLDER
-  //const dragonLair = process.env.DRAGON_LAIR
+  // const dragonLair = process.env.DRAGON_LAIR
   // 其實我很想叫這個名字，但想想為了不要讓人誤會，還是改成 STORAGE_ROOT 這種無聊的名字吧
 
   const storageRoot = process.env.STORAGE_ROOT
+  for (let item of sourceItems) {
+    const itemId = assetsDict[item].id
+    const itemName = replaceBankWithUnderscore(item)
 
-  fs.copyFileSync('./public/asset/preview/preview.png', './public/asset/preview/preview.png')
+    const sourceAssetFolder = `${sourceFolder}/${itemName}`
+    const targetAssetFolder = `${storageRoot}/${itemId}`
+
+    const sourceItemPreview = `${sourceAssetFolder}/${itemName}.png`
+    const sourceItemModel = `${sourceAssetFolder}/${itemName}.zip`
+    const sourceItemTexture = `${sourceAssetFolder}/${itemName}_texture.zip`
+
+    const targetPreviewFile = `${targetAssetFolder}/${itemId}_preview.png`
+    const targetModelFile = `${targetAssetFolder}/${itemId}_model.zip`
+    const targetTextureFile = `${targetAssetFolder}/${itemId}_texture.zip`
+
+    try {
+      fs.copyFileSync(sourceItemPreview, targetPreviewFile)
+      fs.copyFileSync(sourceItemModel, targetModelFile)
+      fs.copyFileSync(sourceItemTexture, targetTextureFile)
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+
 
   // Create 100 assets
   // let creators = usersData.splice(0, 40)
