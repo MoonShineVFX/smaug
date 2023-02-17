@@ -1,80 +1,22 @@
+import fs from 'fs'
 import { faker } from '@faker-js/faker/locale/zh_TW'
-import { PrismaClient, Role, UserType, RepresentationFormat, RepresentationType } from '@prisma/client'
+import { PrismaClient, UserType, Category, Representation, Asset, Tag } from '@prisma/client'
 import { createId } from '@paralleldrive/cuid2'
 import { permission, rolesData } from '../src/libs/common'
 import { hashPassword } from '../src/libs/server/auth'
-
-
-export const defaultCategoriesAssets = [
-  { name: "2D Asset", parent: null },
-  { name: "FX", parent: "2D Asset" },
-  { name: "3D Asset", parent: null },
-  {
-    name: "Accessories", parent: "3D Asset",
-    assets: [
-      { name: "Hat", creator: 'admin', tags: ['asus', 'rog'] },
-    ]
-  },
-  { name: "Animal", parent: "3D Asset" },
-  {
-    name: "Fish", parent: "Animal",
-    assets: [
-      { name: "Fish 001", creator: 'admin', tags: ['taiwan'] },
-      { name: "Fish 002", creator: 'admin', tags: ['taiwan'] },
-    ]
-  },
-
-  {
-    name: "Building", parent: "3D Asset",
-    assets: [
-      { name: "Building 1", creator: 'admin', tags: ['cyperpunk'] },
-      { name: "Building 2", creator: 'admin', tags: ['east'] },
-    ]
-  },
-
-  { name: "Char", parent: "3D Asset" },
-  { name: "Male", parent: "Char" },
-  { anem: "Female", parent: "Char" },
-  { name: "Parts", parent: "Char" },
-  { name: "Indoor", parent: "3D Asset" },
-  { name: "Exterior", parent: "3D Asset" },
-  { name: "Naturel", parent: "3D Asset" },
-  { name: "Rocks", parent: "Naturel" },
-  { name: "Scene", parent: "3D Asset" },
-  { name: "Product", parent: "3D Asset" },
-  { name: "Weapon", parent: "3D Asset" },
-  { name: "3D Plants", parent: null },
-  { name: "Bushes", parent: "3D Plants" },
-  { name: "Flower", parent: "3D Plants" },
-  { name: "Grass", parent: "3D Plants" },
-  { name: "Tree", parent: "3D Plants" },
-  { name: "Surfaces", parent: null },
-  { name: "Brick", parent: "Surfaces" },
-  { name: "Concrete", parent: "Surfaces" },
-  { name: "Fabric", parent: "Surfaces" },
-  { name: "Grass", parent: "Surfaces" },
-  { name: "Ground", parent: "Surfaces" },
-  { name: "Marble", parent: "Surfaces" },
-  { name: "Metal", parent: "Surfaces" },
-  { name: "Rock", parent: "Surfaces" },
-  { name: "Roofing", parent: "Surfaces" },
-  { name: "Sand", parent: "Surfaces" },
-  { name: "Snow", parent: "Surfaces" },
-  { name: "Soil", parent: "Surfaces" },
-  { name: "Stone", parent: "Surfaces" },
-  { name: "Tile", parent: "Surfaces" },
-  { name: "Wood", parent: "Surfaces" },
-  { name: "Other", parent: "Surfaces" },
-];
+import { defaultCategories, defaultAssets, defaultRepresentations, defaultTags } from './defaultData'
+import { sourceItems } from './defaultData'
 
 
 const prisma = new PrismaClient()
 async function main() {
 
   // 刪除現有資料
+
+
   await prisma.$transaction([
-    // prisma.representation.deleteMany({}),
-    // prisma.asset.deleteMany({}),
+    prisma.representation.deleteMany({}),
+    prisma.asset.deleteMany({}),
     prisma.category.deleteMany({}),
     prisma.user.deleteMany({}),
     prisma.permission.deleteMany({}),
@@ -144,40 +86,115 @@ async function main() {
   console.log(`categort Root created`)
 
   // Create 20 categories
-  // const categoriesLv1 = Array.from({ length: 4 }).map((_, i) => {
-  //   return {
-  //     id: createId(),
-  //     parentId: rootId,
-  //     name: faker.commerce.productName(),
-  //     createAt: faker.date.past(),
-  //   }
-  // })
+  const categoriesData = defaultCategories.map((cate, i) => {
+    return {
+      id: createId(),
+      iconName: "ViewModule",
+      name: cate.name,
+      parent: cate.parent,
+      parentId: '',
+      createAt: faker.date.past(),
+      isDeleted: false,
+      isVisiable: true,
+    }
+  })
 
-  // const categoriesLv2 = Array.from({ length: 16 }).map((_, i) => {
-  //   return {
-  //     id: createId(),
-  //     parentId: categoriesLv1[Math.trunc(i / 4)].id,
-  //     name: faker.commerce.productName(),
-  //     createAt: faker.date.past(),
-  //   }
-  // })
+  const categoryDict = {}
+  for (let category of categoriesData) {
+    categoryDict[category.name as string] = category
+    if (category.parent) {
+      category.parentId = categoryDict[category.parent].id
+    }
+  }
 
-  // const categories = [...categoriesLv1, ...categoriesLv2]
-  // const create_cate_tree = prisma.category.createMany({ data: categories })
-  // await prisma.$transaction([create_root, create_cate_tree])
-  // console.log(`categories created`)
+  const categories: Category[] = categoriesData.map((cate) => {
+    return {
+      id: cate.id,
+      iconName: cate.iconName,
+      name: cate.name as string,
+      createAt: cate.createAt,
+      isDeleted: cate.isDeleted,
+      isVisible: cate.isVisiable,
+      parentId: cate.parentId,
+      updateAt: null
+    }
+  })
 
-  // Create 10 tag
-  // await prisma.tag.createMany({
-  //   data: Array.from({ length: 10 }).map((_, i) => {
-  //     return {
-  //       name: faker.word.noun(),
-  //       createAt: faker.date.past(),
-  //     }
-  //   })
-  // })
-  // console.log(`tags created`)
+  const create_cate_tree = await prisma.category.createMany({ data: categories })
+  console.log(`categories created`)
 
+  // create assets
+  const assetsData: Asset[] = defaultAssets.map((asset, i) => {
+    return {
+      id: createId(),
+      name: asset.name,
+      categoryId: categoryDict[asset.category].id,
+      creatorId: roleAdmin.id,
+      createAt: faker.date.past(),
+      isDeleted: false,
+      updateAt: null
+    }
+  })
+
+  const assetsDict = {}
+  for (let asset of assetsData) {
+    assetsDict[asset.name as string] = asset
+  }
+
+  await prisma.asset.createMany({ data: assetsData })
+
+  // create tags
+  const tagsData: Tag[] = defaultTags.map((tag, i) => {
+    return {
+      id: createId(),
+      name: tag.name,
+      assets: {
+        connect: tag.assets.map((asset) => {
+          return { id: assetsDict[asset].id }
+        }),
+      },
+      createAt: faker.date.past(),
+      updateAt: null
+    }
+  })
+
+  await prisma.tag.createMany({ data: tagsData })
+  console.log(`tags created`)
+
+  // create representations
+  const representationsData: Representation[] = defaultRepresentations.map((rep, i) => {
+    return {
+      id: createId(),
+      name: rep.name,
+      format: rep.format,
+      type: rep.type,
+      assetId: assetsDict[rep.asset].id,
+      path: "",
+      uploaderId: roleAdmin.id,
+      createAt: faker.date.past(),
+      updateAt: null,
+      textureId: null,
+    }
+  }
+  )
+
+  const representationsDict = {}
+  for (let rep of representationsData) {
+    representationsDict[rep.name as string] = rep
+  }
+
+  await prisma.representation.createMany({ data: representationsData })
+  console.log(`representations created`)
+
+
+  // 操作檔案
+  const sourceFolder = process.env.SOURCE_DATA_FOLDER
+  //const dragonLair = process.env.DRAGON_LAIR
+  // 其實我很想叫這個名字，但想想為了不要讓人誤會，還是改成 STORAGE_ROOT 這種無聊的名字吧
+
+  const storageRoot = process.env.STORAGE_ROOT
+
+  fs.copyFileSync('./public/asset/preview/preview.png', './public/asset/preview/preview.png')
 
   // Create 100 assets
   // let creators = usersData.splice(0, 40)
@@ -247,6 +264,17 @@ async function main() {
   //   })
   // }
   // console.log(`representations MODEL and TEXTURE created`)
+
+  // Create 10 tag
+  // await prisma.tag.createMany({
+  //   data: Array.from({ length: 10 }).map((_, i) => {
+  //     return {
+  //       name: faker.word.noun(),
+  //       createAt: faker.date.past(),
+  //     }
+  //   })
+  // })
+  // console.log(`tags created`)
 }
 
 main()
