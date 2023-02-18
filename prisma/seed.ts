@@ -1,4 +1,5 @@
-import fs from 'fs'
+import * as fs from 'fs'
+import path from 'path'
 import { faker } from '@faker-js/faker/locale/zh_TW'
 import { PrismaClient, UserType, Category, Representation, Asset, Tag } from '@prisma/client'
 import { createId } from '@paralleldrive/cuid2'
@@ -11,6 +12,27 @@ import { sourceItems } from './defaultData'
 // utitlties function
 function replaceBankWithUnderscore(str: string) {
   return str.replace(/\s/g, '_')
+}
+
+function deleteFolderRecursive(folderPath) {
+  if (fs.existsSync(folderPath)) {
+    fs.readdirSync(folderPath).forEach((file) => {
+      const curPath = path.join(folderPath, file);
+      if (fs.lstatSync(curPath).isDirectory()) {
+        // 如果當前資料夾是 vault，就跳過
+        if (curPath === path.join(folderPath, 'vault')) {
+          return;
+        }
+        // 遞迴地刪除子資料夾
+        deleteFolderRecursive(curPath);
+      } else {
+        // 刪除檔案
+        fs.unlinkSync(curPath);
+      }
+    });
+    // 刪除資料夾本身
+    fs.rmdirSync(folderPath);
+  }
 }
 
 const prisma = new PrismaClient()
@@ -28,6 +50,10 @@ async function main() {
     prisma.role.deleteMany({}),
   ])
   console.log('deleted all existing data')
+
+  // 刪除所有檔案
+  const storageRoot = process.env.STORAGE_ROOT
+  deleteFolderRecursive(storageRoot)
 
   // 建立所有初始資料
   // 建立權限
@@ -236,7 +262,7 @@ async function main() {
   // const dragonLair = process.env.DRAGON_LAIR
   // 其實我很想叫這個名字，但想想為了不要讓人誤會，還是改成 STORAGE_ROOT 這種無聊的名字吧
 
-  const storageRoot = process.env.STORAGE_ROOT
+
   for (let item of sourceItems) {
     const itemId = assetsDict[item].id
     const itemName = replaceBankWithUnderscore(item)
@@ -253,6 +279,7 @@ async function main() {
     const targetTextureFile = `${targetAssetFolder}/${itemId}_texture.zip`
 
     try {
+      fs.mkdirSync(targetAssetFolder, { recursive: true })
       fs.copyFileSync(sourceItemPreview, targetPreviewFile)
       fs.copyFileSync(sourceItemModel, targetModelFile)
       fs.copyFileSync(sourceItemTexture, targetTextureFile)
