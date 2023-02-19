@@ -97,7 +97,6 @@ model Representation {
 model Category {
   id        String     @id @default(cuid())
   name      String?
-  iconName  String?
   parentId  String?
   parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children  Category[] @relation("CategoryTree")
@@ -129,4 +128,16 @@ model AuthToken {
   userId   String
   user     User     @relation(fields: [userId], references: [id])
   createAt DateTime @default(now())
+}
+
+model menu {
+  id        String    @id @default(cuid())
+  name      String
+  iconName  String?
+  createAt  DateTime  @default(now())
+  updateAt  DateTime? @updatedAt
+  isDeleted Boolean   @default(false)
+  isVisible Boolean   @default(true)
+  sortOrder Int       @default(0)
+  protected Boolean   @default(false) // 是否需要登入才能看到
 }
