@@ -14,7 +14,7 @@ function replaceBankWithUnderscore(str: string) {
   return str.replace(/\s/g, '_')
 }
 
-function deleteFolderRecursive(folderPath) {
+function deleteFolderRecursive(folderPath: string) {
   if (fs.existsSync(folderPath)) {
     fs.readdirSync(folderPath).forEach((file) => {
       const curPath = path.join(folderPath, file);
@@ -53,7 +53,7 @@ async function main() {
 
   // 刪除所有檔案
   const storageRoot = process.env.STORAGE_ROOT
-  deleteFolderRecursive(storageRoot)
+  deleteFolderRecursive(storageRoot as string)
 
   // 建立所有初始資料
   // 建立權限
@@ -270,13 +270,36 @@ async function main() {
     const sourceAssetFolder = `${sourceFolder}/${itemName}`
     const targetAssetFolder = `${storageRoot}/${itemId}`
 
+    const repPreviewId = representationsDict[`${item} Preview`].id
+    const repModelId = representationsDict[`${item} FBX`].id
+    const RepTextureId = representationsDict[`${item} FBX texture`].id
+
     const sourceItemPreview = `${sourceAssetFolder}/${itemName}.png`
     const sourceItemModel = `${sourceAssetFolder}/${itemName}.zip`
     const sourceItemTexture = `${sourceAssetFolder}/${itemName}_texture.zip`
 
-    const targetPreviewFile = `${targetAssetFolder}/${itemId}_preview.png`
-    const targetModelFile = `${targetAssetFolder}/${itemId}_model.zip`
-    const targetTextureFile = `${targetAssetFolder}/${itemId}_texture.zip`
+    const previewFile = `${itemId}/${repPreviewId}_preview.png`
+    const modelFile = `${itemId}/${repModelId}_model.zip`
+    const textureFile = `${itemId}/${RepTextureId}_texture.zip`
+
+    const targetPreviewFile = `${storageRoot}/${previewFile}`
+    const targetModelFile = `${storageRoot}/${modelFile}`
+    const targetTextureFile = `${storageRoot}/${textureFile}`
+
+    // update representation path
+
+    await prisma.representation.update({
+      where: { id: repPreviewId },
+      data: { path: previewFile }
+    })
+    await prisma.representation.update({
+      where: { id: repModelId },
+      data: { path: modelFile }
+    })
+    await prisma.representation.update({
+      where: { id: RepTextureId },
+      data: { path: textureFile }
+    })
 
     try {
       fs.mkdirSync(targetAssetFolder, { recursive: true })
@@ -288,87 +311,6 @@ async function main() {
       console.log(err)
     }
   }
-
-
-  // Create 100 assets
-  // let creators = usersData.splice(0, 40)
-  // const tags = await prisma.tag.findMany()
-  // for (let i = 0; i < 100; i++) {
-  //   let creator = creators[Math.floor(Math.random() * 40)]
-  //   await prisma.asset.create({
-  //     data: {
-  //       name: faker.commerce.productName(),
-  //       categoryId: categories[Math.trunc(i / 5)].id,
-  //       creatorId: creator.id,
-  //       createAt: faker.date.past(),
-  //       tags: {
-  //         connect: [
-  //           { id: tags[Math.floor(Math.random() * 10)].id },
-  //         ]
-  //       }
-  //     }
-  //   })
-  // }
-  // console.log(`assets created`)
-
-
-  // Create 50 representations ->preview
-  // const assets = await prisma.asset.findMany()
-  // await prisma.representation.createMany({
-  //   data: Array.from({ length: 1 }).map((_, i) => {
-  //     return {
-  //       id: createId(),
-  //       path: faker.image.imageUrl(320, 160),
-  //       assetId: assets[i].id,
-  //       format: RepresentationFormat.IMG,
-  //       type: RepresentationType.PREVIEW,
-  //       uploaderId: assets[i].creatorId,
-  //       createAt: faker.date.past(),
-  //     }
-  //   })
-  // })
-  // console.log(`representations PREVIEW created`)
-
-
-  // Create 25 representations ->model and texture
-  // for (let i = 0; i < 25; i++) {
-  //   let texture = await prisma.representation.create({
-  //     data: {
-  //       id: createId(),
-  //       path: faker.image.imageUrl(320, 160),
-  //       assetId: assets[i].id,
-  //       format: RepresentationFormat.IMG,
-  //       type: RepresentationType.TEXTURE,
-  //       uploaderId: assets[i].creatorId,
-  //       createAt: faker.date.past()
-  //     }
-  //   })
-
-  //   await prisma.representation.create({
-  //     data: {
-  //       id: createId(),
-  //       path: faker.image.imageUrl(320, 160),
-  //       assetId: assets[i].id,
-  //       format: RepresentationFormat.MAX,
-  //       type: RepresentationType.MODEL,
-  //       uploaderId: assets[i].creatorId,
-  //       createAt: faker.date.past(),
-  //       linkTo: { connect: { id: texture.id } }
-  //     }
-  //   })
-  // }
-  // console.log(`representations MODEL and TEXTURE created`)
-
-  // Create 10 tag
-  // await prisma.tag.createMany({
-  //   data: Array.from({ length: 10 }).map((_, i) => {
-  //     return {
-  //       name: faker.word.noun(),
-  //       createAt: faker.date.past(),
-  //     }
-  //   })
-  // })
-  // console.log(`tags created`)
 }
 
 main()
