@@ -130,7 +130,7 @@ model AuthToken {
   createAt DateTime @default(now())
 }
 
-model menu {
+model Menu {
   name        String    @id @unique
   iconName    String?
   createAt    DateTime  @default(now())
