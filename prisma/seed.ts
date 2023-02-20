@@ -5,7 +5,7 @@ import { PrismaClient, UserType, Category, Representation, Asset, Tag } from '@p
 import { createId } from '@paralleldrive/cuid2'
 import { permission, rolesData } from '../src/libs/common'
 import { hashPassword } from '../src/libs/server/auth'
-import { defaultCategories, defaultAssets, defaultRepresentations, defaultTags } from './defaultData'
+import { defaultCategories, defaultAssets, defaultRepresentations, defaultTags, defaultMenus } from './defaultData'
 import { sourceItems } from './defaultData'
 
 
@@ -48,6 +48,7 @@ async function main() {
     prisma.user.deleteMany({}),
     prisma.permission.deleteMany({}),
     prisma.role.deleteMany({}),
+    prisma.menu.deleteMany({})
   ])
   console.log('deleted all existing data')
 
@@ -105,6 +106,20 @@ async function main() {
   console.log(`users "Admin" created`)
 
 
+  // create menu
+  const menuData = defaultMenus.map((menu, i) => {
+    return {
+      name: menu.name,
+      createAt: faker.date.past(),
+      isDeleted: menu.isDeleted,
+      isVisible: menu.isVisible,
+      isProtected: menu.isProtected,
+      sortOrder: menu.sortOrder,
+    }
+  })
+  await prisma.menu.createMany({ data: menuData })
+  console.log("menus created")
+
   // Create Root Category
   const rootId = createId()
   const rootCate = await prisma.category.create({
@@ -114,12 +129,11 @@ async function main() {
       createAt: faker.date.past(),
     }
   })
-  console.log(`categort Root created`)
+  console.log("categort Root created")
 
   // Create 20 categories
   type categoryData = {
     id: string
-    iconName: string | null
     name: string | null
     parent: string
     parentId: string
@@ -133,7 +147,6 @@ async function main() {
     // console.log(`convert category: ${cate.name} to categoryData`)
     return {
       id: createId(),
-      iconName: "ViewModule",
       name: cate.name as string,
       parent: cate.parent,
       parentId: '',
@@ -147,7 +160,6 @@ async function main() {
   const categoryDict: { [key: string]: categoryData } = {}
   categoryDict['Root'] = {
     id: rootCate.id,
-    iconName: rootCate.iconName,
     name: rootCate.name,
     parent: '',
     parentId: '',
@@ -172,7 +184,7 @@ async function main() {
   const categories: Category[] = categoriesData.map((cate) => {
     return {
       id: cate.id,
-      iconName: cate.iconName,
+      // iconName: cate.iconName,
       name: cate.name as string,
       createAt: cate.createAt,
       isDeleted: cate.isDeleted,
