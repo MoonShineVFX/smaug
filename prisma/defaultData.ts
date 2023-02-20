@@ -105,8 +105,16 @@ export const defaultTags = [
   { name: 'taiwan', creator: 'admin', assets: ["Fish 001", "Fish 002"] },
   { name: "cyperpunk", creator: "admin", assets: ["Building 1"] },
   { name: "east", creator: "admin", assets: ["Building 2"] },
-
 ]
 
 // source data
 export const sourceItems = ["Fish 001", "Fish 002"]
+
+
+// menu
+export const defaultMenus = [
+  { name: 'Categories', sortOrder: 1, isVisible: true, isDeleted: false, isProtected: false },
+  { name: 'Tags', sortOrder: 2, isVisible: true, isDeleted: false, isProtected: false },
+  { name: 'Favorite', sortOrder: 3, isVisible: true, isDeleted: false, isProtected: true },
+  { name: 'Download', sortOrder: 4, isVisible: false, isDeleted: false, isProtected: true }]
+
