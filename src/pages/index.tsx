@@ -1,5 +1,5 @@
 import React,{ useState, useEffect } from 'react';
-import { modalItemData,modalItemData2 } from '../components/listItemData'
+import {modalItemData2 } from '../components/listItemData'
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -29,13 +29,7 @@ export default function Home() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  useEffect(()=>{
-    async function getMovies() {
-      const movies = await fetchData('https://api.themoviedb.org/3/movie/popular?api_key=ac53d6d75da27e33c65825f9b41bb633&language=en-US&page=1');
-      console.log(movies);
-    }
-    getMovies()
-  },[])
+  
   return (
     <>
       <Drawer
@@ -51,7 +45,7 @@ export default function Home() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
-          px: [1],
+          px: [1]
         }}
       >
       </Toolbar>
@@ -83,14 +77,16 @@ export default function Home() {
         <Box sx={{p:2}}>
           data info 
         </Box>
-        <Box sx={{display:'flex',position:'absolute',bottom:0,width:'100%',justifyContent:'center', p:2, bgcolor:"#202020"}}>
+        <Box sx={{display:'flex',position:'absolute',bottom:0,width:'100%',justifyContent:'center', p:2}}>
           <Button variant="contained" sx={{m:1, width: .5}}>Download</Button>
         </Box>
         
       </Drawer>
       <ImageList sx={{}}  cols={5} gap={8}  sx={{mx:2 , my:2}} variant="standad" >
         <ImageListItem key="Subheader" cols={5}>
-          <ListSubheader component="div">3D Assets</ListSubheader>
+          <Typography variant="h5" sx={{fontWeight:'bold', color:"#999"}}>
+            ALL Assest
+          </Typography>;
         </ImageListItem>
         {modalItemData2.map((item) => {
           return(

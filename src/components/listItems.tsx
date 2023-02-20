@@ -104,7 +104,7 @@ const CustomListWithCollapse = ({ listData }: typesListData) => {
   };
 
   return (
-    <CustomerNav>
+    <CustomerNav >
       <ListItemButton onClick={handleClick}>
         <ListItemIcon >
           <Icon size="22px" />
@@ -162,19 +162,11 @@ const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
   )
 }
 
-export const MainListItems = () => {
-
+export const MainListItems = ({data}) => {
   return (
-    <React.Fragment>
-      {
-        mainList.map((item, index) => {
-          return (
-            <CustomListWithCollapse listData={item} key={index} />
-          )
-        })
-      }
 
-    </React.Fragment>
+      <CustomListWithCollapse listData={data}  />
+ 
   );
 }
 export const TagListItems = () => {

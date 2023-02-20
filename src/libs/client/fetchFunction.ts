@@ -39,6 +39,5 @@ export async function testTmdb(){
     'https://api.themoviedb.org/3/movie/popular?api_key=ac53d6d75da27e33c65825f9b41bb633&language=en-US&page=1'
   );
   const data = await res.json();
-  console.log(data)
   return data
 }

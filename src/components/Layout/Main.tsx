@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{ useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Header from '../Header';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
@@ -15,6 +15,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import List from '@mui/material/List';
 import { MainListItems,TagListItems, MemberListItems } from '../listItems';
+import { fetchData } from '../../libs/client/fetchFunction';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
+import { Hidden } from '@mui/material';
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -61,16 +65,26 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function Main({children}) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
+  const [mainListItem, setMainListItem] = useState({});
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  useEffect(()=>{
+    async function getMovies() {
+      const categories = await fetchData('/api/categories');
+      console.log(categories)
+      setMainListItem(categories);
+    }
+    getMovies()
+  },[])
   return (
-      <Box sx={{ display: 'flex' }}>
-        <AppBar position="absolute" open={open}>
+      <Box sx={{ display: 'flex'}}>
+        <AppBar position="fixed" open={open} sx={{boxShadow:'none' }}>
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
+              bgcolor:'#2F2F2F'
             }}
           >
             <IconButton
@@ -91,13 +105,14 @@ export default function Main({children}) {
             </Box>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" open={open} sx={{ height:'100vh'}}  >
           <Toolbar
             sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              px: [1],
+              px: 1,
+            
             }}
           >
             {/* <IconButton onClick={toggleDrawer}>
@@ -115,10 +130,9 @@ export default function Main({children}) {
           </Toolbar>
           <Divider />
 
-          <List component="nav">
-            <MainListItems />
+          <List component="nav" >
+            {Object.keys(mainListItem).length > 0  ?  <MainListItems  data={mainListItem} /> : <><LinearProgress /></>}
             <TagListItems />
-            <Divider sx={{ my: 1 }} />
             <MemberListItems />
           </List>
         </Drawer>
@@ -128,7 +142,7 @@ export default function Main({children}) {
             backgroundColor: (theme) =>
               theme.palette.mode === 'light'
                 ? theme.palette.grey[100]
-                : theme.palette.grey[800],
+                : '#242424',
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',

@@ -26,7 +26,7 @@ export default function Header(props: headProps): JSX.Element {
                 flexDirection: 'row-reverse',
                 justifyContent: 'right',
                 alignItems: 'center',
-                color: 'white',
+                color: 'white'
             }}>
             <UserProfile props={{
                 userProfile: userProfile,
