@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{ useState, useEffect } from 'react';
 import { modalItemData,modalItemData2 } from '../components/listItemData'
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -19,14 +19,23 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import {  useRecoilValue ,useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
+
+import { fetchData } from '../libs/client/fetchFunction';
 export default function Home() {
   const [currentModel, setCurrentModel] = useRecoilState(modelState);
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const model = useRecoilValue(modelState);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  useEffect(()=>{
+    async function getMovies() {
+      const movies = await fetchData('https://api.themoviedb.org/3/movie/popular?api_key=ac53d6d75da27e33c65825f9b41bb633&language=en-US&page=1');
+      console.log(movies);
+    }
+    getMovies()
+  },[])
   return (
     <>
       <Drawer
