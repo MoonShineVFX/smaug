@@ -79,6 +79,7 @@ model Asset {
 // 資產可以有多種格式，代表模型的檔案格式
 model Representation {
   id         String               @id @default(cuid())
+  name       String
   path       String?
   format     RepresentationFormat
   type       RepresentationType
@@ -95,8 +96,7 @@ model Representation {
 
 model Category {
   id        String     @id @default(cuid())
-  name      String?    @unique
-  iconName  String?
+  name      String?
   parentId  String?
   parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children  Category[] @relation("CategoryTree")
@@ -104,14 +104,15 @@ model Category {
   createAt  DateTime   @default(now())
   updateAt  DateTime?  @updatedAt
   isDeleted Boolean    @default(false)
+  isVisible Boolean    @default(true)
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String
-  assets    Asset[]
-  createAt  DateTime  @default(now())
-  uopdateAt DateTime? @updatedAt
+  id       String    @id @default(cuid())
+  name     String
+  assets   Asset[]
+  createAt DateTime  @default(now())
+  updateAt DateTime? @updatedAt
 }
 
 model Permission {
@@ -127,4 +128,16 @@ model AuthToken {
   userId   String
   user     User     @relation(fields: [userId], references: [id])
   createAt DateTime @default(now())
+}
+
+model menu {
+  id        String    @id @default(cuid())
+  name      String
+  iconName  String?
+  createAt  DateTime  @default(now())
+  updateAt  DateTime? @updatedAt
+  isDeleted Boolean   @default(false)
+  isVisible Boolean   @default(true)
+  sortOrder Int       @default(0)
+  protected Boolean   @default(false) // 是否需要登入才能看到
 }
