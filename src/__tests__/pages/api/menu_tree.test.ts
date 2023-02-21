@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { PrismaClient } from '@prisma/client';
-import handlerCategoryList from '../../../../pages/api/categories/list'
+import handlerMenuTree from '../../../pages/api/menu_tree'
 
 let prisma: PrismaClient;
 
@@ -14,11 +14,17 @@ afterEach(async () => {
   await prisma.$disconnect();
 })
 
-describe('CategoriesList API', () => {
+describe('Menu Tree API', () => {
   test('return categories list with menu as root', async () => {
-    const { req, res } = createMocks({ method: 'GET' });
+    const homeMenu = await prisma.menu.findFirst({
+      where: {
+        name: { equals: 'Home' }
+      }
+    })
 
-    await handlerCategoryList(req, res);
+    const { req, res } = createMocks({ method: 'GET', query: { id: homeMenu?.id } });
+
+    await handlerMenuTree(req, res);
     expect(res._getStatusCode()).toBe(200);
   })
 
