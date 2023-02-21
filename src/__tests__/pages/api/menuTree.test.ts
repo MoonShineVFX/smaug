@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { PrismaClient } from '@prisma/client';
-import handlerMenuTree from '../../../pages/api/menu_tree'
+import handlerMenuTree from '../../../pages/api/menuTree'
 
 let prisma: PrismaClient;
 
