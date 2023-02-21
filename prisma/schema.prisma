@@ -105,6 +105,7 @@ model Category {
   updateAt  DateTime?  @updatedAt
   isDeleted Boolean    @default(false)
   isVisible Boolean    @default(true)
+  menuId    String
 }
 
 model Tag {
