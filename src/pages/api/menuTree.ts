@@ -39,17 +39,19 @@ export default async function handlerMenuTree(req: NextApiRequest, res: NextApiR
   }
   let menuId: string = id
 
-  // get menu "category"
+  // get menu
   const menu = await prisma.menu.findUnique({
     where: {
       id: menuId
     },
   })
 
-  if (!menu) {
+  if (!menu || menu.isDeleted || !menu.isVisible) {
     res.status(404).json({ message: "Menu Categories not found" })
     return
   }
+
+
   const returnField = {
     select: {
       id: true,
@@ -69,6 +71,7 @@ export default async function handlerMenuTree(req: NextApiRequest, res: NextApiR
       AND: {
         isDeleted: { equals: false },
         isVisible: { equals: true },
+        menuId: { equals: menuId }
       }
     }
   }
