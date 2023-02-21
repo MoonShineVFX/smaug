@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
-import { PrismaClient } from '@prisma/client';
-import handlerCategories from '../../../pages/api/categories'
+import { PrismaClient, Category } from '@prisma/client';
+import handlerCategories from '../../../../pages/api/categories'
 
 
 let prisma: PrismaClient;
@@ -45,6 +45,13 @@ describe('Categories API', () => {
       }
     })
 
+    // get root category
+    const rootCate = await prisma.category.findFirst({
+      where: {
+        name: { equals: "Root" }
+      }
+    }) as Category
+
     const { req, res } = createMocks(
       {
         method: 'POST',
@@ -52,19 +59,25 @@ describe('Categories API', () => {
           authorization: `Bearer ${token.id}`
         },
         body: {
-          parentId: null,
+          parentId: rootCate.id,
           name: "Test Category"
         }
       }
     )
-    await handlerCategories(req, res);
+
+    await handlerCategories(req, res)
+    expect(res._getStatusCode()).toBe(201)
+
+    const newCate = res._getJSONData()
+    const newCateId: string = newCate.id
+    const newCateName: string = newCate.name
     await prisma.category.delete({
       where: {
-        name: "Test Category"
+        id: newCateId
       }
     });
-    expect(res._getStatusCode()).toBe(201);
-    expect(res._getJSONData().name).toBe("Test Category");
+
+    expect(newCateName).toBe("Test Category");
   })
 });
 
