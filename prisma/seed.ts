@@ -110,6 +110,7 @@ async function main() {
   const menuData = defaultMenus.map((menu, i) => {
     return {
       name: menu.name,
+      iconName: menu.iconName,
       createAt: faker.date.past(),
       isDeleted: menu.isDeleted,
       isVisible: menu.isVisible,
@@ -117,33 +118,38 @@ async function main() {
       sortOrder: menu.sortOrder,
     }
   })
-  await prisma.menu.createMany({ data: menuData })
+  let menuDict = {} as { [key: string]: any }
+  for (let menu of menuData) {
+    const menuObj = await prisma.menu.create({ data: menu })
+    menuDict[menuObj.name] = menuObj
+  }
   console.log("menus created")
 
   // Create Root Category
-  const rootId = createId()
-  const rootCate = await prisma.category.create({
-    data: {
-      id: rootId,
-      name: "Root",
-      createAt: faker.date.past(),
-    }
-  })
-  console.log("categort Root created")
+  // const rootId = createId()
+  // const rootCate = await prisma.category.create({
+  //   data: {
+  //     id: rootId,
+  //     name: "Root",
+  //     createAt: faker.date.past(),
+  //   }
+  // })
+  // console.log("categort Root created")
 
   // Create 20 categories
   type categoryData = {
     id: string
     name: string | null
-    parent: string
-    parentId: string
+    parent: string | null
+    parentId: string | null
     createAt: Date
     isDeleted: boolean
     isVisible: boolean
     updateAt: Date | null
+    menuId: string
   }
 
-  const categoriesData: categoryData[] = defaultCategories.map((cate, i) => {
+  const categoriesData: categoryData[] = defaultCategories.map((cate, _) => {
     // console.log(`convert category: ${cate.name} to categoryData`)
     return {
       id: createId(),
@@ -153,22 +159,13 @@ async function main() {
       createAt: faker.date.past(),
       isDeleted: false,
       isVisible: true,
-      updateAt: null
+      updateAt: null,
+      menuId: menuDict[cate.menu].id
     }
   })
 
+  // 建立 categoryData 的 Dict 版本
   const categoryDict: { [key: string]: categoryData } = {}
-  categoryDict['Root'] = {
-    id: rootCate.id,
-    name: rootCate.name,
-    parent: '',
-    parentId: '',
-    createAt: rootCate.createAt,
-    isDeleted: rootCate.isDeleted,
-    isVisible: rootCate.isVisible,
-    updateAt: rootCate.updateAt
-  }
-
   for (let category of categoriesData) {
     categoryDict[category.name as string] = category
   }
@@ -176,11 +173,15 @@ async function main() {
   //update parentId
   for (let categoryKey in categoryDict) {
     const category = categoryDict[categoryKey]
-    if (category.parent !== '') {
+    if (category.parent === null) {
+      category.parentId = null
+    }
+    else if (category.parent !== '') {
       category.parentId = categoryDict[category.parent].id
     }
   }
 
+  // 建立準 category 陣列版本 
   const categories: Category[] = categoriesData.map((cate) => {
     return {
       id: cate.id,
@@ -190,11 +191,15 @@ async function main() {
       isDeleted: cate.isDeleted,
       isVisible: cate.isVisible,
       parentId: cate.parentId,
-      updateAt: null
+      updateAt: null,
+      menuId: cate.menuId
     }
   })
 
-  await prisma.category.createMany({ data: categories })
+  // 建立 category
+  for (let category of categories) {
+    await prisma.category.create({ data: category })
+  }
   console.log(`categories created`)
 
   // create assets

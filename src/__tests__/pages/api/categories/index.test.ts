@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
-import { PrismaClient } from '@prisma/client';
-import handlerCategories from '../../../pages/api/categories'
+import { PrismaClient, Category } from '@prisma/client';
+import handlerCategories from '../../../../pages/api/categories'
 
 
 let prisma: PrismaClient;
@@ -23,15 +23,6 @@ describe('Categories API', () => {
     expect(res._getStatusCode()).toBe(200);
   })
 
-  test('return a category by name', async () => {
-    const { req, res } = createMocks(
-      { method: 'GET', query: { name: "Root" } }
-    )
-    await handlerCategories(req, res);
-    const rootCate = res._getJSONData()[0];
-    expect(rootCate.name).toBe("Root");
-  })
-
   test('should be able to create a category when caller authenticated', async () => {
     // fake a token
     const adminUser = await prisma.user.findFirst({
@@ -45,6 +36,13 @@ describe('Categories API', () => {
       }
     })
 
+    // get home menu
+    const homeMenu = await prisma.menu.findFirst({
+      where: {
+        name: "Home"
+      }
+    })
+
     const { req, res } = createMocks(
       {
         method: 'POST',
@@ -53,18 +51,25 @@ describe('Categories API', () => {
         },
         body: {
           parentId: null,
+          menuId: homeMenu!.id,
           name: "Test Category"
         }
       }
     )
-    await handlerCategories(req, res);
+
+    await handlerCategories(req, res)
+    expect(res._getStatusCode()).toBe(201)
+
+    const newCate = res._getJSONData()
+    const newCateId: string = newCate.id
+    const newCateName: string = newCate.name
     await prisma.category.delete({
       where: {
-        name: "Test Category"
+        id: newCateId
       }
     });
-    expect(res._getStatusCode()).toBe(201);
-    expect(res._getJSONData().name).toBe("Test Category");
+
+    expect(newCateName).toBe("Test Category");
   })
 });
 
