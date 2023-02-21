@@ -131,8 +131,9 @@ model AuthToken {
 }
 
 model Menu {
-  name        String    @id @unique
-  iconName    String?
+  id          String    @id @default(cuid())
+  name        String    @unique
+  iconName    String
   createAt    DateTime  @default(now())
   updateAt    DateTime? @updatedAt
   isDeleted   Boolean   @default(false)
