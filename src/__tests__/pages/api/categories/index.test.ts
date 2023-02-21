@@ -23,15 +23,6 @@ describe('Categories API', () => {
     expect(res._getStatusCode()).toBe(200);
   })
 
-  test('return a category by name', async () => {
-    const { req, res } = createMocks(
-      { method: 'GET', query: { name: "Root" } }
-    )
-    await handlerCategories(req, res);
-    const rootCate = res._getJSONData()[0];
-    expect(rootCate.name).toBe("Root");
-  })
-
   test('should be able to create a category when caller authenticated', async () => {
     // fake a token
     const adminUser = await prisma.user.findFirst({
@@ -45,12 +36,12 @@ describe('Categories API', () => {
       }
     })
 
-    // get root category
-    const rootCate = await prisma.category.findFirst({
+    // get home menu
+    const homeMenu = await prisma.menu.findFirst({
       where: {
-        name: { equals: "Root" }
+        name: "Home"
       }
-    }) as Category
+    })
 
     const { req, res } = createMocks(
       {
@@ -59,7 +50,8 @@ describe('Categories API', () => {
           authorization: `Bearer ${token.id}`
         },
         body: {
-          parentId: rootCate.id,
+          parentId: null,
+          menuId: homeMenu!.id,
           name: "Test Category"
         }
       }
