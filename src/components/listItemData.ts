@@ -1,16 +1,16 @@
 //這邊都是假資料用途
 interface ListItem {
-  id:string;
+  id: string;
   name: string;
   iconName: string;
-  children:{}[]
+  children: {}[]
 }
-export const mainList : ListItem[]= [
+export const mainList: ListItem[] = [
   {
-    id:"1",
-    name:"素材類別",
+    id: "1",
+    name: "素材類別",
     iconName: "ViewModule",
-    children:[
+    children: [
       {
         id: "a1",
         name: "3D Assets",
@@ -32,12 +32,12 @@ export const mainList : ListItem[]= [
               {
                 id: "a1-1-3",
                 name: "Combined",
-                children:[]
+                children: []
               },
               {
                 id: "a1-1-4",
                 name: "A1234",
-                children:[]
+                children: []
               }
             ]
           },
@@ -80,10 +80,10 @@ export const mainList : ListItem[]= [
 
 export const tagList: ListItem[] = [
   {
-    id:"2",
-    name:"標籤 TAGS",
+    id: "2",
+    name: "標籤 TAGS",
     iconName: "Label",
-    children:[
+    children: [
       {
         id: "1",
         name: "3D Assets",
@@ -117,6 +117,26 @@ export const memberList = [
     name: "我的最愛",
   }
 ]
+
+
+export const menuList = [
+  {
+    id: "menu1",
+    iconName: "ViewModule",
+    name: "Home",
+  },
+  {
+    id: "menu2",
+    iconName: "ViewModule",
+    name: "Tags",
+  },
+  {
+    id: "menu",
+    iconName: "ViewModule",
+    name: ""
+  }
+]
+
 
 export const modalItemData2 = [
   {
