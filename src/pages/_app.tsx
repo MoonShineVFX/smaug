@@ -34,6 +34,10 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
               rel="stylesheet"
               href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
             />
+            <link
+              rel="stylesheet"
+              href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            />
             <meta property="og:site_name" content="SMAUG" />
             <meta property="og:image" content="/card.png" />
             <meta name="description" content="SMAUG Asset HomePage" />

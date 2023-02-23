@@ -12,8 +12,10 @@ import Chip from '@mui/material/Chip';
 import Box, { BoxProps } from '@mui/material/Box';
 import { mainList, memberList, tagList } from './listItemData'
 import { MdViewModule, MdLabel, } from 'react-icons/md';
+import * as FontAwesome from "react-icons/fa";
 import { useRouter } from "next/router";
 import { fetchData } from '../libs/client/fetchFunction';
+import Icon from '@mui/material/Icon';
 
 interface typesListData {
     id: string;
@@ -99,11 +101,12 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
 
   )
 }
+
 const CustomListWithCollapse = ({ mainMenuData }: typesMainMenuData) => {
   const [open, setOpen] = useState(true);
   const [listItem, setListItem] = useState({});
   const { id,name } = mainMenuData
-  const Icon =  Object.keys(listItem).length > 0 ? components[`Md${listItem.iconName}`] : null
+
   const handleClick = () => {
     setOpen(!open);
   };
@@ -126,7 +129,7 @@ const CustomListWithCollapse = ({ mainMenuData }: typesMainMenuData) => {
       <CustomerNav >
         <ListItemButton onClick={handleClick}>
           <ListItemIcon >
-            <Icon size="22px" />
+            <Icon>{listItem.iconName}</Icon>
           </ListItemIcon>
           <ListItemText primary={listItem.name} />
         </ListItemButton>
