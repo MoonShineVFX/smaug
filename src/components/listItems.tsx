@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{ useState, useEffect } from 'react';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -13,13 +13,17 @@ import Box, { BoxProps } from '@mui/material/Box';
 import { mainList, memberList, tagList } from './listItemData'
 import { MdViewModule, MdLabel, } from 'react-icons/md';
 import { useRouter } from "next/router";
-
+import { fetchData } from '../libs/client/fetchFunction';
 
 interface typesListData {
     id: string;
     title: string;
     iconname?: 'ViewModule' | 'Label';
     subitems?: { id: string, name: string }[]
+}
+interface typesMainMenuData {
+  id: string;
+  name: string;
 }
 
 const components = {
@@ -95,25 +99,41 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
 
   )
 }
-const CustomListWithCollapse = ({ listData }: typesListData) => {
-  const [open, setOpen] = React.useState(true);
-  const { name,iconName } = listData
-  const Icon = components[`Md${iconName}`]
+const CustomListWithCollapse = ({ mainMenuData }: typesMainMenuData) => {
+  const [open, setOpen] = useState(true);
+  const [listItem, setListItem] = useState({});
+  const { id,name } = mainMenuData
+  const Icon =  Object.keys(listItem).length > 0 ? components[`Md${listItem.iconName}`] : null
   const handleClick = () => {
     setOpen(!open);
   };
+  useEffect(()=>{
+    async function getItems() {
+      const items = await fetchData('/api/menuTree?id='+id );
+      console.log(items)
+      setListItem(items);
+    }
+    getItems()
+  },[])
 
   return (
-    <CustomerNav >
-      <ListItemButton onClick={handleClick}>
-        <ListItemIcon >
-          <Icon size="22px" />
-        </ListItemIcon>
-        <ListItemText primary={name} />
-      </ListItemButton>
-
-      <CollapseTree child={listData.children} open={open} isVisible={false} />
-    </CustomerNav>
+    <>
+     {
+      Object.keys(listItem).length > 0 && 
+      listItem.message === 'Menu Categories not found' ? 
+      <></>
+      :
+      <CustomerNav >
+        <ListItemButton onClick={handleClick}>
+          <ListItemIcon >
+            <Icon size="22px" />
+          </ListItemIcon>
+          <ListItemText primary={listItem.name} />
+        </ListItemButton>
+        <CollapseTree child={listItem.children} open={open} isVisible={false} /> 
+       </CustomerNav>
+     }
+    </>
   )
 }
 
@@ -128,6 +148,7 @@ const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
   const handleTagClick = () => {
     console.log('click')
   }
+  console.log(listData)
 
   return (
     <CustomerNav>
@@ -162,10 +183,10 @@ const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
   )
 }
 
-export const MainListItems = ({data}) => {
+export const MainListItems = ({mainMenuData}: typesMainMenuData) => {
   return (
 
-      <CustomListWithCollapse listData={data}  />
+      <CustomListWithCollapse mainMenuData={mainMenuData}  />
  
   );
 }

@@ -67,16 +67,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function Main({children}) {
   const [open, setOpen] = useState(true);
   const [mainListItem, setMainListItem] = useState({});
+  const [menuListItem, setMenuListItem] = useState([]);
   const toggleDrawer = () => {
     setOpen(!open);
   };
   useEffect(()=>{
-    async function getMovies() {
-      const categories = await fetchData('/api/categories');
-      console.log(categories)
-      setMainListItem(categories);
+    async function getMenus() {
+      const menus = await fetchData('/api/menus');
+      console.log(menus)
+      setMenuListItem(menus);
     }
-    getMovies()
+    getMenus()
   },[])
   return (
       <Box sx={{ display: 'flex'}}>
@@ -131,9 +132,16 @@ export default function Main({children}) {
           <Divider />
 
           <List component="nav" >
-            {Object.keys(mainListItem).length > 0  ?  <MainListItems  data={mainListItem} /> : <><LinearProgress /></>}
-            <TagListItems />
-            <MemberListItems />
+            { menuListItem.length > 0 ? 
+              menuListItem.map((item,index)=>{
+                const {id,name} = item
+                return name === 'Tags' ? <TagListItems key={index} /> : <MainListItems key={index}  mainMenuData={item} />
+
+              }) : <></>
+            }
+            {/* {Object.keys(mainListItem).length > 0  ?  <MainListItems  data={mainListItem} /> : <><LinearProgress /></>} */}
+            {/* <TagListItems /> */}
+            {/* <MemberListItems /> */}
           </List>
         </Drawer>
         <Box
