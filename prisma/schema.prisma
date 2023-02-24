@@ -92,6 +92,7 @@ model Representation {
   textureId  String?              @unique
   texture    Representation?      @relation("ModelTexture", fields: [textureId], references: [id])
   models     Representation[]     @relation("ModelTexture")
+  fileSize   Int?                 @default(0) // 檔案大小
 }
 
 model Category {

@@ -59,6 +59,7 @@ export const defaultRepresentations = [
     format: RepresentationFormat.IMG,
     type: RepresentationType.TEXTURE,
     uploader: 'admin',
+    fileSize: 1233456789
   },
   {
     name: "Fish 001 FBX",
@@ -66,7 +67,8 @@ export const defaultRepresentations = [
     format: RepresentationFormat.FBX,
     type: RepresentationType.MODEL,
     uploader: 'admin',
-    texture: "Fish 001 FBX texture"
+    texture: "Fish 001 FBX texture",
+    fileSize: 1234456789
   },
   {
     name: "Fish 001 Preview",
@@ -81,6 +83,7 @@ export const defaultRepresentations = [
     format: RepresentationFormat.IMG,
     type: RepresentationType.TEXTURE,
     uploader: 'admin',
+    fileSize: 1234456789
   },
   {
     name: "Fish 002 FBX",
@@ -88,14 +91,15 @@ export const defaultRepresentations = [
     format: RepresentationFormat.FBX,
     type: RepresentationType.MODEL,
     uploader: 'admin',
-    texture: "Fish 002 FBX texture"
+    texture: "Fish 002 FBX texture",
+    fileSize: 1234456789
   },
   {
     name: "Fish 002 Preview",
     asset: "Fish 002",
     format: RepresentationFormat.IMG,
     type: RepresentationType.PREVIEW,
-    uploader: 'admin',
+    uploader: 'admin'
   },
 ]
 
@@ -113,8 +117,8 @@ export const sourceItems = ["Fish 001", "Fish 002"]
 
 // menu
 export const defaultMenus = [
-  { name: 'Home', iconName: "ViewModule", sortOrder: 1, isVisible: true, isDeleted: false, isProtected: false },
-  { name: 'Tags', iconName: "ViewModule", sortOrder: 2, isVisible: true, isDeleted: false, isProtected: false },
-  { name: 'Favorite', iconName: "ViewModule", sortOrder: 3, isVisible: true, isDeleted: false, isProtected: true },
-  { name: 'Download', iconName: "ViewModule", sortOrder: 4, isVisible: false, isDeleted: false, isProtected: true }]
+  { name: 'Home', iconName: "menu", sortOrder: 1, isVisible: true, isDeleted: false, isProtected: false },
+  { name: 'Tags', iconName: "label", sortOrder: 2, isVisible: true, isDeleted: false, isProtected: false },
+  { name: 'Favorite', iconName: "favorite", sortOrder: 3, isVisible: true, isDeleted: false, isProtected: true },
+  { name: 'Download', iconName: "star", sortOrder: 4, isVisible: false, isDeleted: false, isProtected: true }]
 

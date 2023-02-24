@@ -254,6 +254,7 @@ async function main() {
       createAt: faker.date.past(),
       updateAt: null,
       textureId: null,
+      fileSize: rep.fileSize ? rep.fileSize : 0,
     }
   }
   )
