@@ -41,8 +41,71 @@ export const settings = {
 
 
 export const representationJsonSchema = {
-  previewFields: [],
-  renderFields: ["Render Size", "Renderer"],
-  modelFields: ["Vertext Count", "Face Count", "Bone Count", "Texture Count"],
-  textureFields: ["Texture Size", "Texture Format"],
+  preview: {},
+  render: {
+    "$schema": "https://json-schema.org/draft/2020-12/schema#",
+    "$id": "https:/smaug.moonshine.tw/representation-render.json",
+    "type": "object",
+    "properties": {
+      "render size": {
+        "type": "array",
+        "items": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          }
+        ]
+      },
+      "renderer": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "render size",
+      "renderer"
+    ]
+  },
+  model: {
+    "$schema": "https://json-schema.org/draft/2020-12/schema#",
+    "$id": "https:/smaug.moonshine.tw/representation-model.json",
+    "type": "object",
+    "properties": {
+      "vertext count": {
+        "type": "integer"
+      },
+      "face count": {
+        "type": "integer"
+      },
+      "bone count": {
+        "type": "integer"
+      },
+      "texture count": {
+        "type": "integer"
+      }
+    },
+    "required": [
+      "vertext count",
+      "face count",
+      "bone count",
+      "texture count"
+    ]
+  },
+  texture: {
+    "$schema": "https://json-schema.org/draft/2020-12/schema#",
+    "$id": "https:/smaug.moonshine.tw/representation-texture.json",
+    "type": "object",
+    "properties": {
+      "texture size": {
+        "type": "integer"
+      },
+      "texture format": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "texture size"
+    ]
+  },
 }
