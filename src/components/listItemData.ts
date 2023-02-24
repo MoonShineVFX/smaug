@@ -140,91 +140,118 @@ export const menuList = [
 
 export const modalItemData2 = [
   {
-    id: "1",
+    id: "as-1",
+    name: "Tasty burger",
+    thumbnails: "https://ddinktqu5prvc.cloudfront.net/wjvsbay/wjvsbay_Thumb_HighPoly_thumb.jpg",
+    category: '3D assets',
+    updateAt: null,
+    createAt: "2023-02-10"
+  },
+  {
+    id: "as-2",
+    name: "Tasty burger",
+    thumbnails: "https://ddinktqu5prvc.cloudfront.net/wjvsbay/wjvsbay_Thumb_HighPoly_thumb.jpg",
+    category: '3D assets',
+    updateAt: null,
+    createAt: "2023-02-10"
+    // },
+    // {
+    //   id: "as-3",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/wjvsbay/wjvsbay_Thumb_HighPoly_thumb.jpg",
+    //   name: "Camera",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-4",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/wjehcjb/wjehcjb_Grid_360_thumb.jpg",
+    //   name: "Morning",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-5",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/wj3keakqx/wj3keakqx_Thumb_HighPoly_thumb.jpg",
+    //   name: "Hats",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-6",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/wj3keaaqx/wj3keaaqx_Thumb_HighPoly_thumb.jpg",
+    //   name: "Honey",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-7",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/wffnebus/wffnebus_Thumb_HighPoly_thumb.jpg",
+    //   name: "Vegetables",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-8",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/wd1xedc/wd1xedc_Thumb_HighPoly_thumb.jpg",
+    //   name: "Mushrooms",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-9",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/vgkwebl/vgkwebl_Thumb_HighPoly_thumb.jpg",
+    //   name: "Olive oil",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-10",
+    //   thumbnails:
+    //     "https://ddinktqu5prvc.cloudfront.net/rmyxk/Grid_render_thumb_thumb.jpg",
+    //   name: "Sea star",
+    //   category: '3D assets'
+    // },
+    // {
+    //   id: "as-11",
+    //   thumbnails: "https://ddinktqu5prvc.cloudfront.net/vjrgdcz/vjrgdcz_Thumb_HighPoly_thumb.jpg",
+    //   name: "test Col2",
+    //   category: '3D assets'
+  }
+];
+
+
+const assetDetails = [
+  {
+    id: "cat-1",
     thumbnails:
       "https://ddinktqu5prvc.cloudfront.net/wldhdhxva/wldhdhxva_Thumb_HighPoly_thumb.jpg",
     name: "Breakfast",
-    category: '3D assets',
+    categorylist: '3D assets\sexygirl\\',
     tages: [
-      {
-        slug: "string",
-        uri: "string"
-      }
+      { id: "tags-1", name: "Rog" },
+      { id: "tags-2", name: "Taiwan" },
     ],
-    archives: {
-      source: "http://"
-    },
+    renders: [
+      { id: "as-1-render-1", name: "Render Size", value: "1920x1080", url: "https://ddinktqu5prvc.cloudfront.net/wldhdhxva/wldhdhxva_Thumb_HighPoly_thumb.jpg" },
+      { id: "as-1-render-2", name: "Render Size", value: "1920x1080", url: "https://ddinktqu5prvc.cloudfront.net/wldhdhxva/wldhdhxva_Thumb_HighPoly_thumb.jpg" },
+    ],
+    downloads: [
+      [
+        { id: "poiuyt", name: 'asset-1 高模', format: "FBX", diskUsage: "1.1 GB" },
+        { id: "lkjhhg", name: 'asset-1 高模貼圖)', format: "IMG", diskUsage: 2233456789, size: "2K" }
+      ],
+      [
+        { id: "asdfde", name: 'asset-1 中模', format: "FBX", diskUsage: "1.1 GB" },
+        { id: "lkjhhg", name: 'asset-1 中模貼圖)', format: "IMG", diskUsage: 1233456789, size: "1K" }
+      ]
+    ],
     publishedAt: "2023-02-10",
     author: "username"
+  }]
 
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wdelca0/wdelca0_Thumb_HighPoly_thumb.jpg",
-    name: "Tasty burger",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wjvsbay/wjvsbay_Thumb_HighPoly_thumb.jpg",
-    name: "Camera",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wjehcjb/wjehcjb_Grid_360_thumb.jpg",
-    name: "Morning",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wj3keakqx/wj3keakqx_Thumb_HighPoly_thumb.jpg",
-    name: "Hats",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wj3keaaqx/wj3keaaqx_Thumb_HighPoly_thumb.jpg",
-    name: "Honey",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wffnebus/wffnebus_Thumb_HighPoly_thumb.jpg",
-    name: "Vegetables",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/wd1xedc/wd1xedc_Thumb_HighPoly_thumb.jpg",
-    name: "Mushrooms",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/vgkwebl/vgkwebl_Thumb_HighPoly_thumb.jpg",
-    name: "Olive oil",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails:
-      "https://ddinktqu5prvc.cloudfront.net/rmyxk/Grid_render_thumb_thumb.jpg",
-    name: "Sea star",
-    category: '3D assets'
-  },
-  {
-    id: "1",
-    thumbnails: "https://ddinktqu5prvc.cloudfront.net/vjrgdcz/vjrgdcz_Thumb_HighPoly_thumb.jpg",
-    name: "test Col2",
-    category: '3D assets'
-  }
-];
+  // export const representationJsonSchema = {
+  //   preview: [],
+  //   render: ["Render Size", "Renderer"],
+  //   model: ["Vertext Count", "Face Count", "Bone Count", "Texture Count"],
+  //   texture: ["Texture Size", "Texture Format"],
+  // }
