@@ -21,15 +21,23 @@ import {  useRecoilValue ,useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 
 import { fetchData } from '../libs/client/fetchFunction';
-export default function Home() {
+export default function Index() {
   const [currentModel, setCurrentModel] = useRecoilState(modelState);
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const model = useRecoilValue(modelState);
+  const [assetsListItem, setAssetsListItem] = useState([]);
   const [open, setOpen] = useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  
+  useEffect(()=>{
+    async function getAssets() {
+      const assets = await fetchData('/api/assets');
+      console.log(assets)
+      setAssetsListItem(assets);
+    }
+    // getAssets()
+  },[])
   return (
     <>
       <Drawer

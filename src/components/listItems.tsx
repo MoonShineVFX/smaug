@@ -23,10 +23,7 @@ interface typesListData {
     iconname?: 'ViewModule' | 'Label';
     subitems?: { id: string, name: string }[]
 }
-interface typesMainMenuData {
-  id: string;
-  name: string;
-}
+
 
 const components = {
   MdViewModule,
@@ -49,22 +46,26 @@ const CustomerNav = styled(List)<{ component?: React.ElementType }>({
   }
 });
 interface ICollapseTree {
-  child:any,
+  child?:IChild[],
   open?: boolean;
-  isVisible:string
+  isVisible?:boolean |  undefined;
+}
+interface IChild {
+  id: string;
+  name: string;
+  children?: IChild[];
 }
 const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
-  console.log(child)
   const router = useRouter();
   const [subOpen, setSubOpen] = React.useState('');
-  const handleClick = (id) => {
+  const handleClick = (id:string) => {
     if(subOpen === id){
       setSubOpen('')
       return
     }
     console.log('click')
     //需要做成多層路徑分類＋分類＋分類
-    router.push({pathname: '/' , query: {categoryId:id} }, undefined, { shallow: true });
+    router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
     setSubOpen(id)
   }
   return (
@@ -101,23 +102,39 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
 
   )
 }
-
-const CustomListWithCollapse = ({ mainMenuData }: typesMainMenuData) => {
+interface ICustomListWithCollapse {
+  mainMenuData?: ImainMenuData
+}
+interface ImainMenuData {
+  id: string;
+  name: string;
+}
+interface IListItem {
+  iconName: string;
+  name: string;
+  children: any[];
+  message?: string;
+}
+const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
   const [open, setOpen] = useState(true);
-  const [listItem, setListItem] = useState({});
-  const { id,name } = mainMenuData
+  const [listItem, setListItem] = useState<IListItem>({
+    iconName: "",
+    name: "",
+    children: [],
+  });
+
 
   const handleClick = () => {
     setOpen(!open);
   };
   useEffect(()=>{
     async function getItems() {
-      const items = await fetchData('/api/menuTree?id='+id );
+      const items = await fetchData(`/api/menuTree?id=${mainMenuData?.id}`);
       console.log(items)
       setListItem(items);
     }
     getItems()
-  },[])
+  },[mainMenuData])
 
   return (
     <>
@@ -140,29 +157,43 @@ const CustomListWithCollapse = ({ mainMenuData }: typesMainMenuData) => {
   )
 }
 
-
-const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
+interface ICustomListWithCollapseForTag {
+  mainMenuData?: ImainMenuData
+}
+interface ITagsListItem {
+  id: string;
+  name: string;
+}
+const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseForTag) => {
   const [open, setOpen] = React.useState(true);
-  const { name,iconName } = listData
-  const Icon = components[`Md${iconName}`]
+  const router = useRouter();
+  const [listItem, setListItem] = useState<ITagsListItem[]>([]);
   const handleClick = () => {
     setOpen(!open);
   };
-  const handleTagClick = () => {
+  const handleTagClick = (id) => {
     console.log('click')
+    router.push({pathname: '/tags' , query: {id} }, undefined, { shallow: true });
   }
-  console.log(listData)
+  useEffect(()=>{
+    async function getItems() {
+      const items = await fetchData(`/api/tags`);
+      console.log(items)
+      setListItem(items);
+    }
+    getItems()
+  },[mainMenuData])
 
   return (
     <CustomerNav>
       <ListItemButton onClick={handleClick}>
         <ListItemIcon>
-          <Icon size="22px" />
+          <Icon>label</Icon>
         </ListItemIcon>
-        <ListItemText primary={name} />
+        <ListItemText primary={'Tags'} />
       </ListItemButton>
       {
-        listData.children &&
+        listItem &&
         <Collapse in={open} timeout="auto" unmountOnExit>
           <Box sx={{
             display: 'flex',
@@ -171,9 +202,9 @@ const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
             m: 1,
           }}>
             {
-              listData.children.map((item, index) => {
+              listItem.map((item, index) => {
                 return (
-                  <Chip key={item.name} label={item.name} onClick={handleTagClick} sx={{ m: .5, fontSize: '12px' }} />
+                  <Chip key={item.name} label={item.name} onClick={()=>handleTagClick(item.id)} sx={{ m: .5, fontSize: '12px' }} />
                 )
               })
             }
@@ -185,27 +216,25 @@ const CustomListWithCollapseForTag = ({ listData }: typesListData) => {
     </CustomerNav>
   )
 }
-
-export const MainListItems = ({mainMenuData}: typesMainMenuData) => {
+interface IMainListItems {
+  mainMenuData?: ImainMenuData
+}
+export const MainListItems = ({mainMenuData}: IMainListItems) => {
   return (
 
       <CustomListWithCollapse mainMenuData={mainMenuData}  />
  
   );
 }
-export const TagListItems = () => {
+interface ITagListItems {
+  mainMenuData?: ImainMenuData
+}
+export const TagListItems = ({mainMenuData}: ITagListItems) => {
 
   return (
-    <React.Fragment>
-      {
-        tagList.map((item, index) => {
-          return (
-            <CustomListWithCollapseForTag listData={item} key={index} />
-          )
-        })
-      }
 
-    </React.Fragment>
+      <CustomListWithCollapseForTag mainMenuData={mainMenuData}  />
+
   );
 }
 

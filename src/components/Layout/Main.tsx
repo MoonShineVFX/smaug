@@ -135,7 +135,7 @@ export default function Main({children}) {
             { menuListItem.length > 0 ? 
               menuListItem.map((item,index)=>{
                 const {id,name} = item
-                return name === 'Tags' ? <TagListItems key={index} /> : <MainListItems key={index}  mainMenuData={item} />
+                return name === 'Tags' ? <TagListItems key={index} mainMenuData={item} /> : <MainListItems key={index}  mainMenuData={item} />
 
               }) : <></>
             }

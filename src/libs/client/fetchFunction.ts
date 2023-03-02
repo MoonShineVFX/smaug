@@ -1,7 +1,7 @@
 interface IQuery {
   id : string
 }
-
+//not yet used
 export async function fetchCategories() {
   const res = await fetch('/api/cateogries')
   const data = await res.json()

@@ -154,7 +154,7 @@ export const modalItemData2 = [
     category: '3D assets',
     updateAt: null,
     createAt: "2023-02-10"
-    // },
+  }
     // {
     //   id: "as-3",
     //   thumbnails:
@@ -216,7 +216,7 @@ export const modalItemData2 = [
     //   thumbnails: "https://ddinktqu5prvc.cloudfront.net/vjrgdcz/vjrgdcz_Thumb_HighPoly_thumb.jpg",
     //   name: "test Col2",
     //   category: '3D assets'
-  }
+    //}
 ];
 
 

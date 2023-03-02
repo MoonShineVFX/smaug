@@ -1,4 +1,6 @@
-//TEST Component No USE
+/**
+ * 
+ * TEST Component Un USE 備用 目前無用
 
 import React,{ useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
@@ -58,10 +60,6 @@ function CustomListWithCollapse({ mainMenuData }: typesMainMenuData) {
       <CustomerNav >
         <ListItemButton onClick={handleClick}>
           <ListItemIcon >
-            {/* <Icon size="22px" /> */}
-            {/* <>{React.createElement(FontAwesome[listItem.iconName])}</> */}
-            
-            {/* <Icon iconName={listItem.iconName} size={20}  /> */}
           </ListItemIcon>
           <ListItemText primary={listItem.name} />
         </ListItemButton>
@@ -71,6 +69,8 @@ function CustomListWithCollapse({ mainMenuData }: typesMainMenuData) {
     </>
   )
 }
+
+
 const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
   console.log(child)
   const router = useRouter();
@@ -121,3 +121,4 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
 }
 
 export default CustomListWithCollapse
+**/
