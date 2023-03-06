@@ -16,13 +16,16 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
-import ViewInArIcon from '@mui/icons-material/ViewInAr';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { experimentalStyled as styled } from '@mui/material/styles';
+import Skeleton from '@mui/material/Skeleton';
+import Stack from '@mui/material/Stack';
 import {  useRecoilValue ,useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 
-import { fetchData } from '../libs/client/fetchFunction';
 import { useRouter } from "next/router";
-
+import useSWR from "swr";
 interface IassetsListItem{
   id:string;
   name:string;
@@ -31,25 +34,75 @@ interface IassetsListItem{
   createAt:string;
   updateAt:string;
 }
+const fetcher = (url) => fetch(url).then((r) => r.json());
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+  transition:'0.6s',
+  cursor:"pointer",
+  fontSize:"16px",
+  border:'2px #202020 solid',
+  '&:hover':{
+    border:"2px grey solid",
+    color:'white'
+  },
+}));
 export default function Home() {
   const [currentModel, setCurrentModel] = useRecoilState(modelState);
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const model = useRecoilValue(modelState);
-  const [assetsListItem, setAssetsListItem] = useState<IassetsListItem[]>([]);
-  const [open, setOpen] = useState(false);
   const router = useRouter();
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
-  useEffect(()=>{
-    if(!router.isReady) return;
-    async function getAssets() {
-      const assets = await fetchData(`/api/assets?cid=${router.query.categoryId}`);
-      console.log(assets)
-      setAssetsListItem(assets);
-    }
-    getAssets()
-  },[router])
+  const { categoryId,menuTreeId } = router.query;
+  
+  const { data: mainOptionsListItem } = useSWR(menuTreeId ? [`/api/menuTree?id=${menuTreeId}` ] : null, fetcher);
+  const { data: assetsListItem } = useSWR(categoryId ? [`/api/assets?cid=${categoryId}` ] : null, fetcher);
+  console.log(menuTreeId)
+  if(menuTreeId) {
+    if(!mainOptionsListItem) return <div>Loading</div>
+    console.log(mainOptionsListItem)
+    return(
+      <Box sx={{ flexGrow: 1 , p:5 }} >
+        <Box>
+          <Typography variant="h5" sx={{fontWeight:'bold', color:"#999"}}>
+            Categories
+          </Typography>
+        </Box>
+        <Grid container sx={{pt:5,px:1}} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+          {mainOptionsListItem.children.map((item,index) => {
+            return(
+                <Grid xs={2} sm={4} md={4} key={index}
+                  sx={{
+                     transition:'all 0.3s',
+                     p:1.5
+                  }}
+                  // onClick={() => handleClick(item.id)}
+                >
+                  <Item>{item.name}</Item>
+                </Grid>
+              )
+            }
+          )}
+        </Grid>
+
+      </Box>
+    )
+  }
+
+  //Loading
+  if (!assetsListItem) return (
+    <Grid container wrap="nowrap" sx={{mx:2 , my:2}}>
+      <Box sx={{ width: '20%', marginRight: 1, my: 5 }}>
+        <Skeleton variant="rounded" width='100%'  height={220} />
+      </Box>
+      <Box sx={{ width: '20%', marginRight: 1, my: 5 }}>
+        <Skeleton variant="rounded" width='100%' height={220} />
+      </Box>
+    </Grid>
+
+  );
   return (
     <>
       <Drawer
@@ -69,6 +122,7 @@ export default function Home() {
         }}
       >
       </Toolbar>
+        
         <Card sx={{  }}>
           <div style={{ position: "relative" }}>
             <CardMedia

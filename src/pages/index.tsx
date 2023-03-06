@@ -7,6 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import {  useRecoilValue ,useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 import { useRouter } from "next/router";
+import useSWR from "swr";
 import { fetchData } from '../libs/client/fetchFunction';
 interface IhomeListItem{
   id:string;
@@ -14,6 +15,7 @@ interface IhomeListItem{
   iconName:string;
   children: any[];
 }
+const fetcher = (url) => fetch(url).then((r) => r.json());
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
   ...theme.typography.body2,
@@ -32,13 +34,6 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function Index() {
   const [currentModel, setCurrentModel] = useRecoilState(modelState);
   const model = useRecoilValue(modelState);
-  const [homeListItem, setHomeListItem] = useState<IhomeListItem>({
-    id:"",
-    name:"",
-    iconName:"",
-    children: []
-  });
-
   const router = useRouter();
   const handleClick = (id:string) => {
 
@@ -46,14 +41,8 @@ export default function Index() {
     //需要做成多層路徑分類＋分類＋分類
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
   }
-  useEffect(()=>{
-    async function getAssets() {
-      const homeList = await fetchData('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9');
-      console.log(homeList)
-      setHomeListItem(homeList);
-    }
-    getAssets()
-  },[])
+  const { data: mainOptionsListItem } = useSWR('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9', fetcher);
+  if (!mainOptionsListItem) return <div>Loading</div>
   return (
     <>
       <Box sx={{ flexGrow: 1 , p:5 }} >
@@ -64,7 +53,7 @@ export default function Index() {
         </Box>
 
         <Grid container sx={{pt:5}} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          {homeListItem.children.map((item,index) => {
+          {mainOptionsListItem.children.map((item,index) => {
             return(
                 <Grid xs={2} sm={4} md={4} key={index}
                   sx={{

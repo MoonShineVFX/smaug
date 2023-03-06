@@ -151,7 +151,7 @@ const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
           </ListItemIcon>
 
             {/* <ListItemText primary={listItem.name} /> */}
-            <NextLink href={`${listItem.name.toLowerCase()}?categoryId=${listItem.id}`} passHref style={{ textDecoration: 'none' }}>
+            <NextLink href={`${listItem.name.toLowerCase()}?menuTreeId=${listItem.id}`} passHref style={{ textDecoration: 'none' }}>
                 <MUILink variant="body2"  underline="none" sx={{color:'white',fontSize:'1rem'}} >{listItem.name}</MUILink>
             </NextLink>
           
