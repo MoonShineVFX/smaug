@@ -57,7 +57,6 @@ export default function Home() {
   const router = useRouter();
   const handleClick = (id:string) => {
 
-    //需要做成多層路徑分類＋分類＋分類
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
   }
   const { categoryId,menuTreeId } = router.query;
