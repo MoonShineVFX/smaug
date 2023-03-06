@@ -16,7 +16,8 @@ import * as FontAwesome from "react-icons/fa";
 import { useRouter } from "next/router";
 import { fetchData } from '../libs/client/fetchFunction';
 import Icon from '@mui/material/Icon';
-
+import NextLink from 'next/link'
+import { Link as MUILink } from '@mui/material';
 interface typesListData {
     id: string;
     title: string;
@@ -78,7 +79,7 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
               <Box component="div" key={child.id} >
                 <ListItemButton
                   sx={{
-                    pl: 2, py: .3,
+                    pl: 2, py: 0,
                     ':hover': {
                       color: 'white'
                     },
@@ -148,7 +149,12 @@ const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
           <ListItemIcon >
             <Icon>{listItem.iconName}</Icon>
           </ListItemIcon>
-          <ListItemText primary={listItem.name} />
+
+            {/* <ListItemText primary={listItem.name} /> */}
+            <NextLink href={`${listItem.name.toLowerCase()}?categoryId=${listItem.id}`} passHref style={{ textDecoration: 'none' }}>
+                <MUILink variant="body2"  underline="none" sx={{color:'white',fontSize:'1rem'}} >{listItem.name}</MUILink>
+            </NextLink>
+          
         </ListItemButton>
         <CollapseTree child={listItem.children} open={open} isVisible={false} /> 
        </CustomerNav>

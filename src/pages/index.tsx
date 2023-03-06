@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import {  useRecoilValue ,useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
-
+import { useRouter } from "next/router";
 import { fetchData } from '../libs/client/fetchFunction';
 interface IhomeListItem{
   id:string;
@@ -23,13 +23,14 @@ const Item = styled(Paper)(({ theme }) => ({
   transition:'0.6s',
   cursor:"pointer",
   fontSize:"16px",
+  border:'2px #202020 solid',
   '&:hover':{
-    backgroundColor: '#333',
+    border:"2px grey solid",
+    color:'white'
   },
 }));
 export default function Index() {
   const [currentModel, setCurrentModel] = useRecoilState(modelState);
-  const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const model = useRecoilValue(modelState);
   const [homeListItem, setHomeListItem] = useState<IhomeListItem>({
     id:"",
@@ -37,10 +38,14 @@ export default function Index() {
     iconName:"",
     children: []
   });
-  const [open, setOpen] = useState(false);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+
+  const router = useRouter();
+  const handleClick = (id:string) => {
+
+    console.log('click')
+    //需要做成多層路徑分類＋分類＋分類
+    router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
+  }
   useEffect(()=>{
     async function getAssets() {
       const homeList = await fetchData('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9');
@@ -65,11 +70,7 @@ export default function Index() {
                   sx={{
                      transition:'all 0.3s',
                   }}
-                  onClick={()=>{
-                      setShowDrawer(true);
-                      setCurrentModel(item);
-                    }
-                  }
+                  onClick={() => handleClick(item.id)}
                 >
                   <Item>{item.name}</Item>
                 </Grid>

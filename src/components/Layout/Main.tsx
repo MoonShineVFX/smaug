@@ -18,7 +18,7 @@ import { MainListItems,TagListItems, MemberListItems } from '../listItems';
 import { fetchData } from '../../libs/client/fetchFunction';
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
-import { Hidden } from '@mui/material';
+import Link from 'next/link'
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -125,7 +125,9 @@ export default function Main({children}) {
               color="inherit"
               sx={{ flexGrow: 1 }}
             >
-              SMAUG
+              <Link href="/" style={{ textDecoration: 'none', color:'white' }} >
+                SMAUG
+              </Link>
             </Typography>
             
           </Toolbar>
