@@ -64,8 +64,6 @@ const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
       setSubOpen('')
       return
     }
-    console.log('click')
-    //需要做成多層路徑分類＋分類＋分類
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
     setSubOpen(id)
   }

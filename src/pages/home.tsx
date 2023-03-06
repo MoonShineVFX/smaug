@@ -55,6 +55,11 @@ export default function Home() {
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const model = useRecoilValue(modelState);
   const router = useRouter();
+  const handleClick = (id:string) => {
+
+    //需要做成多層路徑分類＋分類＋分類
+    router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
+  }
   const { categoryId,menuTreeId } = router.query;
   
   const { data: mainOptionsListItem } = useSWR(menuTreeId ? [`/api/menuTree?id=${menuTreeId}` ] : null, fetcher);
@@ -78,7 +83,7 @@ export default function Home() {
                      transition:'all 0.3s',
                      p:1.5
                   }}
-                  // onClick={() => handleClick(item.id)}
+                  onClick={() => handleClick(item.id)}
                 >
                   <Item>{item.name}</Item>
                 </Grid>

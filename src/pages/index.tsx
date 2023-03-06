@@ -37,8 +37,6 @@ export default function Index() {
   const router = useRouter();
   const handleClick = (id:string) => {
 
-    console.log('click')
-    //需要做成多層路徑分類＋分類＋分類
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
   }
   const { data: mainOptionsListItem } = useSWR('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9', fetcher);
