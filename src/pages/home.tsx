@@ -120,7 +120,7 @@ export default function Home() {
       </Drawer>
       <ImageList sx={{}}  cols={5} gap={8}  sx={{mx:2 , my:2}} variant="standad" >
         <ImageListItem key="Subheader" cols={5}>
-          <Typography variant="h5" sx={{fontWeight:'bold', color:"#999"}}>
+          <Typography variant="h5" sx={{fontWeight:'bolder', color:"#999", textTransform:"uppercase"}}>
             {assetsListItem[0]?.categoryName}
           </Typography>;
         </ImageListItem>
