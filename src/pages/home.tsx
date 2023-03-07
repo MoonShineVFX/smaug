@@ -18,6 +18,7 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import Chip from '@mui/material/Chip';
 import { experimentalStyled as styled } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
@@ -59,10 +60,15 @@ export default function Home() {
 
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
   }
-  const { categoryId } = router.query;
+  const { categoryId,assetId } = router.query;
   
   // const { data: mainOptionsListItem } = useSWR(menuTreeId ? [`/api/menuTree?id=${menuTreeId}` ] : null, fetcher);
   const { data: assetsListItem } = useSWR(categoryId ? [`/api/assets?cid=${categoryId}` ] : null, fetcher);
+  const { data: assetItem } = useSWR(assetId ? [`/api/assets/${assetId}` ] : null, fetcher);
+  if(assetId){
+    if(!assetItem) <div>Loading</div>
+    console.log(assetItem)
+  }
   // 暫時註解 若有需要再開
   // if(menuTreeId) {
   //   if(!mainOptionsListItem) return <div>Loading</div>
@@ -132,8 +138,8 @@ export default function Home() {
             <CardMedia
               component="img"
               height="280"
-              image={model?.preview === "" ?  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : model?.preview} 
-              alt={model?.name}
+              image={assetItem?.preview === "" ?  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : model?.preview} 
+              alt={assetItem?.name}
               sx={{objectFit:"contain", bgcolor:"#202020" , p:2}}
             />
             <Box sx={{ position:'absolute',width:'100%' , px:2 , top:'10px' , display:'flex' ,justifyContent:"space-between"  }}>
@@ -145,7 +151,11 @@ export default function Home() {
                 <Button ><ImageOutlinedIcon fontSize="small"  /></Button>
                 <Button ><ViewInArOutlinedIcon fontSize="small"  /></Button>
               </ButtonGroup>
-              <IconButton aria-label="close" onClick={()=>setShowDrawer(false)}>
+              <IconButton aria-label="close" onClick={()=>{
+                setShowDrawer(false)
+                router.query.assetId = [];
+                router.push(router)
+              }}>
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -156,22 +166,55 @@ export default function Home() {
          
           <CardContent sx={{backgroundColor:'#333' , px:3}}>
             <Typography gutterBottom variant="h5" component="div" sx={{fontWeight:'bolder' ,textTransform:'uppercase',mb:0}}>
-              {model?.name}
-              {model?.id}
+              {assetItem?.name}
+              
               
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{textTransform:'uppercase' }}>
-              {model?.categoryName}
+            <Typography variant="body2" color="text.secondary" sx={{textTransform:'',letterSpacing:'',fontSize:13 }}>
+              {assetItem?.categoryList?.replace(/\\/g, " > ").slice(0,-2)}
             </Typography>
+            
           </CardContent>
 
         </Card>
 
 
         <Box sx={{p:3}}>
-          <Typography variant="h6" color="text.secondary" >
-            Resource
+          <Typography variant="body2" color="text.secondary" sx={{fontSize:12,textAlign:'right' }}>
+            {assetItem?.createAt?.toLocaleString().substr(0,10)} by {assetItem?.creator}  
           </Typography>
+          <Box sx={{pt:3}}>
+            <Typography variant="h6" color="text.secondary" sx={{fontSize:18}}>
+              Tags
+            </Typography>
+            <Box sx={{
+              display: 'flex',
+              flexWrap: "wrap",
+              p: 0,
+              mt: 1,
+            }}>
+              {
+                assetItem?.tags?.map((item, index) => {
+                  return (
+                    <Chip 
+                      key={item.name} label={item.name} 
+                      onClick={()=> { 
+                        //handleTagClick(item.id)
+                      }} 
+                      sx={{ m: .5, fontSize: 13 }} />
+                  )
+                })
+              }
+
+            </Box>
+          </Box>
+          <Box sx={{pt:3}}>
+            <Typography variant="h6" color="text.secondary" sx={{fontSize:18}}>
+              Resource
+            </Typography>
+          </Box>
+
+
            
           
         </Box>
@@ -199,6 +242,11 @@ export default function Home() {
               onClick={()=>{
                   setShowDrawer(true);
                   setCurrentModel(item);
+                  
+                  router.query.assetId = item.id
+                  router.push(router)
+                  console.log(router)
+
                 }
               }
             >
