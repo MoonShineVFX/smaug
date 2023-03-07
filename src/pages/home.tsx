@@ -59,41 +59,41 @@ export default function Home() {
 
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
   }
-  const { categoryId,menuTreeId } = router.query;
+  const { categoryId } = router.query;
   
-  const { data: mainOptionsListItem } = useSWR(menuTreeId ? [`/api/menuTree?id=${menuTreeId}` ] : null, fetcher);
+  // const { data: mainOptionsListItem } = useSWR(menuTreeId ? [`/api/menuTree?id=${menuTreeId}` ] : null, fetcher);
   const { data: assetsListItem } = useSWR(categoryId ? [`/api/assets?cid=${categoryId}` ] : null, fetcher);
-  console.log(menuTreeId)
-  if(menuTreeId) {
-    if(!mainOptionsListItem) return <div>Loading</div>
-    console.log(mainOptionsListItem)
-    return(
-      <Box sx={{ flexGrow: 1 , p:5 }} >
-        <Box>
-          <Typography variant="h5" sx={{fontWeight:'bold', color:"#999"}}>
-            Categories
-          </Typography>
-        </Box>
-        <Grid container sx={{pt:5,px:1}} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          {mainOptionsListItem.children.map((item,index) => {
-            return(
-                <Grid xs={2} sm={4} md={4} key={index}
-                  sx={{
-                     transition:'all 0.3s',
-                     p:1.5
-                  }}
-                  onClick={() => handleClick(item.id)}
-                >
-                  <Item>{item.name}</Item>
-                </Grid>
-              )
-            }
-          )}
-        </Grid>
+  // 暫時註解 若有需要再開
+  // if(menuTreeId) {
+  //   if(!mainOptionsListItem) return <div>Loading</div>
+  //   console.log(mainOptionsListItem)
+  //   return(
+  //     <Box sx={{ flexGrow: 1 , p:5 }} >
+  //       <Box>
+  //         <Typography variant="h5" sx={{fontWeight:'bold', color:"#999"}}>
+  //           Categories
+  //         </Typography>
+  //       </Box>
+  //       <Grid container sx={{pt:5,px:1}} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+  //         {mainOptionsListItem.children.map((item,index) => {
+  //           return(
+  //               <Grid xs={2} sm={4} md={4} key={index}
+  //                 sx={{
+  //                    transition:'all 0.3s',
+  //                    p:1.5
+  //                 }}
+  //                 onClick={() => handleClick(item.id)}
+  //               >
+  //                 <Item>{item.name}</Item>
+  //               </Grid>
+  //             )
+  //           }
+  //         )}
+  //       </Grid>
 
-      </Box>
-    )
-  }
+  //     </Box>
+  //   )
+  // }
 
   //Loading
   if (!assetsListItem) return (
@@ -157,6 +157,8 @@ export default function Home() {
           <CardContent sx={{backgroundColor:'#333' , px:3}}>
             <Typography gutterBottom variant="h5" component="div" sx={{fontWeight:'bolder' ,textTransform:'uppercase',mb:0}}>
               {model?.name}
+              {model?.id}
+              
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{textTransform:'uppercase' }}>
               {model?.categoryName}

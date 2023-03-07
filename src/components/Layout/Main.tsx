@@ -18,11 +18,14 @@ import { MainListItems,TagListItems, MemberListItems } from '../listItems';
 import { fetchData } from '../../libs/client/fetchFunction';
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
-import Link from 'next/link'
+import NextLink from 'next/link'
+import { Link as MUILink } from '@mui/material';
+import useSWR from "swr";
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
+const fetcher = (url) => fetch(url).then((r) => r.json());
 const AppBar = styled(MuiAppBar, {shouldForwardProp: (prop) => prop !== 'open',})<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
@@ -67,18 +70,19 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function Main({children}) {
   const [open, setOpen] = useState(true);
   const [mainListItem, setMainListItem] = useState({});
-  const [menuListItem, setMenuListItem] = useState([]);
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  useEffect(()=>{
-    async function getMenus() {
-      const menus = await fetchData('/api/menus');
-      console.log(menus)
-      setMenuListItem(menus);
-    }
-    getMenus()
-  },[])
+  const { data: menuListItem } = useSWR('/api/menus', fetcher);
+  if (!menuListItem) return <div>Loading</div>
+  // useEffect(()=>{
+  //   async function getMenus() {
+  //     const menus = await fetchData('/api/menus');
+  //     console.log(menus)
+  //     setMenuListItem(menus);
+  //   }
+  //   getMenus()
+  // },[])
   return (
       <Box sx={{ display: 'flex'}}>
         <AppBar position="fixed" open={open} sx={{boxShadow:'none' }}>
@@ -125,21 +129,24 @@ export default function Main({children}) {
               color="inherit"
               sx={{ flexGrow: 1 }}
             >
-              <Link href="/" style={{ textDecoration: 'none', color:'white' }} >
+              {/* <Link href="/" style={{ textDecoration: 'none', color:'white' }}>
                 SMAUG
-              </Link>
+              </Link> */}
+              <NextLink href='/' passHref style={{ textDecoration: 'none' }}>
+                <MUILink variant="body2"  underline="none" sx={{transition:'.3s',color:'white',fontSize:'1.3rem' ,fontWeight:'bold' ,"&:hover":{color:'#eee',letterSpacing:'1px' }}} >SMAUG</MUILink>
+              </NextLink> 
             </Typography>
             
           </Toolbar>
           <Divider />
 
           <List component="nav" >
-            { menuListItem.length > 0 ? 
+            { 
               menuListItem.map((item,index)=>{
                 const {id,name} = item
                 return name === 'Tags' ? <TagListItems key={index} mainMenuData={item} /> : <MainListItems key={index}  mainMenuData={item} />
 
-              }) : <></>
+              }) 
             }
             {/* {Object.keys(mainListItem).length > 0  ?  <MainListItems  data={mainListItem} /> : <><LinearProgress /></>} */}
             {/* <TagListItems /> */}

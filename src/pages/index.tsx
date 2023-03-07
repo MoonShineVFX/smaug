@@ -39,7 +39,8 @@ export default function Index() {
 
     router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
   }
-  const { data: mainOptionsListItem } = useSWR('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9', fetcher);
+  const { data: menuListItem } = useSWR('/api/menus', fetcher);
+  const { data: mainOptionsListItem } = useSWR(`/api/menuTree?id=${menuListItem[0].id}`, fetcher);
   if (!mainOptionsListItem) return <div>Loading</div>
   return (
     <>
