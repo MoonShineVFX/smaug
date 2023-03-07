@@ -58,22 +58,37 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
         }
       )
     if (asset !== null) {
-      const categories = await prisma.category.findMany({})
+      const categories = await prisma.category.findMany({select: {id: true, parentId: true, name: true}})
+      const representations = await prisma.representation.findMany({where: {assetId: {in: assetId}}})
 
-      let cate_dict = {}
+      type Category = {
+        id: string
+        parentId: string | null
+        name: string | null
+      }
+
+      const cate_dict : { [id: string] : Category; } = {};
 
       categories.forEach((element, index) => {
-        
-        //cate_dict[element[id]] = element;
+        cate_dict[element.id] = element;
       });
 
-      const representations = await prisma.representation.findMany({where: {assetId: {in: assetId}}})
+      const getCategoryList = (categoryId: string, categoryList: string | null): string => {
+        const cate = cate_dict[categoryId]
+        const newList = (categoryList == null) ? cate.name : `${cate.name}\\${categoryList}`
+
+        if(cate !== undefined && cate.parentId !== null)
+          return getCategoryList(cate.parentId, newList);
+        else
+          return newList == null? "" : newList;
+      };
+      const categoryList = getCategoryList(asset.categoryId, "")
 
       const assetReturn = { 
               id: asset.id, 
               preview: "",
               name: asset.name,
-              categoryList: "",
+              categoryList: categoryList,
               updateAt: asset.updateAt,
               createAt: asset.createAt,
               creator: asset.creator.name,
