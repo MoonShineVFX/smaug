@@ -6,7 +6,8 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import {  useRecoilValue ,useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
-
+import { useRouter } from "next/router";
+import useSWR from "swr";
 import { fetchData } from '../libs/client/fetchFunction';
 interface IhomeListItem{
   id:string;
@@ -14,6 +15,7 @@ interface IhomeListItem{
   iconName:string;
   children: any[];
 }
+const fetcher = (url) => fetch(url).then((r) => r.json());
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
   ...theme.typography.body2,
@@ -23,32 +25,22 @@ const Item = styled(Paper)(({ theme }) => ({
   transition:'0.6s',
   cursor:"pointer",
   fontSize:"16px",
+  border:'2px #202020 solid',
   '&:hover':{
-    backgroundColor: '#333',
+    border:"2px grey solid",
+    color:'white'
   },
 }));
 export default function Index() {
   const [currentModel, setCurrentModel] = useRecoilState(modelState);
-  const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const model = useRecoilValue(modelState);
-  const [homeListItem, setHomeListItem] = useState<IhomeListItem>({
-    id:"",
-    name:"",
-    iconName:"",
-    children: []
-  });
-  const [open, setOpen] = useState(false);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
-  useEffect(()=>{
-    async function getAssets() {
-      const homeList = await fetchData('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9');
-      console.log(homeList)
-      setHomeListItem(homeList);
-    }
-    getAssets()
-  },[])
+  const router = useRouter();
+  const handleClick = (id:string) => {
+
+    router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
+  }
+  const { data: mainOptionsListItem } = useSWR('/api/menuTree?id=cler1rzxz0008k1q57xghe0b9', fetcher);
+  if (!mainOptionsListItem) return <div>Loading</div>
   return (
     <>
       <Box sx={{ flexGrow: 1 , p:5 }} >
@@ -59,17 +51,13 @@ export default function Index() {
         </Box>
 
         <Grid container sx={{pt:5}} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          {homeListItem.children.map((item,index) => {
+          {mainOptionsListItem.children.map((item,index) => {
             return(
                 <Grid xs={2} sm={4} md={4} key={index}
                   sx={{
                      transition:'all 0.3s',
                   }}
-                  onClick={()=>{
-                      setShowDrawer(true);
-                      setCurrentModel(item);
-                    }
-                  }
+                  onClick={() => handleClick(item.id)}
                 >
                   <Item>{item.name}</Item>
                 </Grid>
