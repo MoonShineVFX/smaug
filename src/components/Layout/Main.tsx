@@ -75,6 +75,7 @@ export default function Main({children}) {
   };
   const { data: menuListItem } = useSWR('/api/menus', fetcher);
   if (!menuListItem) return <div>Loading</div>
+  console.log(menuListItem)
   // useEffect(()=>{
   //   async function getMenus() {
   //     const menus = await fetchData('/api/menus');
