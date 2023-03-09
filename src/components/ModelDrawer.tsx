@@ -98,6 +98,14 @@ export default function ModelDrawer({ assetItem,open }: IModelDrawer){
                 <CloseIcon />
               </IconButton>
             </Box>
+            {
+              assetItem?.renders.length > 0 ? 
+              <Typography variant="body2" color="text.secondary" sx={{fontSize:12,textAlign:'right' }}>Loading</Typography>
+              : 
+              <Box  sx={{ position:'absolute',width:'100%' , px:2 , bottom:'10px' , display:'flex' ,justifyContent:"space-between"  }}> 
+                <Typography variant="body2" color="text.secondary" sx={{fontSize:12,textAlign:'right' }}>Render Images : 0</Typography>
+              </Box>
+            }
 
             
 
@@ -112,6 +120,7 @@ export default function ModelDrawer({ assetItem,open }: IModelDrawer){
             <Typography variant="body2" color="text.secondary" sx={{textTransform:'',letterSpacing:'',fontSize:13 }}>
               {assetItem?.categoryList?.replace(/\\/g, " > ").slice(0,-2)}
             </Typography>
+
             
           </CardContent>
 
@@ -154,7 +163,19 @@ export default function ModelDrawer({ assetItem,open }: IModelDrawer){
             <Typography variant="h6" color="text.secondary" sx={{fontSize:18}}>
               Resource
             </Typography>
+            <Box>
+              {
+                assetItem?.downloads.length > 0 ? 
+                <Typography variant="body2" color="text.secondary" sx={{fontSize:12,textAlign:'right' }}>Loading</Typography>
+                : 
+                <Box  sx={{  display:'flex' ,justifyContent:"space-between"  }}> 
+                  <Typography variant="body2" color="text.secondary" sx={{fontSize:12,textAlign:'right' }}>There is no downloadable file now.</Typography>
+                </Box>
+              }
+              
+            </Box>
           </Box>
+
 
 
            
