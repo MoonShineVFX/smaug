@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Asset } from '@prisma/client';
-import {  RepresentationType, Prisma } from '@prisma/client';
+import { RepresentationType, Prisma } from '@prisma/client';
 import { prisma } from '../../../libs/server/prisma';
 
 
 type AssetReturnItem = {
-    id: string
-    name: string
-    preview: string | null
-    categoryName: string | null
-    updateAt: Date | null
-    createAt: Date
-  }
+  id: string
+  name: string
+  preview: string | null
+  categoryName: string | null
+  updateAt: Date | null
+  createAt: Date
+}
 
 export default async function handlerAsset(req: NextApiRequest, res: NextApiResponse): Promise<void> {
 
@@ -30,77 +30,82 @@ export default async function handlerAsset(req: NextApiRequest, res: NextApiResp
 }
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any>): Promise<void> {
-    const selectField = {
+  const selectField = {
+    select: {
+      id: true,
+      name: true,
+      category: {
         select: {
-            id: true,
-            name: true,
-            category: {
-                select: {
-                    name: true,
-                }
-            },
-            representations: {
-                where: {
-                    type: RepresentationType.PREVIEW,
-                },
-                orderBy: {
-                    createAt: Prisma.SortOrder.desc,
-                },
-                select: {
-                    path: true,
-                },
-            },
-            updateAt: true,
-            createAt: true,
-          }
-      }
-
-    const { cid } = req.query
-
-    let queryFilter = {
-        where: {
-          AND: {} as { [key: string]: { equals: Boolean | string; } }
+          name: true,
         }
+      },
+      representations: {
+        where: {
+          type: RepresentationType.PREVIEW,
+        },
+        orderBy: {
+          createAt: Prisma.SortOrder.desc,
+        },
+        select: {
+          path: true,
+        },
+      },
+      updateAt: true,
+      createAt: true,
+    }
+  }
+
+  const { cid } = req.query
+
+  let queryFilter = {
+    where: {
+      AND: {} as { [key: string]: { equals: Boolean | string; } }
+    }
+  };
+
+  queryFilter = {
+    where: {
+      AND: {
+        isDeleted: { equals: false },
+      }
+    }
+  }
+
+  if (cid) {
+    queryFilter.where.AND = {
+      ...queryFilter.where.AND,
+      categoryId: { equals: cid as string },
+    }
+  }
+
+  const assets = await prisma.asset.findMany(
+    {
+      ...queryFilter,
+      ...selectField
+    }
+  )
+
+  if (assets.length > 0) {
+    res.status(200).json([]);
+  }
+  else {
+    const AssetReturnItems: AssetReturnItem[] = assets.map((asset) => {
+      let path;
+      try {
+        path = asset.representations[0].path;
+      } catch (error) {
+        path = "";
       };
 
-    queryFilter = {
-        where: {
-          AND: {
-            isDeleted: { equals: false },
-          }
-        }
-    }
-
-    if (cid) {
-        queryFilter.where.AND = {
-          ...queryFilter.where.AND,
-          categoryId: { equals: cid as string },
-        }
+      return {
+        id: asset.id,
+        name: asset.name,
+        preview: path,
+        categoryName: asset.category.name,
+        updateAt: asset.updateAt,
+        createAt: asset.createAt,
       }
-
-    const assets = await prisma.asset.findMany(
-        {
-          ...queryFilter,
-          ...selectField
-        }
-      )
-
-    const AssetReturnItems: AssetReturnItem[] = assets.map((asset) => {
-        let path;
-          try { 
-            path = asset.representations[0].path; 
-          } catch (error) { 
-            path = "";
-          };
-
-        return { 
-            id: asset.id, 
-            name: asset.name,
-            preview: path,
-            categoryName: asset.category.name,
-            updateAt: asset.updateAt,
-            createAt: asset.createAt,
-        }
-      })
+    })
     res.status(200).json(AssetReturnItems)
   }
+}

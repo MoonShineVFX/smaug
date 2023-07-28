@@ -108,6 +108,7 @@ export async function createToken(user: IUser): Promise<string> {
   return token.id;
 }
 
+
 export async function limitedTokenNumber(user: IUser): Promise<void> {
   if (user.authTokens.length > settings.TOKEN_PER_USER) {
     let tokens = await prisma.authToken.findMany({ where: { userId: user.id }, orderBy: { createAt: 'desc' } });
@@ -117,21 +118,50 @@ export async function limitedTokenNumber(user: IUser): Promise<void> {
   }
 }
 
+type NextRequestOrApiRequest = NextApiRequest | NextRequest;
+
 export function getToken(req: NextApiRequest): string {
-  let auth_str: string | undefined;
+  let authStr: string | undefined;
   if (req.headers) {
-    auth_str = req.headers['authorization'];
+    authStr = req.headers['authorization'];
   }
 
-  if (!auth_str) {
+  if (!authStr) {
     return "";
   }
 
-  const [auth_header, token] = auth_str.split(' ')
+  const [auth_header, token] = authStr.split(' ')
   if (auth_header != 'Bearer') {
     return "";
   }
   return token;
 }
 
+
+export async function verifyToken(req: NextRequest): Promise<UserInfo | null> {
+  let auth_str = req.headers.get('authorization')
+  const token = getToken(authStr);
+
+  if (!token) {
+    return null;
+  }
+  let user = await prisma.authToken.findUnique({
+    where: { id: token }
+  }).user();
+
+  if (!user) {
+    return null;
+  }
+  return getUserInfo(user);
+}
+
+function getUserInfo(user: User): UserInfo {
+  let userInfo: UserInfo = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    picture: 'no_avatar.png'
+  }
+  return userInfo;
+}
 export type { UserInfo };
