@@ -3,6 +3,7 @@ import type { Asset } from '@prisma/client';
 import {  RepresentationType, Prisma } from '@prisma/client';
 import { prisma } from '../../../libs/server/prisma';
 import util from '../../../utility/util';
+import { AssetDetails } from '../../../libs/types';
 
 const {
   formatBytes,
@@ -84,7 +85,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
       };
       const categoryList = getCategoryList(asset.categoryId, "")
 
-      const assetReturn = { 
+      const assetReturn: AssetDetails = { 
               id: asset.id, 
               preview: "",
               name: asset.name,
@@ -117,7 +118,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
               id: element.id,
               name: element.name,
               format: element.format,
-              fileSize: formatBytes(element.fileSize),
+              fileSize: formatBytes(element.fileSize ? element.fileSize : 0),
             }
             assetReturn.downloads.push(download)
             break; 

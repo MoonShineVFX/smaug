@@ -19,6 +19,7 @@ export const permission = [
   ['TAG_DELETE', '刪除標籤'],
 ]
 
+
 export const rolesData = [{
   roleName: 'Admin',
   permissions: ['CATEGORY_CREATE', 'CATEGORY_UPDATE', 'CATEGORY_DELETE', 'ASSET_CREATE', 'ASSET_UPDATE', 'ASSET_DELETE', 'ASSET_DOWNLOAD', 'TAG_CREATE', 'TAG_UPDATE', 'TAG_DELETE']

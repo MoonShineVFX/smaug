@@ -14,14 +14,8 @@ import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import ModelDrawer from '../components/ModelDrawer';
-interface IassetsListItem {
-  id: string;
-  name: string;
-  preview: string;
-  categoryName: string;
-  createAt: string;
-  updateAt: string;
-}
+import { AssetListItem, AssetDetails } from '../libs/types';
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
@@ -45,8 +39,8 @@ export default function Home() {
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
   }
   const { categoryId, assetId } = router.query;
-  const { data: assetsListItem } = useSWR(categoryId ? [`/api/assets?cid=${categoryId}`] : null, fetcher);
-  const { data: assetItem } = useSWR(assetId ? [`/api/assets/${assetId}`] : null, fetcher);
+  const { data: assetListItems } = useSWR<AssetListItem[]>(categoryId ? [`/api/assets?cid=${categoryId}`] : null, fetcher);
+  const { data: assetDetails } = useSWR<AssetDetails>(assetId ? [`/api/assets/${assetId}`] : null, fetcher);
 
   // 暫時註解 若有需要再開
   // if(menuTreeId) {
@@ -81,7 +75,7 @@ export default function Home() {
   // }
 
   //Loading
-  if (!assetsListItem) return (
+  if (!assetListItems) return (
     <Grid container wrap="nowrap" sx={{ mx: 2, my: 2 }}>
       <Box sx={{ width: '20%', marginRight: 1, my: 5 }}>
         <Skeleton variant="rounded" width='100%' height={220} />
@@ -95,16 +89,16 @@ export default function Home() {
   return (
     <>
       {
-        assetId && <ModelDrawer open={showDrawer} assetItem={assetItem} />
+        assetId && <ModelDrawer open={showDrawer} assetItem={assetDetails} />
       }
 
-      <ImageList sx={{}} cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standad" >
+      <ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
         <ImageListItem key="Subheader" cols={5}>
           <Typography variant="h5" sx={{ fontWeight: 'bolder', color: "#999", textTransform: "uppercase" }}>
-            {assetsListItem[0]?.categoryName}
+            {assetListItems[0]?.categoryName}
           </Typography>;
         </ImageListItem>
-        {assetsListItem.map((item, index) => {
+        {assetListItems.map((item, index) => {
           return (
             <ImageListItem key={item.id}
               sx={{
@@ -127,7 +121,7 @@ export default function Home() {
               }
             >
               <img
-                src={item.preview === "" ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : item.preview}
+                src={item.preview === null ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : item.preview}
                 alt={item.name}
                 loading="lazy"
                 style={{ borderRadius: "5px", objectFit: 'contain', aspectRatio: 1 / 1 }}

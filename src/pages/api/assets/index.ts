@@ -2,16 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Asset } from '@prisma/client';
 import { RepresentationType, Prisma } from '@prisma/client';
 import { prisma } from '../../../libs/server/prisma';
+import { AssetListItem } from '../../../libs/types';
 
-
-type AssetReturnItem = {
-  id: string
-  name: string
-  preview: string | null
-  categoryName: string | null
-  updateAt: Date | null
-  createAt: Date
-}
 
 export default async function handlerAsset(req: NextApiRequest, res: NextApiResponse): Promise<void> {
 
@@ -89,7 +81,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     res.status(200).json([]);
   }
   else {
-    const AssetReturnItems: AssetReturnItem[] = assets.map((asset) => {
+    const AssetReturnItems: AssetListItem[] = assets.map((asset) => {
       let path;
       try {
         path = asset.representations[0].path;

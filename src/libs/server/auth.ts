@@ -138,30 +138,30 @@ export function getToken(req: NextApiRequest): string {
 }
 
 
-export async function verifyToken(req: NextRequest): Promise<UserInfo | null> {
-  let auth_str = req.headers.get('authorization')
-  const token = getToken(authStr);
+// export function verifyToken(req: NextRequest): Promise<UserInfo | null> {
+//   let authStr = req.headers.get('authorization')
+//   const token = getToken(authStr);
 
-  if (!token) {
-    return null;
-  }
-  let user = await prisma.authToken.findUnique({
-    where: { id: token }
-  }).user();
+//   if (!token) {
+//     return null;
+//   }
+//   let user = prisma.authToken.findUnique({
+//     where: { id: token }
+//   }).user();
 
-  if (!user) {
-    return null;
-  }
-  return getUserInfo(user);
-}
+//   if (!user) {
+//     return null;
+//   }
+//   return getUserInfo(user);
+// }
 
-function getUserInfo(user: User): UserInfo {
-  let userInfo: UserInfo = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    picture: 'no_avatar.png'
-  }
-  return userInfo;
-}
+// function getUserInfo(user: User): UserInfo {
+//   let userInfo: UserInfo = {
+//     id: user.id,
+//     name: user.name,
+//     email: user.email,
+//     picture: 'no_avatar.png'
+//   }
+//   return userInfo;
+// }
 export type { UserInfo };
