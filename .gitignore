@@ -1,8 +1,10 @@
 .next
 node_modules/*
+storage/*
 package-lock.json
 .env
 .vscode/*
 .env.test.local
 .gitignore
 .env*
+
