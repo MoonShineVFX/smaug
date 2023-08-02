@@ -10,13 +10,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { MenuListItem, MenuWithCategoriesResponse } from '../libs/types';
 
-// import { fetchData } from '../libs/client/fetchFunction';
-interface IhomeListItem {
-  id: string;
-  name: string;
-  iconName: string;
-  children: any[];
-}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
