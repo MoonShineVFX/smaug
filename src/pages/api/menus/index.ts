@@ -23,7 +23,7 @@ export default async function handlerMenu(req: NextApiRequest, res: NextApiRespo
 }
 
 
-function handleGet(req: NextApiRequest, res: NextApiResponse): void {
+async function handleGet(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const { id } = req.query
 
   const returnField = {
@@ -32,36 +32,33 @@ function handleGet(req: NextApiRequest, res: NextApiResponse): void {
     sortOrder: true,
   }
 
-  if (id) {
-    prisma.menu.findUnique({
-      where: {
-        id: id as string
-      },
-      select: returnField
-    }).then((menu) => {
+  try {
+    if (id) {
+      const menu = await prisma.menu.findUnique({
+        where: {
+          id: id as string
+        },
+        select: returnField
+      })
       if (!menu) {
         res.status(404).json({ message: "Menu not found" })
-        return
+      } else {
+        res.status(200).json({ id: menu.id, name: menu.name })
       }
-      res.status(200).json(
-        { id: menu.id, name: menu.name }
-      )
-    }).catch((err) => {
-      res.status(500).json({ message: err.message })
-    })
-  } else {
-    prisma.menu.findMany({
-      select: returnField
-    }).then((menus) => {
+    } else {
+      const menus = await prisma.menu.findMany({
+        select: returnField
+      })
+
       if (menus.length === 0) {
         res.status(404).json({ message: "Menu not found" })
-        return
+      } else {
+        res.status(200).json(menus.map((menu) => {
+          return { id: menu.id, name: menu.name }
+        }))
       }
-      res.status(200).json(menus.map((menu) => {
-        return { id: menu.id, name: menu.name }
-      }))
-    }).catch((err) => {
-      res.status(500).json({ message: err.message })
-    })
+    }
+  } catch (err: any) {
+    res.status(500).json({ message: err.message })
   }
 }
