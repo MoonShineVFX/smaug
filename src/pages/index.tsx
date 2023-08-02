@@ -8,6 +8,8 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { MenuListItem, MenuWithCategoriesResponse } from '../libs/types';
+
 // import { fetchData } from '../libs/client/fetchFunction';
 interface IhomeListItem {
   id: string;
@@ -39,8 +41,9 @@ export default function Index() {
 
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
   }
-  const { data: menuListItem } = useSWR('/api/menus', fetcher);
-  const { data: mainOptionsListItem } = useSWR(`/api/menuTree?id=${menuListItem[0].id}`, fetcher);
+  const { data: menuListItems } = useSWR<MenuListItem[]>('/api/menus', fetcher);
+  if (!menuListItems) return <div>Error!!</div>
+  const { data: mainOptionsListItem } = useSWR<MenuWithCategoriesResponse>(`/api/menuTree?id=${menuListItems[0].id}`, fetcher);
   if (!mainOptionsListItem) return <div>Loading</div>
   return (
     <>

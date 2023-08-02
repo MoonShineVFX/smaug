@@ -1,14 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../libs/server/prisma';
+import { MenuListItem } from '../../../libs/types';
 
 
-type MenuReturnItem = {
-  id: string
-  name: string
-}
-
-
-export default async function handlerMenu(req: NextApiRequest, res: NextApiResponse<MenuReturnItem | MenuReturnItem[] | any>): Promise<void> {
+export default async function handlerMenu(req: NextApiRequest, res: NextApiResponse<MenuListItem | MenuListItem[] | any>): Promise<void> {
 
   if (req.method === undefined) {
     res.status(405).json({ message: "Method not allowed" })
@@ -58,7 +53,7 @@ function handleGet(req: NextApiRequest, res: NextApiResponse): void {
     prisma.menu.findMany({
       select: returnField
     }).then((menus) => {
-      if (!menus) {
+      if (menus.length === 0) {
         res.status(404).json({ message: "Menu not found" })
         return
       }

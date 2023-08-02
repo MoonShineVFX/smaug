@@ -1,31 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../libs/server/prisma';
+import { Category } from '@prisma/client'
+
+import { MenuWithCategoriesResponse, CategoryTree } from '../../libs/types';
 
 
-type CategoryReturnItem = {
-  id: string;
-  name: string | null;
-  parentId: string | null;
-}
+type CategoryRecord = Pick<Category, 'id' | 'name' | 'parentId'>;
 
 
-type CategoryItem = {
-  id: string;
-  name: string;
-  children: CategoryItem[];
-}
-
-
-type CategoryGetResponse = {
-  id: string;
-  name: string;
-  iconName: string;
-  children: CategoryItem[];
-
-}
-
-
-export default async function handlerMenuTree(req: NextApiRequest, res: NextApiResponse<CategoryGetResponse | any>): Promise<void> {
+export default async function handlerMenuTree(req: NextApiRequest, res: NextApiResponse<MenuWithCategoriesResponse | any>): Promise<void> {
 
   if (req.method !== 'GET') {
     res.status(405).json({ message: "Method not allowed" })
@@ -76,15 +59,15 @@ export default async function handlerMenuTree(req: NextApiRequest, res: NextApiR
     }
   }
 
-  const categroies: CategoryReturnItem[] = await prisma.category.findMany(
+  const categroies: CategoryRecord[] = await prisma.category.findMany(
     {
       ...queryFilter,
       ...returnField
     }
   )
 
-  // 把 category 整理成 id 為 key 值為 CategoryItem 的物件
-  let categoryDict = {} as { [key: string]: CategoryItem }
+  // 把 category 整理成 id 為 key 值為 CategoryTree  的物件
+  let categoryDict = {} as { [key: string]: CategoryTree }
   categroies.forEach((category) => {
     categoryDict[category.id] = {
       id: category.id,
@@ -94,7 +77,7 @@ export default async function handlerMenuTree(req: NextApiRequest, res: NextApiR
   })
 
   // 利用 categoryDict 整理出 categoryTree，去除掉 category 為 Root 那一層
-  let categoryTree = [] as CategoryItem[]
+  let categoryTree = [] as CategoryTree[]
   categroies.forEach((category) => {
     if (category.parentId === null) {
       categoryTree.push(categoryDict[category.id])
@@ -105,13 +88,13 @@ export default async function handlerMenuTree(req: NextApiRequest, res: NextApiR
   })
 
 
-  const categoryReturn = {
+  const menuWithCategories = {
     id: menu.id,
     name: menu.name,
     iconName: menu.iconName,
     children: categoryTree,
   }
 
-  res.status(200).json(categoryReturn)
+  res.status(200).json(menuWithCategories)
   return
 }

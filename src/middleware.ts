@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyToken } from './libs/server/auth';
+// import { verifyToken } from './libs/server/auth';
 
 
 const isLoginRoute = (pathname: string) => {
@@ -36,7 +36,7 @@ export async function middleware(req: NextRequest) {
       { status: 401 });
   }
 
-  const user = await verifyToken(req);
+  // const user = await verifyToken(req);
 
 }
 

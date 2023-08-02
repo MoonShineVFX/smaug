@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -21,10 +21,10 @@ import NextLink from 'next/link'
 import { Link as MUILink } from '@mui/material';
 const fetcher = (url) => fetch(url).then((r) => r.json());
 interface typesListData {
-    id: string;
-    title: string;
-    iconname?: 'ViewModule' | 'Label';
-    subitems?: { id: string, name: string }[]
+  id: string;
+  title: string;
+  iconname?: 'ViewModule' | 'Label';
+  subitems?: { id: string, name: string }[]
 }
 
 
@@ -49,24 +49,24 @@ const CustomerNav = styled(List)<{ component?: React.ElementType }>({
   }
 });
 interface ICollapseTree {
-  child?:IChild[],
+  child?: IChild[],
   open?: boolean;
-  isVisible?:boolean |  undefined;
+  isVisible?: boolean | undefined;
 }
 interface IChild {
   id: string;
   name: string;
   children?: IChild[];
 }
-const CollapseTree = ({child,open,isVisible}:ICollapseTree)=>{
+const CollapseTree = ({ child, open, isVisible }: ICollapseTree) => {
   const router = useRouter();
   const [subOpen, setSubOpen] = React.useState('');
-  const handleClick = (id:string) => {
-    if(subOpen === id){
+  const handleClick = (id: string) => {
+    if (subOpen === id) {
       setSubOpen('')
       return
     }
-    router.push({pathname: '/home' , query: {categoryId:id} }, undefined, { shallow: true });
+    router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
     setSubOpen(id)
   }
   return (
@@ -121,37 +121,30 @@ const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
   const handleClick = () => {
     setOpen(!open);
   };
-  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/menuTree?id=${mainMenuData.id}` ] : null, fetcher);
-  // useEffect(()=>{
-  //   async function getItems() {
-  //     const items = await fetchData(`/api/menuTree?id=${mainMenuData?.id}`);
-  //     console.log(items)
-  //     setListItem(items);
-  //   }
-  //   getItems()
-  // },[mainMenuData])
+  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/menuTree?id=${mainMenuData.id}`] : null, fetcher);
+
   if (!mainOptionsListItem) return <div>Loading</div>
   return (
     <>
-     {
-      mainOptionsListItem.message === 'Menu Categories not found' ? 
-      <></>
-      :
-      <CustomerNav >
-        <ListItemButton onClick={handleClick}>
-          <ListItemIcon >
-            <Icon>{mainOptionsListItem.iconName}</Icon>
-          </ListItemIcon>
+      {
+        mainOptionsListItem.message === 'Menu Categories not found' ?
+          <></>
+          :
+          <CustomerNav >
+            <ListItemButton onClick={handleClick}>
+              <ListItemIcon >
+                <Icon>{mainOptionsListItem.iconName}</Icon>
+              </ListItemIcon>
 
-            <ListItemText primary={mainOptionsListItem.name} />
-            {/* <NextLink href={`${mainOptionsListItem.name.toLowerCase()}?menuTreeId=${mainOptionsListItem.id}`} passHref style={{ textDecoration: 'none' }}>
+              <ListItemText primary={mainOptionsListItem.name} />
+              {/* <NextLink href={`${mainOptionsListItem.name.toLowerCase()}?menuTreeId=${mainOptionsListItem.id}`} passHref style={{ textDecoration: 'none' }}>
                 <MUILink variant="body2"  underline="none" sx={{color:'white',fontSize:'1rem'}} >{mainOptionsListItem.name}</MUILink>
             </NextLink> */}
-          
-        </ListItemButton>
-        <CollapseTree child={mainOptionsListItem.children} open={open} isVisible={false} /> 
-       </CustomerNav>
-     }
+
+            </ListItemButton>
+            <CollapseTree child={mainOptionsListItem.children} open={open} isVisible={false} />
+          </CustomerNav>
+      }
     </>
   )
 }
@@ -172,9 +165,9 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
   };
   const handleTagClick = (id) => {
     console.log('click')
-    router.push({pathname: '/tags' , query: {id} }, undefined, { shallow: true });
+    router.push({ pathname: '/tags', query: { id } }, undefined, { shallow: true });
   }
-  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags` ] : null, fetcher);
+  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags`] : null, fetcher);
 
   if (!mainOptionsListItem) return <div>Loading</div>
   return (
@@ -197,7 +190,7 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
             {
               mainOptionsListItem.map((item, index) => {
                 return (
-                  <Chip key={item.name} label={item.name} onClick={()=>handleTagClick(item.id)} sx={{ m: .5, fontSize: '12px' }} />
+                  <Chip key={item.name} label={item.name} onClick={() => handleTagClick(item.id)} sx={{ m: .5, fontSize: '12px' }} />
                 )
               })
             }
@@ -212,21 +205,21 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
 interface IMainListItems {
   mainMenuData?: ImainMenuData
 }
-export const MainListItems = ({mainMenuData}: IMainListItems) => {
+export const MainListItems = ({ mainMenuData }: IMainListItems) => {
   return (
 
-      <CustomListWithCollapse mainMenuData={mainMenuData}  />
- 
+    <CustomListWithCollapse mainMenuData={mainMenuData} />
+
   );
 }
 interface ITagListItems {
   mainMenuData?: ImainMenuData
 }
-export const TagListItems = ({mainMenuData}: ITagListItems) => {
+export const TagListItems = ({ mainMenuData }: ITagListItems) => {
 
   return (
 
-      <CustomListWithCollapseForTag mainMenuData={mainMenuData}  />
+    <CustomListWithCollapseForTag mainMenuData={mainMenuData} />
 
   );
 }
