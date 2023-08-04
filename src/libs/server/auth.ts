@@ -4,25 +4,16 @@ import { User } from '@prisma/client'
 import { settings } from '../common';
 import { NextApiRequest } from 'next'
 import { NextRequest } from 'next/server';
+import { LoginParams, LoginResponse, UserInfo } from '../types';
 
 
-type UserInfo = {
+type IAuthToken = {
   id: string;
-  name: string;
-  email: string;
-  picture: string;
-}
-interface ILoginParams {
-  username: string;
-  password: string;
-}
+};
 
-interface IUser {
-  id: string;
-  password: string;
-  name: string;
-  authTokens: { id: string }[];
-}
+type IUserWithTokens = User & {
+  authTokens: IAuthToken[];
+};
 
 
 export async function authenticated(req: NextRequest): Promise<User | null> {
@@ -50,7 +41,7 @@ export async function authenticated(req: NextRequest): Promise<User | null> {
 };
 
 
-export async function authenticate(credential: ILoginParams): Promise<string | null> {
+export async function authenticate(credential: LoginParams): Promise<LoginResponse | null> {
 
   const user = await findUserByAccount(credential.username);
 
@@ -59,9 +50,15 @@ export async function authenticate(credential: ILoginParams): Promise<string | n
   }
 
   if (await comparePassword(credential.password, user.password)) {
-    const newToken = createToken(user)
+    const newToken = await createToken(user)
     await limitedTokenNumber(user)
-    return newToken
+    const userInfo: UserInfo = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      picture: 'noPicture.png'
+    }
+    return { token: newToken, user: userInfo };
   }
   else {
     return null;
@@ -69,16 +66,13 @@ export async function authenticate(credential: ILoginParams): Promise<string | n
 }
 
 
-export async function findUserByAccount(account: string): Promise<IUser | null> {
+export async function findUserByAccount(account: string): Promise<IUserWithTokens | null> {
   const user = await prisma.user.findUnique({
     where: {
       account: account
     },
-    select:
+    include:
     {
-      id: true,
-      password: true,
-      name: true,
       authTokens: {
         select: {
           id: true
@@ -103,13 +97,13 @@ export async function comparePassword(password: string, hashedPassword: string):
 }
 
 
-export async function createToken(user: IUser): Promise<string> {
+export async function createToken(user: IUserWithTokens): Promise<string> {
   const token = await prisma.authToken.create({ data: { userId: user.id } });
   return token.id;
 }
 
 
-export async function limitedTokenNumber(user: IUser): Promise<void> {
+export async function limitedTokenNumber(user: IUserWithTokens): Promise<void> {
   if (user.authTokens.length > settings.TOKEN_PER_USER) {
     let tokens = await prisma.authToken.findMany({ where: { userId: user.id }, orderBy: { createAt: 'desc' } });
     let preserveTokens = tokens.splice(0, settings.TOKEN_PER_USER);
@@ -118,7 +112,6 @@ export async function limitedTokenNumber(user: IUser): Promise<void> {
   }
 }
 
-type NextRequestOrApiRequest = NextApiRequest | NextRequest;
 
 export function getToken(req: NextApiRequest): string {
   let authStr: string | undefined;

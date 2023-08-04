@@ -37,7 +37,7 @@ export default function Index() {
   }
   const { data: menuListItems } = useSWR<MenuListItem[]>('/api/menus', fetcher);
   if (!menuListItems) return <div>Error!!</div>
-  const { data: mainOptionsListItem } = useSWR<MenuWithCategoriesResponse>(`/api/menuTree?id=${menuListItems[0].id}`, fetcher);
+  const { data: mainOptionsListItem } = useSWR<MenuWithCategoriesResponse>(`/api/menuTree?id=${menuListItems[0].id}`, fetcher); // 拿第一個選單
   if (!mainOptionsListItem) return <div>Loading</div>
   return (
     <>

@@ -1,10 +1,3 @@
-export type UserInfo = {
-  id: string;
-  name: string;
-  email: string;
-  picture: string;
-}
-
 // db init usage
 export const permission = [
   ['CATEGORY_CREATE', '建立分類'],
@@ -110,3 +103,6 @@ export const representationJsonSchema = {
     ]
   },
 }
+
+
+

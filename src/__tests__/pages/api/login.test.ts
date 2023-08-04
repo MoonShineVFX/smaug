@@ -28,7 +28,9 @@ describe('Login API', () => {
     });
     await handleLogin(req, res);
     expect(res._getStatusCode()).toBe(200);
-    expect(res._getJSONData()).toEqual({ message: 'welcome' });
+    expect(
+      Object.keys(res._getJSONData()).sort()).toEqual(
+      ['email', 'id', 'name', 'picture'].sort())
     await prisma.authToken.deleteMany({});
   });
 

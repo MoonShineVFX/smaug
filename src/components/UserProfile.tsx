@@ -1,6 +1,6 @@
 import Raect, { useState, useRef, useEffect } from 'react';
 import { Avatar, Stack, Button,Tooltip,IconButton, Container, Popover, Typography, Popper, Grow, Paper, ClickAwayListener, Menu,MenuList, MenuItem, Box, TextField } from '@mui/material';
-import { UserInfo } from '../libs/common';
+import { UserInfo } from '../libs/types';
 import React from 'react';
 
 interface UserProfileProps {

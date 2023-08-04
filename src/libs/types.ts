@@ -1,5 +1,25 @@
 // api routes interface
 
+// api/auth/login.ts
+export interface LoginParams {
+  username: string;
+  password: string;
+
+}
+
+export interface UserInfo {
+  id: string;
+  name: string;
+  email: string;
+  picture: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: UserInfo;
+}
+
+
 // api/assets/index.ts
 export interface AssetListItem {
   id: string

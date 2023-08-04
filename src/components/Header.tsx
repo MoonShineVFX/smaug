@@ -1,6 +1,6 @@
 import { Container } from "@mui/system";
 import React, { useState } from "react";
-import { UserInfo } from "../libs/common";
+import { UserInfo } from "../libs/types";
 import UserProfile from "./UserProfile";
 import { loginHandler } from '../libs/client/login';
 
