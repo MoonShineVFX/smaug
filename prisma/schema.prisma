@@ -107,6 +107,13 @@ model Category {
   isDeleted Boolean    @default(false)
   isVisible Boolean    @default(true)
   menuId    String
+  path      String?
+}
+
+model PathMap {
+  id   Int    @id @default(autoincrement())
+  path String @unique
+  categoryId Int
 }
 
 model Tag {
