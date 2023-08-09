@@ -29,6 +29,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
       category: {
         select: {
           name: true,
+          path: true
         }
       },
       representations: {
@@ -48,6 +49,15 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
   }
 
   const { cid } = req.query
+  
+  const targetCategory = await prisma.category.findUnique({
+    where: {
+      id: parseInt(cid as string, 10)
+    },
+    select: {
+      path: true
+    }
+  });
 
   let queryFilter = {
     where: {
