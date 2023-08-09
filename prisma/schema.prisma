@@ -69,7 +69,7 @@ model Asset {
   creator         User             @relation(fields: [creatorId], references: [id])
   representations Representation[]
   category        Category         @relation(fields: [categoryId], references: [id])
-  categoryId      String
+  categoryId      Int
   tags            Tag[]
   createAt        DateTime         @default(now())
   updateAt        DateTime?        @updatedAt
@@ -96,9 +96,9 @@ model Representation {
 }
 
 model Category {
-  id        String     @id @default(cuid())
+  id        Int        @id @default(autoincrement())
   name      String?
-  parentId  String?
+  parentId  Int?
   parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children  Category[] @relation("CategoryTree")
   assets    Asset[]
@@ -108,12 +108,6 @@ model Category {
   isVisible Boolean    @default(true)
   menuId    String
   path      String?
-}
-
-model PathMap {
-  id   Int    @id @default(autoincrement())
-  path String @unique
-  categoryId Int
 }
 
 model Tag {

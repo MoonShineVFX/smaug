@@ -138,29 +138,31 @@ async function main() {
 
   // Create 20 categories
   type categoryData = {
-    id: string
+    id: number
     name: string | null
     parent: string | null
-    parentId: string | null
+    parentId: number | null
     createAt: Date
     isDeleted: boolean
     isVisible: boolean
     updateAt: Date | null
     menuId: string
+    path: string
   }
 
-  const categoriesData: categoryData[] = defaultCategories.map((cate, _) => {
+  const categoriesData: categoryData[] = defaultCategories.map((cate, idx) => {
     // console.log(`convert category: ${cate.name} to categoryData`)
     return {
-      id: createId(),
+      id: cate.id,
       name: cate.name as string,
       parent: cate.parent,
-      parentId: '',
+      parentId: null,
       createAt: faker.date.past(),
       isDeleted: false,
       isVisible: true,
       updateAt: null,
-      menuId: menuDict[cate.menu].id
+      menuId: menuDict[cate.menu].id,
+      path: cate.path,
     }
   })
 
@@ -192,7 +194,8 @@ async function main() {
       isVisible: cate.isVisible,
       parentId: cate.parentId,
       updateAt: null,
-      menuId: cate.menuId
+      menuId: cate.menuId,
+      path: cate.path
     }
   })
 
@@ -202,6 +205,7 @@ async function main() {
   }
   console.log(`categories created`)
 
+  // 建立 pathmap
   // create assets
   const assetsData: Asset[] = defaultAssets.map((asset, i) => {
     return {
