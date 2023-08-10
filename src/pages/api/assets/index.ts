@@ -22,6 +22,38 @@ export default async function handlerAsset(req: NextApiRequest, res: NextApiResp
 }
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any>): Promise<void> {
+
+  const { cid } = req.query
+
+  const targetCategory = await prisma.category.findUnique({
+    where: {
+      id: parseInt(cid as string, 10)
+    },
+    select: {
+      path: true
+    }
+  });
+
+  if (targetCategory === null) {
+    res.status(404).json({ message: "Category path not found" })
+    return;
+  }
+
+  let queryFilter: any
+
+  if (cid) {
+    queryFilter = {
+      where: {
+        category: {
+          path: {
+            startsWith: targetCategory.path
+          }
+        }
+      }
+    }
+  }
+  queryFilter.where = { ...queryFilter.where, isDeleted: false }
+
   const selectField = {
     select: {
       id: true,
@@ -48,46 +80,29 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     }
   }
 
-  const { cid } = req.query
-  
-  const targetCategory = await prisma.category.findUnique({
-    where: {
-      id: parseInt(cid as string, 10)
-    },
-    select: {
-      path: true
-    }
-  });
-
-  let queryFilter = {
-    where: {
-      AND: {} as { [key: string]: { equals: Boolean | string; } }
-    }
+  interface AssetQueryResult {
+    id: string;
+    name: string;
+    category: {
+      name: string | null;
+      path: string;
+    };
+    representations: {
+      path: string;
+    }[];
+    updateAt: Date | null;
+    createAt: Date;
   };
 
-  queryFilter = {
-    where: {
-      AND: {
-        isDeleted: { equals: false },
-      }
-    }
-  }
-
-  if (cid) {
-    queryFilter.where.AND = {
-      ...queryFilter.where.AND,
-      categoryId: { equals: cid as string },
-    }
-  }
-
-  const assets = await prisma.asset.findMany(
+  const assets = (await prisma.asset.findMany(
     {
       ...queryFilter,
       ...selectField
     }
-  )
+  )) as unknown as AssetQueryResult[]
+  console.log(assets);
 
-  if (assets.length > 0) {
+  if (assets.length === 0) {
     res.status(200).json([]);
   }
   else {

@@ -17,12 +17,18 @@ afterEach(async () => {
 describe('Assets API', () => {
 
   test('return asset detail', async () => {
-    const { req, res } = createMocks({ method: 'GET' });
+    const { req, res } = createMocks({
+      method: 'GET',
+      query: {
+        cid: '3' // or any other valid ID
+      }
+    });
 
     await handlerAsset(req, res);
     expect(res._getStatusCode()).toBe(200);
     console.log(res);
   })
 });
+
 
 export { }
