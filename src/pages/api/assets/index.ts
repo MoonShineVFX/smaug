@@ -109,9 +109,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     const AssetReturnItems: AssetListItem[] = assets.map((asset) => {
       let path;
       try {
-        path = asset.representations[0].path;
+        path = `${process.env['RESOURCE_URL']}/${asset.representations[0].path}`;
       } catch (error) {
-        path = "";
+        path = "/no-image.jpg";
       };
 
       return {

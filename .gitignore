@@ -8,3 +8,4 @@ package-lock.json
 .gitignore
 .env*
 
+src/public/resource/*
