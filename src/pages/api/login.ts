@@ -1,9 +1,9 @@
 import cookie from 'cookie'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { authenticate } from '../../libs/server/auth'
-import { UserInfo } from '../../libs/types';
+import { UserDisplayInfo } from '../../libs/types';
 
-async function handleLogin(req: NextApiRequest, res: NextApiResponse): Promise<UserInfo | void> {
+async function handleLogin(req: NextApiRequest, res: NextApiResponse): Promise<UserDisplayInfo | void> {
 
   const auth_str = req.headers.authorization;
   if (auth_str == null) {

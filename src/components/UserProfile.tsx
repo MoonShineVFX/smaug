@@ -51,16 +51,6 @@ function UserProfile(props: UserProfileProps): JSX.Element {
         }
     };
 
-
-    // const prevOpen = useRef(open);
-    useEffect(() => {
-        // if (prevOpen.current === true && open === false) {
-        //     anchorRef.current!.focus();
-        // }
-
-        // prevOpen.current = open;
-    }, [open]);
-
     const logProc = () => {
         console.log('logProc');
         loginHandler().then((res) => {

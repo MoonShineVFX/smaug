@@ -31,6 +31,7 @@ export const settings = {
   SALT_ROUNDS: process.env.SALT_ROUNDS,
   TOKEN_PER_USER: Number(process.env.TOKEN_PER_USER),
   TOKEN_EXPIRE_TIME: process.env.TOKEN_EXPIRE_TIME,
+  RESOURCE_URL: process.env.RESOURCE_URL,
 }
 
 
@@ -103,6 +104,3 @@ export const representationJsonSchema = {
     ]
   },
 }
-
-
-

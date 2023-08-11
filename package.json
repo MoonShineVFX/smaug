@@ -14,6 +14,9 @@
     "pm-db-push": "prisma db push",
     "pm-db-seed": "prisma db seed"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "keywords": [],
   "author": "MoonshineVFX",
   "license": "MIT",

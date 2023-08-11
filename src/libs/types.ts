@@ -1,3 +1,19 @@
+import { JsonValue } from "@prisma/client/runtime/library";
+
+export type UserDisplayInfo = {
+  id: string;
+  name: string;
+  email: string;
+  picture: string;
+  account: string;
+  roleId: string;
+  roleName: string;
+  type: string;
+  updateAt: Date;
+  createAt: Date;
+  extenData: JsonValue;
+}
+
 // api routes interface
 
 // api/auth/login.ts

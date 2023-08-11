@@ -4,7 +4,7 @@ import { User } from '@prisma/client'
 import { settings } from '../common';
 import { NextApiRequest } from 'next'
 import { NextRequest } from 'next/server';
-import { LoginParams, LoginResponse, UserInfo } from '../types';
+import { LoginParams, LoginResponse, UserDisplayInfo } from '../types';
 
 
 type IAuthToken = {
@@ -52,11 +52,18 @@ export async function authenticate(credential: LoginParams): Promise<LoginRespon
   if (await comparePassword(credential.password, user.password)) {
     const newToken = await createToken(user)
     await limitedTokenNumber(user)
-    const userInfo: UserInfo = {
+    const userInfo: UserDisplayInfo = {
       id: user.id,
       name: user.name,
       email: user.email,
-      picture: 'noPicture.png'
+      picture: 'noPicture.png',
+      account: user.account,
+      roleId: user.roleId,
+      roleName: user.role.name,
+      type: user.type,
+      updateAt: user.updateAt,
+      createAt: user.createAt,
+
     }
     return { token: newToken, user: userInfo };
   }
@@ -77,6 +84,11 @@ export async function findUserByAccount(account: string): Promise<IUserWithToken
         select: {
           id: true
         },
+      },
+      role: {
+        select: {
+          name: true
+        }
       }
     }
   });
