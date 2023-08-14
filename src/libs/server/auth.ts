@@ -12,6 +12,7 @@ type IAuthToken = {
 };
 
 type IUserWithTokens = User & {
+  role: { name: string };
   authTokens: IAuthToken[];
 };
 
@@ -63,7 +64,7 @@ export async function authenticate(credential: LoginParams): Promise<LoginRespon
       type: user.type,
       updateAt: user.updateAt,
       createAt: user.createAt,
-
+      extenData: user.extenData
     }
     return { token: newToken, user: userInfo };
   }
@@ -141,32 +142,3 @@ export function getToken(req: NextApiRequest): string {
   }
   return token;
 }
-
-
-// export function verifyToken(req: NextRequest): Promise<UserInfo | null> {
-//   let authStr = req.headers.get('authorization')
-//   const token = getToken(authStr);
-
-//   if (!token) {
-//     return null;
-//   }
-//   let user = prisma.authToken.findUnique({
-//     where: { id: token }
-//   }).user();
-
-//   if (!user) {
-//     return null;
-//   }
-//   return getUserInfo(user);
-// }
-
-// function getUserInfo(user: User): UserInfo {
-//   let userInfo: UserInfo = {
-//     id: user.id,
-//     name: user.name,
-//     email: user.email,
-//     picture: 'no_avatar.png'
-//   }
-//   return userInfo;
-// }
-export type { UserInfo };
