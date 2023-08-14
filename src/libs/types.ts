@@ -1,4 +1,4 @@
-import { JsonValue } from "@prisma/client/runtime/library";
+import { JsonValue } from 'type-fest';
 
 export type UserDisplayInfo = {
   id: string;
@@ -9,7 +9,7 @@ export type UserDisplayInfo = {
   roleId: string;
   roleName: string;
   type: string;
-  updateAt: Date;
+  updateAt: Date | null;
   createAt: Date;
   extenData: JsonValue;
 }
@@ -32,7 +32,7 @@ export interface UserInfo {
 
 export interface LoginResponse {
   token: string;
-  user: UserInfo;
+  user: UserDisplayInfo;
 }
 
 
