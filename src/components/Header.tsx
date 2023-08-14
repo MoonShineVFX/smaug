@@ -1,8 +1,9 @@
 import { Container } from "@mui/system";
 import React, { useState } from "react";
-import { UserInfo } from "../libs/types";
-import UserProfile from "./UserProfile";
+import UserContainer from "./LoginContainer";
+// import UserProfile from "./UserProfile";
 import { loginHandler } from '../libs/client/login';
+import { Login } from "@mui/icons-material";
 
 interface headProps {
     props?: any;
@@ -10,14 +11,6 @@ interface headProps {
 }
 
 export default function Header(props: headProps): JSX.Element {
-
-    const [userProfile, setUserProfile] = useState<UserInfo>(
-        {
-            id: '',
-            name: '',
-            email: '',
-            picture: ''
-        });
 
     return (
         <Container
@@ -28,11 +21,7 @@ export default function Header(props: headProps): JSX.Element {
                 alignItems: 'center',
                 color: 'white'
             }}>
-            <UserProfile props={{
-                userProfile: userProfile,
-                setUserProfile: setUserProfile,
-                loginHandler: loginHandler
-            }} />
+            <UserContainer />
         </Container>
     )
 }

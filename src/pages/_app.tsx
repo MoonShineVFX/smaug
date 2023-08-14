@@ -11,12 +11,16 @@ import '@fontsource/roboto/700.css';
 import createEmotionCache from '../utility/createEmotionCache';
 import darkThemeOptions from '../styles/theme/darkThemeOptions';
 import '../styles/globals.css';
-interface MyAppProps extends AppProps {
-  emotionCache?: EmotionCache;
-}
 import Head from 'next/head'
 import { RecoilRoot } from 'recoil';
+import { AuthProvider } from '../context/authContext';
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+
+}
+
 const clientSideEmotionCache = createEmotionCache();
+
 
 const darkTheme = createTheme(darkThemeOptions);
 //MyApp主要用於設定nextjs 與 mui dark Theme 使之後的頁面都會套用到設定(like index, etc..)
@@ -27,7 +31,6 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={darkTheme}>
         <RecoilRoot>
-        
           <CssBaseline />
           <Head>
             <link
@@ -45,7 +48,9 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
             <title>SMAUG</title>
           </Head>
           <Main>
-            <Component {...pageProps} />
+            <AuthProvider>
+              <Component {...pageProps} />
+            </AuthProvider>
           </Main>
         </RecoilRoot>
       </ThemeProvider>

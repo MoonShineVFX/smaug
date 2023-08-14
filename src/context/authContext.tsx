@@ -2,11 +2,10 @@ import { createContext, ReactNode, useState } from 'react';
 import { UserDisplayInfo } from '../libs/types';
 
 
-
 type AuthContextType = {
     user: UserDisplayInfo | null;
-    login: (userData: UserDisplayInfo | null) => void;
-    logout: () => void;
+    loginUser: (userData: UserDisplayInfo | null) => void;
+    logoutUser: () => void;
 }
 
 interface AuthProviderProps {
@@ -18,16 +17,16 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserDisplayInfo | null>(null);
 
-    const login = (userData: UserDisplayInfo| null) => {
-        setUser(userData);
+    const loginUser = (userInfo: UserDisplayInfo| null) => {
+        setUser(userInfo);
     };
 
-    const logout = () => {
+    const logoutUser = () => {
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, loginUser, logoutUser }}>
             {children}
         </AuthContext.Provider>
     );
