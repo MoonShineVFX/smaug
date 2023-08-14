@@ -3,6 +3,7 @@ import type { Asset } from '@prisma/client';
 import { RepresentationType, Prisma } from '@prisma/client';
 import { prisma } from '../../../libs/server/prisma';
 import { AssetListItem } from '../../../libs/types';
+import { settings } from '../../../libs/common';
 
 
 export default async function handlerAsset(req: NextApiRequest, res: NextApiResponse): Promise<void> {
@@ -109,7 +110,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     const AssetReturnItems: AssetListItem[] = assets.map((asset) => {
       let path;
       try {
-        path = `${process.env['RESOURCE_URL']}/${asset.representations[0].path}`;
+        path = `${settings.RESOURCE_URL}/${asset.representations[0].path}`;
       } catch (error) {
         path = "/no-image.jpg";
       };
