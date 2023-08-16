@@ -5,6 +5,11 @@ import { UserDisplayInfo } from '../../libs/types';
 
 async function handleLogin(req: NextApiRequest, res: NextApiResponse): Promise<UserDisplayInfo | void> {
 
+  if (req.method !== 'POST') {
+    res.status(405).json({ message: "method not allowed", data: null })
+    return;
+  }
+
   const auth_str = req.headers.authorization;
   if (auth_str == null) {
     res.status(401).json({ message: "please provide username and password", data: null })

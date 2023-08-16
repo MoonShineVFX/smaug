@@ -1,6 +1,6 @@
-async function loginHandler(username: string, password: string): Promise<Response | null> {
-  // const username = document.getElementById('username') as HTMLInputElement;
-  // const password = document.getElementById('password') as HTMLInputElement;
+import { UserDisplayInfo } from "../types";
+
+async function loginHandler(username: string, password: string): Promise<UserDisplayInfo | null> {
 
   const authString = `${username}:${password}`;
   const encodedAuthString = Buffer.from(authString).toString('base64');
@@ -13,7 +13,15 @@ async function loginHandler(username: string, password: string): Promise<Respons
         'Authorization': `Basic ${encodedAuthString}`
       }
     });
-    return (resp);
+
+    if (resp.ok) {
+      const userData = await resp.json();
+      return userData;
+    }
+    else {
+      console.error("Failed to login:", await resp.json());
+      return null;
+    }
   }
   catch (error) {
     console.error("Failed to login:", error);

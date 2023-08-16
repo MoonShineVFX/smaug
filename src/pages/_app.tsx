@@ -47,11 +47,11 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
             <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
             <title>SMAUG</title>
           </Head>
-          <Main>
-            <AuthProvider>
+          <AuthProvider>
+            <Main>
               <Component {...pageProps} />
-            </AuthProvider>
-          </Main>
+            </Main>
+          </AuthProvider>
         </RecoilRoot>
       </ThemeProvider>
     </CacheProvider>
