@@ -1,9 +1,6 @@
 import { Container } from "@mui/system";
-import React, { useState } from "react";
+import React from "react";
 import LoginContainer from "./LoginContainer";
-// import UserProfile from "./UserProfile";
-import { loginHandler } from '../libs/client/login';
-import { Login } from "@mui/icons-material";
 
 interface headProps {
   props?: any;
@@ -19,7 +16,8 @@ export default function Header(props: headProps): JSX.Element {
         flexDirection: 'row-reverse',
         justifyContent: 'right',
         alignItems: 'center',
-        color: 'white'
+        color: 'white',
+        marginRight: 0,
       }}>
       <LoginContainer />
     </Container>

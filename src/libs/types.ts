@@ -69,7 +69,7 @@ export interface MenuListItem {
 //api/menuTree/[menuId]
 
 export type CategoryTree = {
-  id: string;
+  id: number;
   name: string;
   children: CategoryTree[];
 }
