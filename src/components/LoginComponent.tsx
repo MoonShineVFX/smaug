@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, RefObject } from "react";
-import { Button, Dialog, Paper, Popper, Stack, TextField } from "@mui/material";
+import { Alert, Button, Paper, Popper, Snackbar, Stack, TextField } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import useSWR from "swr";
 import { UserDisplayInfo } from "../libs/types";
@@ -83,6 +83,7 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
   const [password, setPassword] = useState('');
   const [encodedAuthString, setEncodedAuthString] = useState<string | null>(null);
   const anchorRef = useRef<HTMLButtonElement>(null);
+  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
 
   const fetcher = (apiUrl: string, encodedAuthString: string | null) => fetch(apiUrl, {
     method: 'POST',
@@ -93,7 +94,13 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
   }).then((res) => res.json());
 
   const apiUrl = '/api/login'
-  const { data: userDisplayInfo, error, isLoading } = useSWR(encodedAuthString ? apiUrl : null, () => fetcher(apiUrl, encodedAuthString));
+  const { data: userDisplayInfo, error, isLoading } = useSWR(
+    encodedAuthString ? apiUrl : null,
+    () => fetcher(apiUrl, encodedAuthString),
+    {
+      shouldRetryOnError: false,
+      revalidateOnFocus: false
+    });
 
   useEffect(
     () => {
@@ -104,6 +111,12 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
     }
     , [userDisplayInfo]
   );
+  useEffect(() => {
+    if (error) {
+      setIsErrorSnackbarOpen(true);
+    }
+  }, [error]);
+
 
   const loginHandler = () => {
     if (!(username && password)) {
@@ -116,6 +129,13 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
 
   };
 
+  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setIsErrorSnackbarOpen(false);
+  };
+
   return (
     <>
       {isLoading ?
@@ -125,9 +145,9 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
           ref={anchorRef}
           onClick={() => { setOpenLoginDialog((prevOpen) => !prevOpen); }}
           variant="outlined">Sign In
-          
+
         </OutLineButton>
-        <LogginDialog
+          <LogginDialog
             open={openLoginDialog}
             username={username}
             setUsername={setUsername}
@@ -135,6 +155,16 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
             setPassword={setPassword}
             loginHandler={loginHandler}
             anchorRef={anchorRef} />
+          <Snackbar
+            open={isErrorSnackbarOpen}
+            autoHideDuration={4000}  
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  // 顯示在頂部中央
+          >
+            <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+              {error?.message || "An error occurred!"}
+            </Alert>
+          </Snackbar>
         </>
       }
     </>
