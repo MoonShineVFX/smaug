@@ -1,18 +1,9 @@
 import React, { useEffect, useState, useRef, RefObject } from "react";
-import { Alert, Button, Paper, Popper, Snackbar, Stack, TextField } from "@mui/material";
-import { styled } from '@mui/material/styles';
+import { Alert, Paper, Popper, Snackbar, Stack, TextField } from "@mui/material";
 import useSWR from "swr";
 import { UserDisplayInfo } from "../libs/types";
+import { OutLineButton } from "./basic";
 
-
-const OutLineButton = styled(Button)(({ theme }) => ({
-  color: "#bbb",
-  borderColor: "#bbb",
-  '&:hover': {
-    backgroundColor: "#fff",
-    color: "#000",
-  },
-}));
 
 interface LoginDialogProps {
   open: boolean;
@@ -23,6 +14,7 @@ interface LoginDialogProps {
   setPassword: (value: string) => void;
   loginHandler: () => void;
 }
+
 
 const LogginDialog: React.FC<LoginDialogProps> = ({
   open,
@@ -72,9 +64,11 @@ const LogginDialog: React.FC<LoginDialogProps> = ({
   )
 }
 
+
 interface LoginComponentProps {
   loginUser: (user: UserDisplayInfo) => void;
 }
+
 
 export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.Element {
 
@@ -126,7 +120,6 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
     const authString = `${username}:${password}`;
     const encodedAuthString = Buffer.from(authString).toString('base64');
     setEncodedAuthString(encodedAuthString)
-
   };
 
   const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
