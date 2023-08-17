@@ -137,37 +137,35 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
   };
 
   return (
-    <>
-      {isLoading ?
-        <><div>loading...</div></>
-        :
-        <><OutLineButton
+
+    isLoading ?
+      <><div>loading...</div></>
+      :
+      <>
+        <OutLineButton
           ref={anchorRef}
           onClick={() => { setOpenLoginDialog((prevOpen) => !prevOpen); }}
           variant="outlined">Sign In
 
         </OutLineButton>
-          <LogginDialog
-            open={openLoginDialog}
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-            loginHandler={loginHandler}
-            anchorRef={anchorRef} />
-          <Snackbar
-            open={isErrorSnackbarOpen}
-            autoHideDuration={4000}  
-            onClose={handleSnackbarClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  // 顯示在頂部中央
-          >
-            <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
-              {error?.message || "An error occurred!"}
-            </Alert>
-          </Snackbar>
-        </>
-      }
-    </>
-
+        <LogginDialog
+          open={openLoginDialog}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+          loginHandler={loginHandler}
+          anchorRef={anchorRef} />
+        <Snackbar
+          open={isErrorSnackbarOpen}
+          autoHideDuration={4000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  // 顯示在頂部中央
+        >
+          <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+            {error?.message || "An error occurred!"}
+          </Alert>
+        </Snackbar>
+      </>
   )
 }
