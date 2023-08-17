@@ -1,13 +1,11 @@
-import { useEffect, useState, useRef } from "react";
-import { Button, Dialog, Paper, Stack, TextField } from "@mui/material";
+import React, { useEffect, useState, useRef, RefObject } from "react";
+import { Button, Dialog, Paper, Popper, Stack, TextField } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
 import useSWR from "swr";
 import { UserDisplayInfo } from "../libs/types";
 
 
-const SignInButton = styled(Button)(({ theme }) => ({
+const OutLineButton = styled(Button)(({ theme }) => ({
   color: "#bbb",
   borderColor: "#bbb",
   '&:hover': {
@@ -15,6 +13,64 @@ const SignInButton = styled(Button)(({ theme }) => ({
     color: "#000",
   },
 }));
+
+interface LoginDialogProps {
+  open: boolean;
+  anchorRef: RefObject<HTMLButtonElement>;
+  username: string;
+  setUsername: (value: string) => void;
+  password: string;
+  setPassword: (value: string) => void;
+  loginHandler: () => void;
+}
+
+const LogginDialog: React.FC<LoginDialogProps> = ({
+  open,
+  anchorRef,
+  username,
+  setUsername,
+  password,
+  setPassword,
+  loginHandler
+}) => {
+  return (
+    <Popper
+      open={open}
+      anchorEl={anchorRef ? anchorRef.current : undefined}
+      placement="bottom-end"
+    >
+      <Paper
+        sx={{ padding: 2 }}
+        component="form"
+        autoComplete="off"
+      // onKeyDown={handleListKeyDown}
+      >
+        <Stack spacing={2} sx={{ paddingTop: '18px' }}>
+          <TextField
+            id="username"
+            label="E-mail"
+            defaultValue={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder='email'
+          />
+          <TextField
+            id="password"
+            label="Password"
+            defaultValue={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder='password'
+          />
+          <OutLineButton
+            id='login-button'
+            onClick={loginHandler}
+          >
+            login
+          </OutLineButton>
+        </Stack>
+      </Paper>
+    </Popper>
+  )
+}
 
 interface LoginComponentProps {
   loginUser: (user: UserDisplayInfo) => void;
@@ -28,7 +84,7 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
   const [encodedAuthString, setEncodedAuthString] = useState<string | null>(null);
   const anchorRef = useRef<HTMLButtonElement>(null);
 
-  const fetcher = (url: string, encodedAuthString: string) => fetch(url, {
+  const fetcher = (apiUrl: string, encodedAuthString: string | null) => fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,14 +92,8 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
     }
   }).then((res) => res.json());
 
-  const { data: userDisplayInfo, error, isLoading } = useSWR(encodedAuthString ? ['/api/login', encodedAuthString] : null, fetcher);
-
-  const loginHandler = () => {
-    const authString = `${username}:${password}`;
-    const encodedAuthString = Buffer.from(authString).toString('base64');
-    setEncodedAuthString(encodedAuthString)
-
-  };
+  const apiUrl = '/api/login'
+  const { data: userDisplayInfo, error, isLoading } = useSWR(encodedAuthString ? apiUrl : null, () => fetcher(apiUrl, encodedAuthString));
 
   useEffect(
     () => {
@@ -55,51 +105,39 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
     , [userDisplayInfo]
   );
 
-  const Loggin_Dialog = () => {
-    return (
-      <Popper
-        open={openLoginDialog}
-        anchorEl={anchorRef.current}
-      >
-        <Paper
-          sx={{ padding: 2 }}
-          component="form"
-          autoComplete="off"
-        // onKeyDown={handleListKeyDown}
-        >
-          <Stack spacing={2}>
-            <TextField
-              id="username"
-              label="E-mail"
-              defaultValue={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder='email'
-            />
-            <TextField
-              id="password"
-              label="Password"
-              defaultValue={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder='password'
-            />
-            <Button
-              id='login'
-              onClick={loginHandler}
-            >
-              login
-            </Button>
-          </Stack>
-        </Paper>
-      </Popper>
-    )
-  }
+  const loginHandler = () => {
+    if (!(username && password)) {
+      console.log('username and password are required');
+      return;
+    }
+    const authString = `${username}:${password}`;
+    const encodedAuthString = Buffer.from(authString).toString('base64');
+    setEncodedAuthString(encodedAuthString)
+
+  };
 
   return (
     <>
-      <SignInButton
-        onClick={ setOpenLoginDialog((prevOpen) => !prevOpen)}
-        variant="outlined">Sign In
-      </SignInButton>
+      {isLoading ?
+        <><div>loading...</div></>
+        :
+        <><OutLineButton
+          ref={anchorRef}
+          onClick={() => { setOpenLoginDialog((prevOpen) => !prevOpen); }}
+          variant="outlined">Sign In
+          
+        </OutLineButton>
+        <LogginDialog
+            open={openLoginDialog}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+            loginHandler={loginHandler}
+            anchorRef={anchorRef} />
+        </>
+      }
     </>
+
   )
 }
