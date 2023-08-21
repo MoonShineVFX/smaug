@@ -61,7 +61,7 @@ describe('Categories API', () => {
     expect(res._getStatusCode()).toBe(201)
 
     const newCate = res._getJSONData()
-    const newCateId: string = newCate.id
+    const newCateId = newCate.id
     const newCateName: string = newCate.name
     await prisma.category.delete({
       where: {

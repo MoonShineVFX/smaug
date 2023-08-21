@@ -1,17 +1,18 @@
 import { createMocks } from 'node-mocks-http';
 import handleLogin from '../../../pages/api/login';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
+import {prismaMock} from '../../../singleton'
 
 
-let prisma: PrismaClient;
+// let prisma: PrismaClient;
 
 beforeEach(() => {
-  prisma = new PrismaClient();
+  // prisma = new PrismaClient();
 });
 
 
 afterEach(async () => {
-  await prisma.$disconnect();
+  await prismaMock.$disconnect();
 });
 
 
@@ -30,8 +31,8 @@ describe('Login API', () => {
     expect(res._getStatusCode()).toBe(200);
     expect(
       Object.keys(res._getJSONData()).sort()).toEqual(
-      ['email', 'id', 'name', 'picture'].sort())
-    await prisma.authToken.deleteMany({});
+      ['email', 'id', 'name', 'picture', 'account', 'createAt', 'extenData', 'roleId', 'roleName', 'type', 'updateAt'].sort())
+    await prismaMock.authToken.deleteMany({});
   });
 
   it('should return 401 when no authorization header', async () => {
