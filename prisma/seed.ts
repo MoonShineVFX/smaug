@@ -45,6 +45,7 @@ async function main() {
     prisma.asset.deleteMany({}),
     prisma.tag.deleteMany({}),
     prisma.category.deleteMany({}),
+    prisma.authToken.deleteMany({}),
     prisma.user.deleteMany({}),
     prisma.permission.deleteMany({}),
     prisma.role.deleteMany({}),
@@ -103,8 +104,41 @@ async function main() {
       type: UserType.BOT,
     }
   })
-  console.log(`users "Admin" created`)
+  console.log(`users "admin" created`)
 
+  const roleCreator = await prisma.role.findFirstOrThrow({
+    where: { name: { contains: 'Creator' } },
+    select: { id: true }
+  })
+
+  let userCreator = await prisma.user.create({
+    data: {
+      name: '建立者',
+      account: 'creator',
+      password: await hashPassword('creator'),
+      email: 'creator@moonshine.tw',
+      roleId: roleCreator.id,
+      type: UserType.BOT,
+    }
+  })
+  console.log(`users "creator" created`)
+
+  const roleUser = await prisma.role.findFirstOrThrow({
+    where: { name: { contains: 'User' } },
+    select: { id: true }
+  })
+
+  let userUSer = await prisma.user.create({
+    data: {
+      name: '使用者',
+      account: 'user',
+      password: await hashPassword('user'),
+      email: 'user@moonshine.tw',
+      roleId: roleUser.id,
+      type: UserType.BOT,
+    }
+  })
+  console.log(`users "creator" created`)
 
   // create menu
   const menuData = defaultMenus.map((menu, i) => {
@@ -125,16 +159,6 @@ async function main() {
   }
   console.log("menus created")
 
-  // Create Root Category
-  // const rootId = createId()
-  // const rootCate = await prisma.category.create({
-  //   data: {
-  //     id: rootId,
-  //     name: "Root",
-  //     createAt: faker.date.past(),
-  //   }
-  // })
-  // console.log("categort Root created")
 
   // Create 20 categories
   type categoryData = {
