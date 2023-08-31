@@ -228,6 +228,8 @@ async function main() {
     await prisma.category.create({ data: category })
   }
   console.log(`categories created`)
+  await prisma.$executeRaw`ALTER SEQUENCE "Category_id_seq" RESTART WITH 41;` // 重設 id 開始值 postgresql 專用語法
+
 
   // 建立 pathmap
   // create assets
