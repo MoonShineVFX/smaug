@@ -4,6 +4,7 @@ import { RepresentationType, Prisma } from '@prisma/client';
 import { prisma } from '../../../libs/server/prisma';
 import util from '../../../utility/util';
 import { AssetDetails } from '../../../libs/types';
+import { assert } from 'console';
 
 const {
   formatBytes,
@@ -106,7 +107,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
           const render = {
             id: element.id,
             name: element.name,
-            path: element.path ? element.path: '',
+            path: element.path ? element.path : '',
           }
           assetReturn.renders.push(render)
           break;
@@ -130,4 +131,17 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     res.status(200).json(assetReturn)
   }
   res.status(404).json({ message: "Asset not found" })
+}
+
+async function handlePost(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+  // 建立新的 asset,  一定要有 name, categoryId,
+  let { name, categoryId, models, texturetags, creatorId } = req.body;
+  if (name === undefined || creatorId === undefined) {
+    res.status(400).json({ message: "Bad Request" })
+    return;
+  }
+
+  if (categoryId === undefined) {
+    categoryId = null;
+  }
 }
