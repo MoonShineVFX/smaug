@@ -132,16 +132,3 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
   }
   res.status(404).json({ message: "Asset not found" })
 }
-
-async function handlePost(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-  // 建立新的 asset,  一定要有 name, categoryId,
-  let { name, categoryId, models, texturetags, creatorId } = req.body;
-  if (name === undefined || creatorId === undefined) {
-    res.status(400).json({ message: "Bad Request" })
-    return;
-  }
-
-  if (categoryId === undefined) {
-    categoryId = null;
-  }
-}
