@@ -1,11 +1,6 @@
 import { z } from 'zod';
 
 
-const UuidSchema = z.object({
-    id: z.string(),
-});
-
-
 export const UserTypeSchema = z.union([
     z.literal("HUMAN"),
     z.literal("BOT"),
@@ -41,21 +36,39 @@ export const tagSchema = z.object({
 export const representationSchema = z.object({
     id: z.number(),
     name: z.string(),
-    assetId: UuidSchema,
+    assetId: z.string(),
     path: z.string().optional(),
     type: RepresentationTypeSchema.optional(),
     format: RepresentationFormatSchema.optional(),
     fileSize: z.number().optional(),
     createAt: z.date(),
     updateAt: z.date().optional(),
-    userId: UuidSchema.optional(),
-    textureId: UuidSchema.optional(),
-
+    userId: z.string().optional(),
+    textureId: z.string().optional(),
 });
 
 
-export const assertCreateSchema = z.object({
+export const representationUpdateSchema = z.object({
+    id: z.string(),
+    name: z.string().optional(),
+    filenama: z.string().optional(),
+    format: RepresentationFormatSchema.optional(),
+    fileSize: z.number().optional(),
+    textureId: z.string().optional(),
+});
+
+
+export const assetCreateSchema = z.object({
     name: z.string().min(1).max(255),
     categoryId: z.number().optional(),
-    tags: z.array(UuidSchema).optional(),});
+    tags: z.array(z.string()).optional(),
+});
 
+
+export const assetUpdateSchema = z.object({
+    id: z.string(),
+    name: z.string().min(1).max(255).optional(),
+    categoryId: z.number().optional(),
+    representation: z.array(representationUpdateSchema).optional(),
+    tags: z.array(z.string()).optional(),
+});
