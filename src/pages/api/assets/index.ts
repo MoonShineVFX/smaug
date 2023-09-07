@@ -151,26 +151,5 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse<Asset[] | an
   // create asset, the only required field is name, other fields are optional
   // if categoryId is not provided, categoryId will be set to 1 (No category)
 
-  let { name, categoryId:cId, tags } = req.body
-  if ( await _validCategoryId(cId)){
-    return res.status(400).json({ message: "Invalid categoryId" })
-  }
-  
-  const schema1 = z.object({
-    name: z.string().min(1).max(255),
-    categroryId: z.string().optional()
-    tags: z.array(z.string()).optional()
-  });
-
-  prisma.asset.create({
-    data: {
-      name: name,
-      categoryId: cId,
-      createAt: new Date(),
-
-    }
-  )
-
-
 
 }
