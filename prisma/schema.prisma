@@ -78,21 +78,21 @@ model Asset {
 
 // 資產可以有多種格式，代表模型的檔案格式
 model Representation {
-  id         String               @id @default(cuid())
+  id         String                @id @default(cuid())
   name       String
-  path       String?
+  path       String
   format     RepresentationFormat?
   type       RepresentationType
   assetId    String
-  asset      Asset                @relation(fields: [assetId], references: [id])
+  asset      Asset                 @relation(fields: [assetId], references: [id])
   uploaderId String
-  uploader   User                 @relation(fields: [uploaderId], references: [id])
-  createAt   DateTime             @default(now())
-  updateAt   DateTime?            @updatedAt
-  textureId  String?              @unique
-  texture    Representation?      @relation("ModelTexture", fields: [textureId], references: [id])
-  models     Representation[]     @relation("ModelTexture")
-  fileSize   Int?                 @default(0) // 檔案大小
+  uploader   User                  @relation(fields: [uploaderId], references: [id])
+  createAt   DateTime              @default(now())
+  updateAt   DateTime?             @updatedAt
+  textureId  String?               @unique
+  texture    Representation?       @relation("ModelTexture", fields: [textureId], references: [id])
+  models     Representation[]      @relation("ModelTexture")
+  fileSize   Int?                  @default(0) // 檔案大小
 }
 
 model Category {
