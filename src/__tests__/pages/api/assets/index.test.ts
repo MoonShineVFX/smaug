@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { Asset } from '@prisma/client';
-import handleAsset from '../../../../pages/api/assets'
+import { handleAsset } from '../../../../pages/api/assets'
 import { prismaMock } from '../../../../singleton';
 import { mockReset } from 'jest-mock-extended';
 import { AssetListItem } from '../../../../libs/types';
@@ -20,23 +20,31 @@ describe('Assets API', () => {
 
   test('return assets list of a given category id', async () => {
     // 預設回應模擬
-    const mockAssetListReturn: AssetListItem[] = [
-      {
-        id: 'asset-1',
-        name: "Test Asset",
-        preview: "https://picsum.photos/200/300",
-        createAt: new Date(2023, 9, 2),
-        categoryName: "Test Category",
-        updateAt: null,
-      }]
+    const mockAssetFindMany = [{
+      id: "asset-1",
+      name: "Tree 1",
+      categoryId: 3,
+      category: {
+        path: "3d/Trees",
+        name: "Trees",
+      },
+      representations: [{
+        path: "https://midea-server/asset-1/preview-1.jpg",
+      }],
+      creatorId: "admin",
+      createAt: new Date(2019, 1, 1),
+      updateAt: null,
+      isDeleted: false,
+    }];
 
-    prismaMock.asset.findMany.mockResolvedValue(mockAssetListReturn);
+    prismaMock.asset.findMany.mockResolvedValue(mockAssetFindMany);
 
+    const mockedHandleAsset = handleAsset(prismaMock);
     const { req, res } = createMocks({ method: 'GET', query: { cid: 3 } });
 
-    await handleAsset(req as any, res as any);
+    mockedHandleAsset.run(req as any, res as any);
     expect(res._getStatusCode()).toBe(200);
-    expect(res._getData()).toEqual(mockAssetListReturn);  // 請根據你的預期回應做調整
+    expect(res._getData()).toEqual(mockAssetFindMany);  // 請根據你的預期回應做調整
   });
 
   test('create Asset', async () => {
