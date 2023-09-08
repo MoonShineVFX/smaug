@@ -9,6 +9,14 @@ import { settings } from '../../../libs/common';
 import { assetCreateSchema } from '../../../libs/server/apiSchema';
 
 
+// for warning "API resolved without sending a response ..."
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+}
+
+
 // Make prisma client is dependency injection
 export const handleAsset = (prismaInst: PrismaClient) => {
   const router = createRouter<NextApiRequest, NextApiResponse>()
@@ -28,7 +36,7 @@ export const handleAsset = (prismaInst: PrismaClient) => {
 
     const { cid } = req.query
 
-    const targetCategory = await prisma.category.findUnique({
+    const targetCategory = await prismaInst.category.findUnique({
       where: {
         id: parseInt(cid as string, 10)
       },
@@ -82,7 +90,7 @@ export const handleAsset = (prismaInst: PrismaClient) => {
         createAt: true,
       }
     }
-
+    
     interface AssetQueryResult {
       id: string;
       name: string;
@@ -97,13 +105,13 @@ export const handleAsset = (prismaInst: PrismaClient) => {
       createAt: Date;
     };
 
-    const assets = (await prisma.asset.findMany(
+    const assets = (await prismaInst.asset.findMany(
       {
         ...queryFilter,
         ...selectField
       }
     )) as unknown as AssetQueryResult[]
-    console.log(assets);
+    // console.log(assets);
 
     if (assets.length === 0) {
       res.status(200).json([]);
@@ -178,18 +186,14 @@ export const handleAsset = (prismaInst: PrismaClient) => {
 
     res.status(200).json(createdAsset);
   }
-  return router;
+
+  const routerHandler = router.handler({
+    onError: (err, req, res) => {
+      res.status(500).json({ message: (err as Error).message })
+    }
+  });
+
+  return routerHandler
 }
 
-export default handleAsset(prisma).handler({
-  onError: (err, req, res) => {
-    res.status(500).json({ message: (err as Error).message })
-  }
-});
-
-// for warning "API resolved without sending a response ..."
-export const config = {
-  api: {
-    externalResolver: true,
-  },
-}
+export default handleAsset(prisma);
