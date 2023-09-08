@@ -18,7 +18,7 @@ afterEach(async () => {
 describe('Assets API', () => {
 
   test('return asset detail', async () => {
-
+    
     prismaMock.asset.findMany.mockResolvedValue([]);
     const { req, res } = createMocks({
       method: 'GET',
@@ -28,7 +28,7 @@ describe('Assets API', () => {
     });
 
     const mockHandleAsset = handleAsset(prismaMock);
-    mockHandleAsset.run(req, res);
+    await mockHandleAsset(req as any, res as any);
     expect(res._getStatusCode()).toBe(200);
     console.log(res);
   })
