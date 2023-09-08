@@ -23,18 +23,12 @@ export const handleAsset = (prismaInst: PrismaClient) => {
     res.status(405).json({ message: "Method not allowed" })
   });
 
-  router.handler({
-    onError: (err, req, res) => {
-      res.status(500).json({ message: (err as Error).message })
-    }
-  });
-
   // method implementation
   async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any>): Promise<void> {
 
     const { cid } = req.query
 
-    const targetCategory = await prismaInst.category.findUnique({
+    const targetCategory = await prisma.category.findUnique({
       where: {
         id: parseInt(cid as string, 10)
       },
@@ -153,7 +147,7 @@ export const handleAsset = (prismaInst: PrismaClient) => {
       }
     }
 
-    // 從 aythrization header 中取得 token 來驗證使用者身份
+    // 從 authrization header 中取得 token 來驗證使用者身份
     const token = req.headers.authorization?.replace("Bearer ", "");
     if (!token) {
       return res.status(401).json({ error: "No token provided" });
@@ -187,4 +181,15 @@ export const handleAsset = (prismaInst: PrismaClient) => {
   return router;
 }
 
-export default handleAsset(prisma);
+export default handleAsset(prisma).handler({
+  onError: (err, req, res) => {
+    res.status(500).json({ message: (err as Error).message })
+  }
+});
+
+// for warning "API resolved without sending a response ..."
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+}
