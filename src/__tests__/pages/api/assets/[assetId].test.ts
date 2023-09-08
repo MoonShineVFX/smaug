@@ -1,22 +1,25 @@
 import { createMocks } from 'node-mocks-http';
 import { PrismaClient, Asset } from '@prisma/client';
-import handlerAsset from '../../../../pages/api/assets'
+import { prismaMock } from '../../../../singleton';
+import { mockReset } from 'jest-mock-extended';
+import { handleAsset } from '../../../../pages/api/assets'
 
 
 let prisma: PrismaClient;
 
 beforeEach(async () => {
-  prisma = new PrismaClient();
+  mockReset(prismaMock);
 });
 
 afterEach(async () => {
-  await prisma.authToken.deleteMany({});
-  await prisma.$disconnect();
+  // pass
 })
 
 describe('Assets API', () => {
 
   test('return asset detail', async () => {
+
+    prismaMock.asset.findMany.mockResolvedValue([]);
     const { req, res } = createMocks({
       method: 'GET',
       query: {
@@ -24,7 +27,8 @@ describe('Assets API', () => {
       }
     });
 
-    await handlerAsset(req, res);
+    const mockHandleAsset = handleAsset(prismaMock);
+    mockHandleAsset.run(req, res);
     expect(res._getStatusCode()).toBe(200);
     console.log(res);
   })

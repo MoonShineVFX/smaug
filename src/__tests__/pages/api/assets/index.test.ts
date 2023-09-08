@@ -48,19 +48,10 @@ describe('Assets API', () => {
   });
 
   test('create Asset', async () => {
-    const adminUser = await prismaMock.user.findFirst({
-      where: {
-        account: "admin"
-      }
-    })
-    const token = await prismaMock.authToken.create({
-      data: {
-        user: { connect: { id: adminUser!.id } }
-      }
-    })
-    const { req, res } = createMocks({ method: 'POST', body: { name: 'test', categoryId: 3 } });
-
-    await handleAsset(req, res);
+    prismaMock.authToken.findMany.mockReturnValue([]);
+    const { req, res } = createMocks({ method: 'POST', headers: {authorization:"bearar 123456"}, body: { name: 'test', categoryId: 3 } });
+    const mockedHandleAsset = handleAsset(prismaMock);
+    handleAsset(req, res);
     expect(res._getStatusCode()).toBe(200);
   })
 });
