@@ -146,20 +146,22 @@ export function getToken(req: NextApiRequest): string {
 
 // next-connect middleware
 export async function authenticateUser(req: NextApiRequest, res: NextApiResponse, next: any) {
+  console.log('Entering authenticateUser')
   const token = req.headers.authorization?.replace("Bearer ", "");
-  if (!token) {
-    (req as any).user = null;
-    next();
-    return
+  if (Boolean(token)) {
+    // 用 token 查詢 authToken 資料表，找到對應的使用者
+    const authToken = await prisma.authToken.findUnique(
+      {
+        where: { id: token },
+        include: { user: true }
+      });
+    // 將 user 資訊附加到 req 物件上
+    (req as any).user = authToken ? authToken.user : null;
+    console.log('Exist authenticateUser')
   }
-
-  // 用 token 查詢 authToken 資料表，找到對應的使用者
-  const authToken = await prisma.authToken.findUnique({
-    where: { id: token },
-    include: { user: true },
-  });
-
-  // 將 user 資訊附加到 req 物件上
-  (req as any).user = authToken ? authToken.user : null;
+  else {
+    (req as any).user = null;
+    console.log('Exist authenticateUser: No token')
+  };
   next();
 }
