@@ -1,30 +1,32 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { createRouter } from 'next-connect';
 import type { Asset } from '@prisma/client';
 import { RepresentationType, Prisma } from '@prisma/client';
+import { authenticateUser } from '../../../libs/server/auth';
 import { prisma } from '../../../libs/server/prisma';
-import { z } from 'zod';
 import { AssetListItem } from '../../../libs/types';
 import { settings } from '../../../libs/common';
+import { assetCreateSchema } from '../../../libs/server/apiSchema';
+
+const router = createRouter<NextApiRequest, NextApiResponse>()
+router.use(authenticateUser);
+router.get(async (req, res) => {
+  return await handleGet(req, res);
+});
+router.post(async (req, res) => {
+  return await handlePost(req, res);
+});
+router.all((req, res) => {
+  res.status(405).json({ message: "Method not allowed" })
+});
 
 
-export default async function handlerAsset(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-
-  if (req.method === undefined) {
-    res.status(405).json({ message: "Method not allowed" })
-    return;
+export default router.handler({
+  onError: (err, req, res) => {
+    res.status(500).json({ message: (err as Error).message })
   }
-  switch (req.method) {
-    case 'GET':
-      await handleGet(req, res);
-      break;
-    case 'POST':
-      await handlePost(req, res);
-      break;
-    default:
-      res.status(405).json({ message: "Method not allowed" })
-  }
+});
 
-}
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any>): Promise<void> {
 
@@ -132,24 +134,52 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
   }
 }
 
-async function _validCategoryId(categoryId: number | undefined): Promise<boolean> {
-  if (categoryId === undefined) {
-    return true;
-  }
-  const category = await prisma.category.findUnique({
-    where: {
-      id: categoryId
-    }
-  })
-  if (category === null) {
-    return false;
-  }
-  return true;
-}
-
 async function handlePost(req: NextApiRequest, res: NextApiResponse<Asset[] | any>): Promise<void> {
   // create asset, the only required field is name, other fields are optional
-  // if categoryId is not provided, categoryId will be set to 1 (No category)
+  // if categoryId is not provided, categoryId will be set to 1 (in schema)
 
+  const valied_body = assetCreateSchema.parse(req.body);
+  const { name, categoryId, tags } = valied_body;
+
+  // 驗證 tags 中所有的 UUID 都存在於資料庫中
+  if (tags) {
+    for (const tagId of tags) {
+      const exists = await prisma.tag.findUnique({ where: { id: tagId } });
+      if (!exists) {
+        return res.status(400).json({ error: `Tag with ID ${tagId} does not exist` });
+      }
+    }
+  }
+
+  // 從 aythrization header 中取得 token 來驗證使用者身份
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+  //用 token 查詢 authToken 資料表，找到對應的使用者
+  const authToken = await prisma.authToken.findUnique({
+    where: { id: token },
+    include: { user: true },
+  });
+
+  if (!authToken) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+
+  const assetCreateData: Prisma.AssetCreateInput = {
+    name: name,
+    category: {
+      connect: { id: categoryId }
+    },
+    createAt: new Date(),
+    creator: { connect: { id: authToken.user.id } }, // Consider fetching this from a session or a JWT for an authenticated user
+    tags: tags ? { connect: tags.map(tagId => ({ id: tagId })) } : undefined,
+  };
+
+  const createdAsset = await prisma.asset.create({
+    data: assetCreateData
+  });
+
+  res.status(200).json(createdAsset);
 
 }

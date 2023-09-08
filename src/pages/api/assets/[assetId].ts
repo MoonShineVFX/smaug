@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Asset } from '@prisma/client';
-import { RepresentationType, Prisma } from '@prisma/client';
+import { RepresentationType } from '@prisma/client';
 import { prisma } from '../../../libs/server/prisma';
 import util from '../../../utility/util';
 import { AssetDetails } from '../../../libs/types';
-import { assert } from 'console';
+
 
 const {
   formatBytes,

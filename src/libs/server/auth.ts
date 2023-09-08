@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from './prisma';
 import { User } from '@prisma/client'
 import { settings } from '../common';
-import { NextApiRequest } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { NextRequest } from 'next/server';
 import { LoginParams, LoginResponse, UserDisplayInfo } from '../types';
 
@@ -141,4 +141,25 @@ export function getToken(req: NextApiRequest): string {
     return "";
   }
   return token;
+}
+
+
+// next-connect middleware
+export async function authenticateUser(req: NextApiRequest, res: NextApiResponse, next: any) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token) {
+    (req as any).user = null;
+    next();
+    return
+  }
+
+  // 用 token 查詢 authToken 資料表，找到對應的使用者
+  const authToken = await prisma.authToken.findUnique({
+    where: { id: token },
+    include: { user: true },
+  });
+
+  // 將 user 資訊附加到 req 物件上
+  (req as any).user = authToken ? authToken.user : null;
+  next();
 }

@@ -57,7 +57,7 @@ export interface AssetDetails {
   creator: string;
   tags: Array<{ id: string, name: string }>;
   renders: Array<{ id: string, name: string, path: string }>;
-  downloads: Array<{ id: string, name: string, format: string, fileSize: string }>;
+  downloads: Array<{ id: string, name: string, format: string | null, fileSize: string }>;
 }
 
 //api/menu
