@@ -150,13 +150,13 @@ export async function authenticateUser(req: NextApiRequest, res: NextApiResponse
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (Boolean(token)) {
     // 用 token 查詢 authToken 資料表，找到對應的使用者
-    const authToken = await prisma.authToken.findUnique(
+    const authTokenObj = await prisma.authToken.findUnique(
       {
         where: { id: token },
         include: { user: true }
       });
     // 將 user 資訊附加到 req 物件上
-    (req as any).user = authToken ? authToken.user : null;
+    (req as any).user = authTokenObj ? authTokenObj.user : null;
     console.log('Exist authenticateUser')
   }
   else {

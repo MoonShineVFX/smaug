@@ -90,7 +90,7 @@ export const handleAsset = (prismaInst: PrismaClient) => {
         createAt: true,
       }
     }
-    
+
     interface AssetQueryResult {
       id: string;
       name: string;
@@ -142,6 +142,13 @@ export const handleAsset = (prismaInst: PrismaClient) => {
     // create asset, the only required field is name, other fields are optional
     // if categoryId is not provided, categoryId will be set to 1 (in schema)
 
+    // user authentication by middleware authenticateUser
+    if ((req as any).user === null) {
+      res.status(401).json({ message: "Unauthorized" })
+      return;
+    }
+
+    const currentUser = (req as any).user;
     const valied_body = assetCreateSchema.parse(req.body);
     const { name, categoryId, tags } = valied_body;
 
@@ -155,28 +162,13 @@ export const handleAsset = (prismaInst: PrismaClient) => {
       }
     }
 
-    // 從 authrization header 中取得 token 來驗證使用者身份
-    const token = req.headers.authorization?.replace("Bearer ", "");
-    if (!token) {
-      return res.status(401).json({ error: "No token provided" });
-    }
-    //用 token 查詢 authToken 資料表，找到對應的使用者
-    const authToken = await prismaInst.authToken.findUnique({
-      where: { id: token },
-      include: { user: true },
-    });
-
-    if (!authToken) {
-      return res.status(401).json({ error: "Invalid token" });
-    }
-
     const assetCreateData: Prisma.AssetCreateInput = {
       name: name,
       category: {
         connect: { id: categoryId }
       },
       createAt: new Date(),
-      creator: { connect: { id: authToken.user.id } }, // Consider fetching this from a session or a JWT for an authenticated user
+      creator: { connect: { id: currentUser.id } }, // Consider fetching this from a session or a JWT for an authenticated user
       tags: tags ? { connect: tags.map(tagId => ({ id: tagId })) } : undefined,
     };
 
