@@ -1,34 +1,34 @@
 import { createMocks } from 'node-mocks-http';
-import { PrismaClient, Asset } from '@prisma/client';
-import { prismaMock } from '../../../../singleton';
-import { mockReset } from 'jest-mock-extended';
 import handleAsset from '../../../../pages/api/assets/[assetId]'
+import { prismaMock } from '../../../../singleton';
 
-
-let prisma: PrismaClient;
-
-beforeEach(async () => {
-  mockReset(prismaMock);
-});
-
-afterEach(async () => {
-  // pass
-})
 
 describe('Assets Detail API', () => {
 
   test('asset detail', async () => {
 
-    prismaMock.asset.findMany.mockResolvedValue([]);
+    prismaMock.asset.findUnique.mockResolvedValue({
+      id: 'fake-uuid-12345',
+      name: 'fake-asset-name',
+      categoryId: 1,
+      tags: [],
+      creator: {
+        name: 'admin'
+      },
+      updateAt: null,
+      createAt: new Date(),
+    } as any);
+    prismaMock.category.findMany.mockResolvedValue([{id:1, parentId: null, name: "No Category"},] as any);
     const { req, res } = createMocks({
       method: 'GET',
       query: {
-        cid: '3' // or any other valid ID
+        assetId: 'fake-uuid-12345' 
       }
     });
+    prismaMock.representation.findMany.mockResolvedValue([])
 
-    const mockHandleAsset = handleAsset(prismaMock);
-    await mockHandleAsset(req as any, res as any);
+
+    await handleAsset(req as any, res as any);
     expect(res._getStatusCode()).toBe(200);
     console.log(res);
   })

@@ -2,7 +2,7 @@ import multer from 'multer';
 import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { RepresentationType, Prisma } from '@prisma/client';
-import { prisma } from '../../libs/server/prisma';
+import prisma from '../../client';
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();

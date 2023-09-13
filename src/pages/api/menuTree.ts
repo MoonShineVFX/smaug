@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../libs/server/prisma';
 import { Category } from '@prisma/client'
+import prisma from '../../client';
 
 import { MenuWithCategoriesResponse, CategoryTree } from '../../libs/types';
 

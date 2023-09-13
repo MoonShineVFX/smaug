@@ -1,22 +1,8 @@
 import { createMocks } from 'node-mocks-http';
-import { Asset } from '@prisma/client';
-import { handleAsset } from '../../../../pages/api/assets'
-import { prismaMock } from '../../../../singleton';
-import { mockReset } from 'jest-mock-extended';
-import { AssetListItem } from '../../../../libs/types';
 import { settings } from '../../../../libs/common';
+import handleAsset from '../../../../pages/api/assets/index'
+import { prismaMock } from '../../../../singleton';
 
-
-// let prisma: PrismaClient;
-
-beforeEach(async () => {
-  mockReset(prismaMock);
-});
-
-afterEach(async () => {
-  // await prismaMock.authToken.deleteMany({});
-  // await prismaMock.$disconnect();
-})
 
 describe('Assets GET, POST', () => {
 
@@ -71,10 +57,9 @@ describe('Assets GET, POST', () => {
     prismaMock.category.findUnique.mockResolvedValue({ path: "2/1" } as any);
     prismaMock.asset.findMany.mockResolvedValue(mockAssetFindMany as any);
 
-    const mockedHandleAsset = handleAsset(prismaMock);
     const { req, res } = createMocks({ method: 'GET', query: { cid: 3 } });
 
-    await mockedHandleAsset(req as any, res as any);
+    await handleAsset(req as any, res as any);
     expect(res._getStatusCode()).toBe(200);
     const reData = res._getJSONData()
     expect(reData).toEqual(excpet_result);  // 請根據你的預期回應做調整
@@ -106,10 +91,9 @@ describe('Assets GET, POST', () => {
     prismaMock.asset.create.mockResolvedValue({
       id: "test",
       name: "test",
-      representations: [{ path: "" },],
       category: {
         name: "No Category",
-        path: "3",
+        path: "1",
       },
       createAt: the_data,
       updateAt: null,
@@ -120,19 +104,19 @@ describe('Assets GET, POST', () => {
     const exceptAssetData = {
       id: "test",
       name: "test",
-      representations: [{ path: "" },],
       category: {
         name: "No Category",
-        path: "3",
+        path: "1",
       },
-      createAt: the_data,
+      createAt: the_data.toISOString(),
+      creatorId: "admin",
       updateAt: null,
     };
 
     const { req, res } = createMocks(
-      { method: 'POST', headers: { authorization: "token-123456" }, body: { name: 'test', categoryId: 3 } });
-    const mockedHandleAsset = handleAsset(prismaMock);
-    await mockedHandleAsset(req as any, res as any);
+      { method: 'POST', headers: { authorization: "token-123456" }, body: { name: 'test', categoryId: 1 } });
+
+    await handleAsset(req as any, res as any);
     expect(res._getStatusCode()).toBe(200);
     expect(res._getJSONData()).toEqual(exceptAssetData);
   });

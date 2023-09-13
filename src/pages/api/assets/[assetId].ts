@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Asset } from '@prisma/client';
 import { RepresentationType } from '@prisma/client';
-import { prisma } from '../../../libs/server/prisma';
+import prisma from '../../../client';
 import util from '../../../utility/util';
 import { AssetDetails } from '../../../libs/types';
 
@@ -56,10 +56,9 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
       ...selectField
     }
   )
-  if (asset !== null) {
-    const assetIds: string[] = assetId ? [assetId] : ['']
+  if (Boolean(asset)) {
     const categories = await prisma.category.findMany({ select: { id: true, parentId: true, name: true } })
-    const representations = await prisma.representation.findMany({ where: { assetId: { in: assetIds } } })
+    const representations = await prisma.representation.findMany({ where: { assetId: assetId} })
 
     type Category = {
       id: number,
@@ -82,17 +81,17 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
       else
         return newList == null ? "" : newList;
     };
-    const categoryList = getCategoryList(asset.categoryId, "")
+    const categoryList = getCategoryList(asset!.categoryId, "")
 
     const assetReturn: AssetDetails = {
-      id: asset.id,
+      id: asset!.id,
       preview: "",
-      name: asset.name,
+      name: asset!.name,
       categoryList: categoryList,
-      updateAt: asset.updateAt,
-      createAt: asset.createAt,
-      creator: asset.creator.name,
-      tags: asset.tags,
+      updateAt: asset!.updateAt,
+      createAt: asset!.createAt,
+      creator: asset!.creator.name,
+      tags: asset!.tags,
       renders: new Array(),
       downloads: new Array(),
     }
@@ -129,6 +128,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     });
 
     res.status(200).json(assetReturn)
+    return;
   }
   res.status(404).json({ message: "Asset not found" })
 }

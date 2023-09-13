@@ -1,11 +1,10 @@
 import bcrypt from 'bcrypt';
-import { prisma } from './prisma';
 import { PrismaClient, User } from '@prisma/client'
 import { settings } from '../common';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextRequest } from 'next/server';
 import { LoginParams, LoginResponse, UserDisplayInfo } from '../types';
-
+import  prisma from '../../client';
 
 type IAuthToken = {
   id: string;
@@ -145,26 +144,25 @@ export function getToken(req: NextApiRequest): string {
 
 
 // next-connect middleware
-export const authenticateUserWrap = (prismaInst: PrismaClient) => {
-  async function authenticateUser(req: NextApiRequest, res: NextApiResponse, next: any) {
-    console.log('Entering authenticateUser')
-    const token = req.headers.authorization?.replace("Bearer ", "");
-    if (Boolean(token)) {
-      // 用 token 查詢 authToken 資料表，找到對應的使用者
-      const authTokenObj = await prismaInst.authToken.findUnique(
-        {
-          where: { id: token },
-          include: { user: true }
-        });
-      // 將 user 資訊附加到 req 物件上
-      (req as any).user = authTokenObj ? authTokenObj.user : null;
-      console.log('Exist authenticateUser')
-    }
-    else {
-      (req as any).user = null;
-      console.log('Exist authenticateUser: No token')
-    };
-    next();
+
+export async function authenticateUser(req: NextApiRequest, res: NextApiResponse, next: any) {
+  console.log('Entering authenticateUser')
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (Boolean(token)) {
+    // 用 token 查詢 authToken 資料表，找到對應的使用者
+    const authTokenObj = await prisma.authToken.findUnique(
+      {
+        where: { id: token },
+        include: { user: true }
+      });
+    // 將 user 資訊附加到 req 物件上
+    (req as any).user = authTokenObj ? authTokenObj.user : null;
+    console.log('Exist authenticateUser')
   }
-  return authenticateUser
+  else {
+    (req as any).user = null;
+    console.log('Exist authenticateUser: No token')
+  };
+  next();
 }
+

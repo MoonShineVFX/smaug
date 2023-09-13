@@ -1,16 +1,4 @@
 import { z } from 'zod';
-import { prisma } from './prisma';
-
-
-export const categoryIdSchema = z.number().refine(async (id) => {
-  const category = await prisma.category.findUnique({
-    where: { id },
-  });
-
-  return Boolean(category); // 如果 category 存在，則返回 true，否則返回 false
-}, {
-  message: "The provided categoryId does not exist in the database.", // 錯誤消息
-});
 
 
 export const UserTypeSchema = z.union([
@@ -72,15 +60,15 @@ export const representationUpdateSchema = z.object({
 
 export const assetCreateSchema = z.object({
   name: z.string().min(1).max(255),
-  categoryId: categoryIdSchema,
-  tags: z.array(z.string()).optional(),
+  categoryId: z.number().optional().default(1),
+  tags: z.array(z.string()).optional().default([]),
 });
 
 
 export const assetUpdateSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(255).optional(),
-  categoryId: categoryIdSchema,
+  categoryId: z.number().optional(),
   representation: z.array(representationUpdateSchema).optional(),
   tags: z.array(z.string()).optional(),
 });

@@ -1,26 +1,52 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { createRouter } from 'next-connect';
 import type { Category } from '@prisma/client';
-import { prisma } from '../../../libs/server/prisma';
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { authenticateUser } from '../../../libs/server/auth';
+import prisma from '../../../client';
 
 
-export default async function handlerCategories(req: NextApiRequest, res: NextApiResponse<Category | Category[] | any>): Promise<void> {
+const router = createRouter<NextApiRequest, NextApiResponse>()
 
-  if (req.method === undefined) {
-    res.status(405).json({ message: "Method not allowed" })
-    return;
+router.use(authenticateUser);
+
+router.get(async (req, res) => {
+  console.log("into category api router.get")
+  return await handleGet(req, res);
+});
+router.post(async (req, res) => {
+  console.log("into category api router.post")
+  return await handlePost(req, res);
+});
+
+router.all((req, res) => {
+  console.log("into category api router.all")
+  res.status(405).json({ message: "Method not allowed" })
+});
+
+// export default async function handlerCategories(req: NextApiRequest, res: NextApiResponse<Category | Category[] | any>): Promise<void> {
+
+//   if (req.method === undefined) {
+//     res.status(405).json({ message: "Method not allowed" })
+//     return;
+//   }
+//   switch (req.method) {
+//     case 'GET':
+//       await handleGet(req, res);
+//       break;
+//     case 'POST':
+//       await handlePost(req, res);
+//       break;
+//     default:
+//       res.status(405).json({ message: "Method not allowed" })
+//   }
+
+// }
+
+export default router.handler({
+  onError: (err, req, res) => {
+    res.status(500).json({ message: (err as Error).message })
   }
-  switch (req.method) {
-    case 'GET':
-      await handleGet(req, res);
-      break;
-    case 'POST':
-      await handlePost(req, res);
-      break;
-    default:
-      res.status(405).json({ message: "Method not allowed" })
-  }
-
-}
+});
 
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse<Category[] | any>): Promise<void> {
@@ -87,6 +113,11 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Category[] | 
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse<Category[] | any>): Promise<void> {
   if (!req.headers) {
+    res.status(401).json({ message: "Unauthorized" })
+    return
+  }
+
+  if(req.user === null) {
     res.status(401).json({ message: "Unauthorized" })
     return
   }

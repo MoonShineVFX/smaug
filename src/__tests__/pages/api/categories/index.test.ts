@@ -1,25 +1,14 @@
 import { createMocks } from 'node-mocks-http';
-import { PrismaClient, Category } from '@prisma/client';
 import handlerCategories from '../../../../pages/api/categories'
+import { prismaMock } from '../../../../singleton'
 
-
-let prisma: PrismaClient;
-
-beforeEach(async () => {
-  prisma = new PrismaClient();
-});
-
-afterEach(async () => {
-  await prisma.authToken.deleteMany({});
-  await prisma.$disconnect();
-})
 
 describe('Categories API', () => {
 
   test('return categories list', async () => {
     const { req, res } = createMocks({ method: 'GET' });
 
-    await handlerCategories(req, res);
+    await handlerCategories(req as any, res as any);
     expect(res._getStatusCode()).toBe(200);
   })
 

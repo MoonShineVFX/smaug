@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '../../../libs/server/prisma';
+import prisma from '../../../client';
 import { MenuListItem } from '../../../libs/types';
 
 

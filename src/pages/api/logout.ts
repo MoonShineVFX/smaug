@@ -1,6 +1,6 @@
-import { prisma } from '../../libs/server/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getToken } from '../../libs/server/auth'
+import prisma from '../../client'
 
 // 清掉 token
 export default async function handlerLogout(
