@@ -2,7 +2,7 @@ import { createMocks } from 'node-mocks-http';
 import { PrismaClient, Asset } from '@prisma/client';
 import { prismaMock } from '../../../../singleton';
 import { mockReset } from 'jest-mock-extended';
-import { handleAsset } from '../../../../pages/api/assets'
+import handleAsset from '../../../../pages/api/assets/[assetId]'
 
 
 let prisma: PrismaClient;
@@ -15,10 +15,10 @@ afterEach(async () => {
   // pass
 })
 
-describe('Assets API', () => {
+describe('Assets Detail API', () => {
 
-  test('return asset detail', async () => {
-    
+  test('asset detail', async () => {
+
     prismaMock.asset.findMany.mockResolvedValue([]);
     const { req, res } = createMocks({
       method: 'GET',

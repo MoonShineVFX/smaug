@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect';
 import type { Asset, PrismaClient } from '@prisma/client';
 import { RepresentationType, Prisma } from '@prisma/client';
-import { authenticateUser } from '../../../libs/server/auth';
+import { authenticateUserWrap } from '../../../libs/server/auth';
 import { prisma } from '../../../libs/server/prisma';
 import { AssetListItem } from '../../../libs/types';
 import { settings } from '../../../libs/common';
@@ -20,7 +20,7 @@ export const config = {
 // Make prisma client is dependency injection
 export const handleAsset = (prismaInst: PrismaClient) => {
   const router = createRouter<NextApiRequest, NextApiResponse>()
-  router.use(authenticateUser);
+  router.use(authenticateUserWrap(prismaInst));
   router.get(async (req, res) => {
     return await handleGet(req, res);
   });
@@ -118,9 +118,14 @@ export const handleAsset = (prismaInst: PrismaClient) => {
     }
     else {
       const AssetReturnItems: AssetListItem[] = assets.map((asset) => {
-        let path;
+        let path: string;
         try {
-          path = `${settings.RESOURCE_URL}/${asset.representations[0].path}`;
+          if (asset.representations[0].path === "") {
+            path = "/no-image.jpg";
+          }
+          else {
+            path = `${settings.RESOURCE_URL}/${asset.representations[0].path}`;
+          }
         } catch (error) {
           path = "/no-image.jpg";
         };
@@ -149,7 +154,7 @@ export const handleAsset = (prismaInst: PrismaClient) => {
     }
 
     const currentUser = (req as any).user;
-    const valied_body = assetCreateSchema.parse(req.body);
+    const valied_body = await assetCreateSchema.parseAsync(req.body);
     const { name, categoryId, tags } = valied_body;
 
     // 驗證 tags 中所有的 UUID 都存在於資料庫中
@@ -175,8 +180,13 @@ export const handleAsset = (prismaInst: PrismaClient) => {
     const createdAsset = await prismaInst.asset.create({
       data: assetCreateData
     });
-
-    res.status(200).json(createdAsset);
+    const cleanAsset = JSON.parse(JSON.stringify(createdAsset));
+    try { res.status(200).json(cleanAsset); }
+    catch (error) {
+      console.log(error)
+      res.status(500).json({ message: "Internal Server Error" })
+    }
+    return;
   }
 
   const routerHandler = router.handler({
