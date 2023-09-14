@@ -2,6 +2,7 @@ import { createMocks } from 'node-mocks-http';
 import { settings } from '../../../../libs/common';
 import handleAsset from '../../../../pages/api/assets/index'
 import { prismaMock } from '../../../../singleton';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 
 describe('Assets GET, POST', () => {
@@ -59,13 +60,14 @@ describe('Assets GET, POST', () => {
 
     const { req, res } = createMocks({ method: 'GET', query: { cid: 3 } });
 
-    await handleAsset(req as any, res as any);
+    await handleAsset(req as unknown as NextApiRequest, res as unknown as NextApiResponse);
     expect(res._getStatusCode()).toBe(200);
     const reData = res._getJSONData()
     expect(reData).toEqual(excpet_result);  // 請根據你的預期回應做調整
   });
 
   test('create Asset', async () => {
+
     prismaMock.authToken.findUnique.mockResolvedValue(
       {
         id: "token-123456",

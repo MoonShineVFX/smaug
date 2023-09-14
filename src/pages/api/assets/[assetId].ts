@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Asset } from '@prisma/client';
 import { RepresentationType } from '@prisma/client';
 import prisma from '../../../client';
-import util from '../../../utility/util';
+import util from '../../../utils/util';
 import { AssetDetails } from '../../../libs/types';
 
 
@@ -58,7 +58,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
   )
   if (Boolean(asset)) {
     const categories = await prisma.category.findMany({ select: { id: true, parentId: true, name: true } })
-    const representations = await prisma.representation.findMany({ where: { assetId: assetId} })
+    const representations = await prisma.representation.findMany({ where: { assetId: assetId } })
 
     type Category = {
       id: number,

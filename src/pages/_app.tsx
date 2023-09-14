@@ -8,11 +8,13 @@ import * as React from 'react';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import Main from '../components/Layout/Main'
-import createEmotionCache from '../utility/createEmotionCache';
+import createEmotionCache from '../utils/createEmotionCache';
 import darkThemeOptions from '../styles/theme/darkThemeOptions';
 import Head from 'next/head'
 import { RecoilRoot } from 'recoil';
 import { AuthProvider } from '../context/authContext';
+import type { AppType } from 'next/app';
+import { trpc } from '../utils/trpc';
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -58,4 +60,4 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
   );
 };
 
-export default MyApp;
+export default trpc.withTRPC(MyApp);
