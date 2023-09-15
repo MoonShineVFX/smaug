@@ -1,6 +1,7 @@
 
 import { z } from 'zod';
-import { publicProcedure, router } from '../../server/trpc';
+import { publicProcedure, router } from '../trpc';
+import { menuRouter } from './menu';
 
 export const appRouter = router({
   hello: publicProcedure
@@ -15,6 +16,8 @@ export const appRouter = router({
         greeting: `hello ${opts.input.text}`,
       };
     }),
+
+  menu: menuRouter,
 });
 
 // Export only the type of a router!
