@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { publicProcedure, router } from '../trpc';
+import { publicProcedure, router } from '../../server/trpc';
 
 export const appRouter = router({
   hello: publicProcedure
@@ -10,6 +10,7 @@ export const appRouter = router({
       }),
     )
     .query((opts) => {
+      console.log(Object.keys(opts.ctx))
       return {
         greeting: `hello ${opts.input.text}`,
       };
