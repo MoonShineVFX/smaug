@@ -1,6 +1,6 @@
 import { UserDisplayInfo } from "../types";
 
-async function loginHandler(username: string, password: string): Promise<UserDisplayInfo | null> {
+export async function loginHandler(username: string, password: string): Promise<UserDisplayInfo | null> {
 
   const authString = `${username}:${password}`;
   const encodedAuthString = Buffer.from(authString).toString('base64');
@@ -29,7 +29,11 @@ async function loginHandler(username: string, password: string): Promise<UserDis
   }
 }
 
-export { loginHandler }
+export function toAuthBase64(username: string, password: string): string {
+  const authString = `${username}:${password}`;
+  const encodedAuthString = Buffer.from(authString).toString('base64');
+  return encodedAuthString;
+}
 
 
 

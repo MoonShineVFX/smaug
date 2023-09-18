@@ -7,11 +7,13 @@ import { publicProcedure, router } from '../trpc';
 
 export const authRouter = router({
   login: publicProcedure
-    .input(z.object({ username: z.string(), password: z.string() }))
+    .input(z.object({ authorization: z.string() }))
     .mutation(async (opts) => {
-      const { ctx } = opts;
-      const { username, password } = opts.input;
-      const loginResponse = await authenticate({ username: username, password: password })
+      const {ctx} = opts;
+      const { authorization } = opts.input;
+      const credentials = Buffer.from(authorization, 'base64').toString('ascii');
+      const [username, password] = credentials.split(':');
+      const loginResponse = await authenticate({ username: username, password: password });
       if (loginResponse) {
         // 在這裡設置 cookie
         const serializedCookie = cookie.serialize('authToken', loginResponse.token, {
@@ -22,7 +24,7 @@ export const authRouter = router({
           maxAge: 3600,
         });
         ctx.res.setHeader('Set-Cookie', serializedCookie);
-        return loginResponse.user;
+        return {user :loginResponse.user};
       }
       else {
         throw new Error("invalid username or password")

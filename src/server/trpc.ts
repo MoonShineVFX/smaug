@@ -1,3 +1,4 @@
+import superjson from 'superjson';
 import { initTRPC, TRPCError } from '@trpc/server';
 import type { Context } from './context';
 
@@ -5,7 +6,9 @@ import type { Context } from './context';
  * Initialization of tRPC backend
  * Should be done only once per backend!
  */
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create(
+  { transformer: superjson,}
+);
 
 const isAuthed = t.middleware((opts) => {
     const { ctx } = opts;

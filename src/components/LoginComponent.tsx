@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef, RefObject } from "react";
 import { Alert, Paper, Popper, Snackbar, Stack, TextField } from "@mui/material";
-import useSWR from "swr";
+import { trpc } from '../utils/trpc';
 import { UserDisplayInfo } from "../libs/types";
+
 import { OutLineButton } from "./basic";
 
 
@@ -79,37 +80,22 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
 
-  const fetcher = (apiUrl: string, encodedAuthString: string | null) => fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Basic ${encodedAuthString}`
-    }
-  }).then((res) => res.json());
-
-  const apiUrl = '/api/login'
-  const { data: userDisplayInfo, error, isLoading } = useSWR(
-    encodedAuthString ? apiUrl : null,
-    () => fetcher(apiUrl, encodedAuthString),
-    {
-      shouldRetryOnError: false,
-      revalidateOnFocus: false
-    });
+  const loginMutation = trpc.auth.login.useMutation();
 
   useEffect(
     () => {
-      if (userDisplayInfo) {
-        loginUser(userDisplayInfo);
+      if (loginMutation.data) {
+        loginUser(loginMutation.data.user);
         setOpenLoginDialog(false);
       }
     }
-    , [userDisplayInfo]
+    , [loginMutation.data]
   );
   useEffect(() => {
-    if (error) {
+    if (loginMutation.error) {
       setIsErrorSnackbarOpen(true);
     }
-  }, [error]);
+  }, [loginMutation.error]);
 
 
   const loginHandler = () => {
@@ -119,7 +105,9 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
     }
     const authString = `${username}:${password}`;
     const encodedAuthString = Buffer.from(authString).toString('base64');
-    setEncodedAuthString(encodedAuthString)
+    loginMutation.mutate({ authorization: encodedAuthString })
+    const user = loginMutation.data?.user;
+    if (user) { loginUser(user); setOpenLoginDialog(false); }
   };
 
   const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -131,7 +119,7 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
 
   return (
 
-    isLoading ?
+    loginMutation.isLoading ?
       <><div>loading...</div></>
       :
       <>
@@ -156,7 +144,7 @@ export default function LoginComponent({ loginUser }: LoginComponentProps): JSX.
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  // 顯示在頂部中央
         >
           <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
-            {error?.message || "An error occurred!"}
+            {loginMutation.error?.message || "An error occurred!"}
           </Alert>
         </Snackbar>
       </>
