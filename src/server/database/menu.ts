@@ -46,3 +46,5 @@ export async function detail(id: string): Promise<MenuListItem> {
     throw new Error(err)
   }
 }
+
+

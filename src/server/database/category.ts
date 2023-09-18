@@ -1,22 +1,44 @@
 
 import prisma from '../../client';
 import { Prisma, Category } from '@prisma/client';
+import { MenuWithCategoriesResponse, CategoryTree } from '../../libs/types';
 
-type CategoryRecord = Pick<Category, 'id' | 'name' | 'parentId'>;
+export async function create(menuId: string, categoryName: string): Promise<Category> {
+  try {
+    const category = await prisma.category.create({
+      data: {
+        menuId: menuId,
+        name: categoryName,
+        createAt: new Date(),
+      },
+    })
+    return category
+  } catch (err: any) {
+    throw new Error(err)
+  }
+}
 
-export async function getByMenu(menuId: string): Promise<CategoryRecord[]> {
+
+// get By Menu Id
+
+export async function getByMenuId(menuId: string): Promise<Category[]> {
+  // get menu
+  const menu = await prisma.menu.findUnique({
+    where: {
+      id: menuId
+    },
+  })
+
+  if (!menu || menu.isDeleted || !menu.isVisible) {
+    throw new Error("Menu Categories not found")
+  }
   const returnField: Prisma.CategorySelect = {
     id: true,
     name: true,
     parentId: true
   }
-  // let queryFilter = {
-  //   where: {
-  //     AND: {} as { [key: string]: { equals: Boolean | string; } }
-  //   }
-  // };
 
-  const queryFilter = {
+  let queryFilter = {
     where: {
       AND: {
         isDeleted: { equals: false },
@@ -25,26 +47,13 @@ export async function getByMenu(menuId: string): Promise<CategoryRecord[]> {
       }
     }
   }
-  const categroies = await prisma.category.findMany(
+
+  const categories = await prisma.category.findMany(
     {
       ...queryFilter,
-      select: returnField,
+      select: returnField
     }
   )
 
-  return categroies
-}
-
-
-export async function create(categoryName: string): Promise<Category> {
-  try {
-    const category = await prisma.category.create({
-      data: {
-        name: categoryName,
-      },
-    })
-    return category
-  } catch (err: any) {
-    throw new Error(err)
-  }
+  return categories
 }
