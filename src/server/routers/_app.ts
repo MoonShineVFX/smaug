@@ -1,6 +1,7 @@
 
 import { z } from 'zod';
 import { publicProcedure, router } from '../trpc';
+import { authRouter }from './auth';
 import { menuRouter } from './menu';
 
 export const appRouter = router({
@@ -16,7 +17,7 @@ export const appRouter = router({
         greeting: `hello ${opts.input.text}`,
       };
     }),
-
+  auth: authRouter,
   menu: menuRouter,
 });
 

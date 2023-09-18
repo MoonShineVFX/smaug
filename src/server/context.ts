@@ -14,8 +14,11 @@ export async function createContext({ req, res, }: trpcNext.CreateNextContextOpt
     }
     return null;
   }
+  
   const user = await getUserFromHeader();
   return {
+    req, 
+    res,
     user,
   };
 }
