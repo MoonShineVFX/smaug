@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 
 const isLoginRoute = (pathname: string) => {
-  return pathname.startsWith('/api/login');
+  return pathname.startsWith('/api/login') ||
+    pathname.startsWith('/api/trpc/auth.login');
 }
 
 
@@ -13,12 +14,13 @@ export async function middleware(req: NextRequest) {
   const res = new NextResponse()
   if (isLoginRoute(req.nextUrl.pathname)) {
     return NextResponse.rewrite(req.nextUrl)
-
   }
+
   if (!(['POST', 'PATCH', 'DELETE', 'OPTIONS'].includes(req.method))) {
+
     return NextResponse.rewrite(req.nextUrl)
   }
-  // login routes are public
+  // login r}outes are public
   // GET method are public, limit are applyed in the each api routes
 
   const auth_str = req.headers.get('authorization')
@@ -35,8 +37,6 @@ export async function middleware(req: NextRequest) {
       JSON.stringify({ 'error': { message: 'authentication required' } }),
       { status: 401 });
   }
-
-  // const user = await verifyToken(req);
 
 }
 
