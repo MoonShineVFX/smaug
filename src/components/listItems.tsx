@@ -19,7 +19,12 @@ import useSWR from "swr";
 import Icon from '@mui/material/Icon';
 import NextLink from 'next/link'
 import { Link as MUILink } from '@mui/material';
-const fetcher = (url) => fetch(url).then((r) => r.json());
+import { trpc } from '../utils/trpc';
+
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+
 interface typesListData {
   id: string;
   title: string;
@@ -54,16 +59,16 @@ interface ICollapseTree {
   isVisible?: boolean | undefined;
 }
 interface IChild {
-  id: string;
+  id: number;
   name: string;
   children?: IChild[];
 }
 const CollapseTree = ({ child, open, isVisible }: ICollapseTree) => {
   const router = useRouter();
-  const [subOpen, setSubOpen] = React.useState('');
-  const handleClick = (id: string) => {
+  const [subOpen, setSubOpen] = useState(0);
+  const handleClick = (id: number) => {
     if (subOpen === id) {
-      setSubOpen('')
+      setSubOpen(id)
       return
     }
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
@@ -91,20 +96,18 @@ const CollapseTree = ({ child, open, isVisible }: ICollapseTree) => {
                 >
                   <ListItemText primary={child.name} />
                 </ListItemButton>
-                {subOpen === child.id ? <CollapseTree child={child.children} open={true} isVisible={subOpen} /> : <></>}
+                {subOpen === child.id ? <CollapseTree child={child.children} open={true} isVisible={Boolean(subOpen)} /> : <></>}
               </Box>
-
             )
           })
         }
-
       </List>
     </Collapse>
 
   )
 }
 interface ICustomListWithCollapse {
-  mainMenuData?: ImainMenuData
+  mainMenuData: ImainMenuData
 }
 interface ImainMenuData {
   id: string;
@@ -121,29 +124,28 @@ const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
   const handleClick = () => {
     setOpen(!open);
   };
-  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/menuTree?id=${mainMenuData.id}`] : null, fetcher);
+  const menuTreeQry = trpc.menus.categories.useQuery({ menuId: mainMenuData.id });
 
-  if (!mainOptionsListItem) return <div>Loading</div>
+  if (menuTreeQry.isLoading) return <div>Loading</div>
+  if (menuTreeQry.error) return <div>Error</div>
   return (
     <>
       {
-        mainOptionsListItem.message === 'Menu Categories not found' ?
-          <></>
-          :
-          <CustomerNav >
-            <ListItemButton onClick={handleClick}>
-              <ListItemIcon >
-                <Icon>{mainOptionsListItem.iconName}</Icon>
-              </ListItemIcon>
+        menuTreeQry.isSuccess &&
+        <CustomerNav >
+          <ListItemButton onClick={handleClick}>
+            <ListItemIcon >
+              <Icon>{menuTreeQry.data.menuTree.iconName}</Icon>
+            </ListItemIcon>
 
-              <ListItemText primary={mainOptionsListItem.name} />
-              {/* <NextLink href={`${mainOptionsListItem.name.toLowerCase()}?menuTreeId=${mainOptionsListItem.id}`} passHref style={{ textDecoration: 'none' }}>
+            <ListItemText primary={menuTreeQry.data.menuTree.name} />
+            {/* <NextLink href={`${mainOptionsListItem.name.toLowerCase()}?menuTreeId=${mainOptionsListItem.id}`} passHref style={{ textDecoration: 'none' }}>
                 <MUILink variant="body2"  underline="none" sx={{color:'white',fontSize:'1rem'}} >{mainOptionsListItem.name}</MUILink>
             </NextLink> */}
 
-            </ListItemButton>
-            <CollapseTree child={mainOptionsListItem.children} open={open} isVisible={false} />
-          </CustomerNav>
+          </ListItemButton>
+          <CollapseTree child={menuTreeQry.data.menuTree.children} open={open} isVisible={false} />
+        </CustomerNav>
       }
     </>
   )
@@ -163,7 +165,7 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
   const handleClick = () => {
     setOpen(!open);
   };
-  const handleTagClick = (id) => {
+  const handleTagClick = (id: string) => {
     console.log('click')
     router.push({ pathname: '/tags', query: { id } }, undefined, { shallow: true });
   }

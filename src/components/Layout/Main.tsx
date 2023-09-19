@@ -20,8 +20,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgress from '@mui/material/LinearProgress';
 import NextLink from 'next/link'
 import { Link as MUILink } from '@mui/material';
-import useSWR from "swr";
+// import useSWR from "swr";
 import { MenuListItem } from '../../libs/types';
+import { trpc } from '../../utils/trpc';
 
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
@@ -71,13 +72,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function Main({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
-  const [mainListItem, setMainListItem] = useState({});
+  // const [mainListItem, setMainListItem] = useState({});
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const { data: menuListItems } = useSWR<MenuListItem[]>('/api/menus', fetcher);
-  if (!menuListItems) return <div>Loading</div>
-  console.log(menuListItems)
+  // const { data: menuList } = useSWR<MenuListItem[]>('/api/menus', fetcher);
+  const menuListQry = trpc.menus.all.useQuery();
+  if (menuListQry.isLoading || !menuListQry.isSuccess) return <div>Loading</div>
+  if (menuListQry.error) return <div>Error</div>
+  console.log(menuListQry.data.menus)
   // useEffect(()=>{
   //   async function getMenus() {
   //     const menus = await fetchData('/api/menus');
@@ -145,7 +148,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
 
         <List component="nav" >
           {
-            menuListItems.map((item: MenuListItem, index) => {
+            menuListQry.data.menus.map((item: MenuListItem, index) => {
               const { id, name } = item
               return name === 'Tags' ? <TagListItems key={index} mainMenuData={item} /> : <MainListItems key={index} mainMenuData={item} />
 

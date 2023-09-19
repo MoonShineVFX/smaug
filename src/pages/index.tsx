@@ -7,11 +7,13 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 import { useRouter } from "next/router";
-import useSWR from "swr";
-import { MenuListItem, MenuWithCategoriesResponse } from '../libs/types';
+// import useSWR from "swr";
+// import { MenuListItem, MenuWithCategoriesResponse } from '../libs/types';
+import { trpc } from '../utils/trpc';
 
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+// const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
   ...theme.typography.body2,
@@ -28,17 +30,35 @@ const Item = styled(Paper)(({ theme }) => ({
   },
 }));
 export default function Index() {
-  const [currentModel, setCurrentModel] = useRecoilState(modelState);
+  // const [currentModel, setCurrentModel] = useRecoilState(modelState);
   const model = useRecoilValue(modelState);
   const router = useRouter();
-  const handleClick = (id: string) => {
+  const [menuId, setMenuId] = useState('');
 
+  const handleClick = (id: number) => {
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
   }
-  const { data: menuListItems } = useSWR<MenuListItem[]>('/api/menus', fetcher);
-  if (!menuListItems) return <div>Error!!</div>
-  const { data: mainOptionsListItem } = useSWR<MenuWithCategoriesResponse>(`/api/menuTree?id=${menuListItems[0].id}`, fetcher); // 拿第一個選單
-  if (!mainOptionsListItem) return <div>Loading</div>
+  // const { data: menuListItems } = useSWR<MenuListItem[]>('/api/menus', fetcher);
+  const menuListItemsQry = trpc.menus.all.useQuery();
+
+  // const firstMenu = menuListItemsQry.data.menus[0]
+  const menuTreeQry = trpc.menus.categories.useQuery({ menuId: menuId });
+
+  useEffect(() => {
+    if (menuListItemsQry.isSuccess && menuListItemsQry.data.menus.length > 0) {
+      setMenuId(menuListItemsQry.data.menus[0].id); // 更新 state 變量
+    }
+  }, [menuListItemsQry.isSuccess, menuListItemsQry.data]);
+
+  if (menuListItemsQry.error) {
+    return (<div>Error!!</div>)
+  }
+  if (!menuListItemsQry.isSuccess) {
+    return (<div>Loading</div>)
+  }
+
+  if (menuTreeQry.isLoading) return <div>Loading</div>
+  if (menuTreeQry.error) return <div>Error</div>
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 5 }} >
@@ -49,7 +69,7 @@ export default function Index() {
         </Box>
 
         <Grid container sx={{ pt: 5 }} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          {mainOptionsListItem.children.map((item, index) => {
+          {menuTreeQry.data.menuTree.children.map((item, _index) => {
             return (
               <Grid xs={2} sm={4} md={4} key={item.id}
                 sx={{
