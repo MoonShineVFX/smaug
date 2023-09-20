@@ -37,7 +37,8 @@ const ViewIconButton = styled(Button)<Props>((ViewIconButtonProps) => ({
   })
 }));
 
-export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
+
+export default function ModelDrawer({ assetItem, open }) {
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();

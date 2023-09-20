@@ -76,4 +76,5 @@ export async function assetDetail(assetId: string) {
     }
   });
 
+  return assetReturn;
 }

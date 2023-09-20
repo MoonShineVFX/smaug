@@ -15,6 +15,26 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import ModelDrawer from '../components/ModelDrawer';
 import { AssetListItem, AssetDetails } from '../libs/types';
+import { trpc } from '../utils/trpc'
+
+
+function processInput<T>(input: T | T[] | undefined): string | number {
+  if (Array.isArray(input)) {
+    // 假設取第一個元素來處理
+    input = input[0];
+  }
+  if (input === undefined) {
+    return "undefined";
+  }
+
+  const numberValue = parseInt(input as unknown as string);
+
+  if (isNaN(numberValue)) {
+    return input as unknown as string;
+  }
+
+  return numberValue;
+}
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 const Item = styled(Paper)(({ theme }) => ({
@@ -32,16 +52,23 @@ const Item = styled(Paper)(({ theme }) => ({
     color: 'white'
   },
 }));
+
 export default function Home() {
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const router = useRouter();
+  const { categoryId, assetId } = router.query;
+
+  const safeCategoryId = processInput(categoryId);
+  const safeAssetId = processInput(assetId);
+
+
+  // const { data: assetListItems } = useSWR<AssetListItem[]>(categoryId ? [`/api/assets?cid=${categoryId}`] : null, fetcher);
+  // const { data: assetDetails } = useSWR<AssetDetails>(assetId ? [`/api/assets/${assetId}`] : null, fetcher);
+  const assetListQry = trpc.assets.list.useQuery({ categoryId: safeCategoryId as number });
+  const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeAssetId as string});
   const handleClick = (id: string) => {
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
   }
-  const { categoryId, assetId } = router.query;
-  const { data: assetListItems } = useSWR<AssetListItem[]>(categoryId ? [`/api/assets?cid=${categoryId}`] : null, fetcher);
-  const { data: assetDetails } = useSWR<AssetDetails>(assetId ? [`/api/assets/${assetId}`] : null, fetcher);
-
   // 暫時註解 若有需要再開
   // if(menuTreeId) {
   //   if(!mainOptionsListItem) return <div>Loading</div>
@@ -75,7 +102,7 @@ export default function Home() {
   // }
 
   //Loading
-  if (!assetListItems) return (
+  if (assetListQry.isLoading) return (
     <Grid container wrap="nowrap" sx={{ mx: 2, my: 2 }}>
       <Box sx={{ width: '20%', marginRight: 1, my: 5 }}>
         <Skeleton variant="rounded" width='100%' height={220} />
@@ -89,7 +116,7 @@ export default function Home() {
   return (
     <>
       {
-        assetId && <ModelDrawer open={showDrawer} assetItem={assetDetails} />
+        assetDetailQry.isSuccess && <ModelDrawer open={showDrawer} assetItem={assetDetailQry.data?.detail} />
       }
 
       <ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >

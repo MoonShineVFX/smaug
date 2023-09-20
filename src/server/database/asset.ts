@@ -26,7 +26,7 @@ export async function get(assetId: string) {
 }
 
 export async function listByCatrgory(categortId: number) {
-  const assetListReturn: Prisma.AssetSelect = {
+  const assetListReturn = {
     id: true,
     name: true,
     categoryId: true,
