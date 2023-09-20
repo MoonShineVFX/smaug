@@ -1,19 +1,31 @@
 import { Prisma, Asset } from "@prisma/client";
 import prisma from '../../client';
+import { fa } from "@faker-js/faker";
 
 
-export async function get(assetId: string): Promise<Asset | null> {
+export async function get(assetId: string) {
 
-  const asset = await prisma.asset.findUnique(
+  let asset = await prisma.asset.findUnique(
     {
       where: { id: assetId },
+      include: {
+        tags: true,
+        creator: true,
+        category: true,
+        representations: true,
+      }
     }
   )
+  if (!asset) {
+    return asset;
+  }
 
-  return asset;
+  // remove password
+  const { password, ...creatorWithoutPassword } = asset.creator;
+  return { ...asset, creator: creatorWithoutPassword };
 }
 
-export async function listByCatrgory(categortId: number): Promise<Asset[]> {
+export async function listByCatrgory(categortId: number) {
   const assetListReturn: Prisma.AssetSelect = {
     id: true,
     name: true,

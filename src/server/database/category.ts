@@ -20,7 +20,6 @@ export async function create(menuId: string, categoryName: string): Promise<Cate
 
 
 // get By Menu Id
-
 export async function getByMenuId(menuId: string): Promise<Category[]> {
   // get menu
   const menu = await prisma.menu.findUnique({
@@ -56,4 +55,15 @@ export async function getByMenuId(menuId: string): Promise<Category[]> {
   )
 
   return categories
+}
+
+
+export async function list(): Promise<Category[]>{
+  const categories = await prisma.category.findMany({
+    where: {
+      isDeleted: false
+    }
+  })
+  return categories;
+  
 }
