@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -10,11 +10,8 @@ import { experimentalStyled as styled } from '@mui/material/styles';
 import Skeleton from '@mui/material/Skeleton';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
-
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import ModelDrawer from '../components/ModelDrawer';
-import { AssetListItem, AssetDetails } from '../libs/types';
 import { trpc } from '../utils/trpc'
 
 
@@ -117,16 +114,16 @@ export default function Home() {
   return (
     <>
       {
-        assetDetailQry.isSuccess && <ModelDrawer open={showDrawer} assetItem={assetDetailQry.data.detail} />
+        assetDetailQry.isSuccess && <ModelDrawer openDrawer={showDrawer} setOpenDrawer={setShowDrawer} assetItem={assetDetailQry.data.detail} />
       }
 
-      (<ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
+      <ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
         <ImageListItem key="Subheader" cols={5}>
           <Typography variant="h5" sx={{ fontWeight: 'bolder', color: "#999", textTransform: "uppercase" }}>
             {assetListQry.data?.list[0]?.categoryName}
           </Typography>;
         </ImageListItem>
-        {assetListQry.data.list.map((item, _index) => {
+        {assetListQry.data?.list.map((item, _index) => {
           return (
             <ImageListItem key={item.id}
               sx={{
@@ -144,15 +141,13 @@ export default function Home() {
                 setTimeout(() => {
                   setShowDrawer(true);
                 }, 500)
-
               }
               }
             >
-              <img
-                src={item.preview item.preview}
-              alt={item.name}
-              loading="lazy"
-              style={{ borderRadius: "5px", objectFit: 'contain', aspectRatio: 1 / 1 }}
+              <img src={item.preview}
+                alt={item.name}
+                loading="lazy"
+                style={{ borderRadius: "5px", objectFit: 'contain', aspectRatio: 1 / 1 }}
 
               />
               <ImageListItemBar
@@ -165,15 +160,10 @@ export default function Home() {
                   display: 'none'
                 }}
               />
-
             </ImageListItem>
           )
-        }
-
-        )}
-      </ImageList>)
+        })}
+      </ImageList>
     </>
-
-
   )
 }

@@ -22,7 +22,8 @@ import { AssetDetailOutput } from '../libs/types';
 
 interface IModelDrawerProps {
   assetItem: AssetDetailOutput;
-  open: boolean;
+  openDrawer: boolean;
+  setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Props {
@@ -38,19 +39,21 @@ const ViewIconButton = styled(Button)<Props>((ViewIconButtonProps) => ({
 }));
 
 
-export default function ModelDrawer({ assetItem, open }: IModelDrawerProps) {
-  const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
+export default function ModelDrawer({ assetItem, openDrawer, setOpenDrawer }: IModelDrawerProps) {
+  // const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();
 
-
-  if (!assetItem) return <div>Loading</div>
+  if (!assetItem) {
+    setOpenDrawer(false)
+    return <></>
+  }
   console.log(assetItem)
 
   return (
     <Drawer
       anchor="right"
-      open={open}
+      open={openDrawer}
       variant="persistent"
       PaperProps={{
         sx: { width: '25%' }
@@ -85,7 +88,7 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawerProps) {
               {assetItem?.renders.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
             </ButtonGroup>
             <IconButton aria-label="close" onClick={() => {
-              setShowDrawer(false)
+              setOpenDrawer(false)
               setTimeout(() => {
                 router.query.assetId = [];
                 router.push(router)
@@ -103,9 +106,6 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawerProps) {
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
               </Box>
           }
-
-
-
         </div>
 
         <CardContent sx={{ backgroundColor: '#333', px: 3 }}>
@@ -156,6 +156,7 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawerProps) {
 
           </Box>
         </Box>
+
         <Box sx={{ pt: 3 }}>
           <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
             Resource
@@ -173,13 +174,7 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawerProps) {
           </Box>
         </Box>
 
-
-
-
-
       </Box>
-
-
     </Drawer>
   )
 }

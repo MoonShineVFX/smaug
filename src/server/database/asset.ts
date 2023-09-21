@@ -1,5 +1,6 @@
 import { Prisma, RepresentationType } from "@prisma/client";
 import prisma from '../../client';
+import { AssetListItem } from "../../libs/types";
 import { settings } from '../../libs/common';
 
 
@@ -25,7 +26,7 @@ export async function get(assetId: string) {
   return { ...asset, creator: creatorWithoutPassword };
 }
 
-export async function listByCategory(categortId: number) {
+export async function listByCategory(categortId: number): Promise<AssetListItem[]> {
   const category = await prisma.category.findUnique({
     where: {
       id: categortId
@@ -75,11 +76,11 @@ export async function listByCategory(categortId: number) {
   });
 
   if (assets.length === 0) {
-    return assets;
+    return [{}] as AssetListItem[];
   }
 
   //update download path
-  const AssetReturnItems = assets.map((asset) => {
+  const assetReturnItems: AssetListItem[] = assets.map((asset) => {
     let path: string;
     try {
       if (asset.representations[0].path === "") {
@@ -101,5 +102,5 @@ export async function listByCategory(categortId: number) {
       createAt: asset.createAt,
     }
   })
-  return assets;
+  return assetReturnItems;
 }

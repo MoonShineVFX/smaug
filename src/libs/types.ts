@@ -44,7 +44,7 @@ export interface LoginResponse {
 export interface AssetListItem {
   id: string
   name: string
-  preview: string | null
+  preview: string
   categoryName: string | null
   updateAt: Date | null
   createAt: Date
