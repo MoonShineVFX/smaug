@@ -53,6 +53,7 @@ const Item = styled(Paper)(({ theme }) => ({
   },
 }));
 
+
 export default function Home() {
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const router = useRouter();
@@ -65,7 +66,7 @@ export default function Home() {
   // const { data: assetListItems } = useSWR<AssetListItem[]>(categoryId ? [`/api/assets?cid=${categoryId}`] : null, fetcher);
   // const { data: assetDetails } = useSWR<AssetDetails>(assetId ? [`/api/assets/${assetId}`] : null, fetcher);
   const assetListQry = trpc.assets.list.useQuery({ categoryId: safeCategoryId as number });
-  const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeAssetId as string});
+  const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeAssetId as string });
   const handleClick = (id: string) => {
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
   }
@@ -116,16 +117,16 @@ export default function Home() {
   return (
     <>
       {
-        assetDetailQry.isSuccess && <ModelDrawer open={showDrawer} assetItem={assetDetailQry.data?.detail} />
+        assetDetailQry.isSuccess && <ModelDrawer open={showDrawer} assetItem={assetDetailQry.data.detail} />
       }
 
-      <ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
+      (<ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
         <ImageListItem key="Subheader" cols={5}>
           <Typography variant="h5" sx={{ fontWeight: 'bolder', color: "#999", textTransform: "uppercase" }}>
-            {assetListItems[0]?.categoryName}
+            {assetListQry.data?.list[0]?.categoryName}
           </Typography>;
         </ImageListItem>
-        {assetListItems.map((item, index) => {
+        {assetListQry.data.list.map((item, _index) => {
           return (
             <ImageListItem key={item.id}
               sx={{
@@ -148,10 +149,10 @@ export default function Home() {
               }
             >
               <img
-                src={item.preview === null ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : item.preview}
-                alt={item.name}
-                loading="lazy"
-                style={{ borderRadius: "5px", objectFit: 'contain', aspectRatio: 1 / 1 }}
+                src={item.preview item.preview}
+              alt={item.name}
+              loading="lazy"
+              style={{ borderRadius: "5px", objectFit: 'contain', aspectRatio: 1 / 1 }}
 
               />
               <ImageListItemBar
@@ -170,7 +171,7 @@ export default function Home() {
         }
 
         )}
-      </ImageList>
+      </ImageList>)
     </>
 
 

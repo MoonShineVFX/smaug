@@ -18,10 +18,10 @@ import { useRecoilState } from 'recoil';
 import { modelDrawerDisplayState } from '../atoms/fromTypes';
 import { styled } from "@mui/material/styles";
 
-import { AssetDetails } from '../libs/types';
+import { AssetDetailOutput } from '../libs/types';
 
-interface IModelDrawer {
-  assetItem?: AssetDetails;
+interface IModelDrawerProps {
+  assetItem: AssetDetailOutput;
   open: boolean;
 }
 
@@ -38,7 +38,7 @@ const ViewIconButton = styled(Button)<Props>((ViewIconButtonProps) => ({
 }));
 
 
-export default function ModelDrawer({ assetItem, open }) {
+export default function ModelDrawer({ assetItem, open }: IModelDrawerProps) {
   const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();

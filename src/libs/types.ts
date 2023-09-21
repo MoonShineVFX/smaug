@@ -1,4 +1,8 @@
 import { JsonValue } from 'type-fest';
+import type { inferRouterOutputs } from '@trpc/server';
+import type { AppRouter } from '../server/routers/_app';
+type RouterOutput = inferRouterOutputs<AppRouter>;
+export type AssetDetailOutput = RouterOutput['assets']['get']['detail'];
 
 export type UserDisplayInfo = {
   id: string;
