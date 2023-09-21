@@ -11,7 +11,7 @@ const menuReturnField: Prisma.MenuSelect = {
 }
 
 
-export async function get(): Promise<MenuListItem[]> {
+export async function get() {
   const menus = await prisma.menu.findMany({
     select: menuReturnField
   })
@@ -26,7 +26,7 @@ export async function get(): Promise<MenuListItem[]> {
 }
 
 
-export async function detail(id: string): Promise<MenuListItem> {
+export async function detail(id: string) {
   //   取得 menu detail, 但目前沒有用到 XD
 
   try {

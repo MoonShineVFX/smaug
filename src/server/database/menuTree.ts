@@ -1,10 +1,10 @@
-import { Category} from '@prisma/client';
+import { Category } from '@prisma/client';
 import prisma from '../../client';
 import { MenuWithCategoriesResponse, CategoryTree } from '../../libs/types';
-import { getByMenuId as cateByMenuId} from './category';
+import { getByMenuId as cateByMenuId } from './category';
 
 
-export async function menuTree(id: string): Promise<MenuWithCategoriesResponse> {
+export async function menuTree(id: string) {
   let menuId: string = id
   const menu = await prisma.menu.findUnique({
     where: {
