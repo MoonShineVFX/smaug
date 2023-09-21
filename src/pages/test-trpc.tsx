@@ -2,8 +2,8 @@ import { trpc } from '../utils/trpc';
 
 export default function IndexPage() {
   const hello = trpc.hello.useQuery({ text: 'client' });
-  const menus = trpc.menu.all.useQuery();
-  if (!hello.data||!menus.data) {
+  const menus = trpc.menus.all.useQuery();
+  if (!hello.data || !menus.data) {
     return <div>Loading...</div>;
   }
   return (
@@ -12,7 +12,7 @@ export default function IndexPage() {
         <p>{hello.data.greeting}</p>
       </div>
       <div>
-        <p>{menus.data.list[0].name}</p>
+        <p>{menus.data.menus[0].name}</p>
       </div>
     </>
   );
