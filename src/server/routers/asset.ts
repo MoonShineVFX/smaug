@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../trpc';
-import { listByCatrgory } from '../database/asset';
+import { listByCategory } from '../database/asset';
 import { assetDetail } from '../api/asset';
 
 export const assetRouter = router({
@@ -16,7 +16,7 @@ export const assetRouter = router({
     .input(z.object({ categoryId: z.number() }))
     .query(async (opts) => {
       const { categoryId } = opts.input
-      const assets = await listByCatrgory(categoryId)
+      const assets = await listByCategory(categoryId)
       return { list: assets }
     })
 }) 

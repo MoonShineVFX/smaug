@@ -1,6 +1,6 @@
-import { Category, RepresentationType } from '@prisma/client';
+import { Prisma, Category, RepresentationType } from '@prisma/client';
 import * as assetRepo from '../database/asset';
-import * as categortRepo from '../database/category';
+import * as categoryRepo from '../database/category';
 import util from '../../utils/util';
 
 const {
@@ -13,7 +13,7 @@ export async function assetDetail(assetId: string) {
   if (!asset) {
     return asset;
   }
-  const categories = await categortRepo.list();
+  const categories = await categoryRepo.list();
 
   const cate_dict: { [id: number]: Category; } = {};
   categories.forEach((cate, _index) => {
