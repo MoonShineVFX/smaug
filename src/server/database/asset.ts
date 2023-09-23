@@ -17,7 +17,7 @@ export async function get(assetId: string) {
       }
     }
   )
-  if (!asset) {
+  if (! asset) {
     return asset;
   }
 
@@ -76,7 +76,7 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
   });
 
   if (assets.length === 0) {
-    return [{}] as AssetListItem[];
+    return [] as AssetListItem[];
   }
 
   //update download path

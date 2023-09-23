@@ -3,32 +3,32 @@ import Typography from '@mui/material/Typography';
 import Header from '../Header';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Container from '@mui/material/Container';
+
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
+
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+
 import List from '@mui/material/List';
 import { MainListItems, TagListItems, MemberListItems } from '../listItems';
-import { fetchData } from '../../libs/client/fetchFunction';
-import CircularProgress from '@mui/material/CircularProgress';
-import LinearProgress from '@mui/material/LinearProgress';
+
+
 import NextLink from 'next/link'
 import { Link as MUILink } from '@mui/material';
 // import useSWR from "swr";
 import { MenuListItem } from '../../libs/types';
 import { trpc } from '../../utils/trpc';
+import { OpenWithRounded } from '@mui/icons-material';
 
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+// const fetcher = (url: string) => fetch(url).then((r) => r.json());
 const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open', })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
@@ -70,25 +70,19 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+
 export default function Main({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
-  // const [mainListItem, setMainListItem] = useState({});
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  // const { data: menuList } = useSWR<MenuListItem[]>('/api/menus', fetcher);
+
   const menuListQry = trpc.menus.all.useQuery();
   if (menuListQry.isLoading || !menuListQry.isSuccess) return <div>Loading</div>
   if (menuListQry.error) return <div>Error</div>
   console.log(menuListQry.data.menus)
-  // useEffect(()=>{
-  //   async function getMenus() {
-  //     const menus = await fetchData('/api/menus');
-  //     console.log(menus)
-  //     setMenuListItem(menus);
-  //   }
-  //   getMenus()
-  // },[])
+
+
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" open={open} sx={{ boxShadow: 'none' }}>
@@ -116,7 +110,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
           </Box>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open} sx={{ height: '100vh' }}  >
+      <Drawer variant="permanent" open={open} sx={{ height: '100vh' }}>
         <Toolbar
           sx={{
             display: 'flex',
@@ -174,7 +168,6 @@ export default function Main({ children }: { children: React.ReactNode }) {
         <Toolbar />
         {children}
       </Box>
-
     </Box>
   )
 }

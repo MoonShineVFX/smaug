@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { CircularProgress } from '@mui/material';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -11,110 +12,71 @@ import Skeleton from '@mui/material/Skeleton';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
 import { useRouter } from "next/router";
+import { CircularIndeterminate, EmptyState } from '../components/basic';
 import ModelDrawer from '../components/ModelDrawer';
 import { trpc } from '../utils/trpc'
+import { zodInputStringPipe } from '../utils/util';
+import { z } from 'zod';
 
 
-function processInput<T>(input: T | T[] | undefined): string | number {
-  if (Array.isArray(input)) {
-    // 假設取第一個元素來處理
-    input = input[0];
-  }
-  if (input === undefined) {
-    return "undefined";
-  }
-
-  const numberValue = parseInt(input as unknown as string);
-
-  if (isNaN(numberValue)) {
-    return input as unknown as string;
-  }
-
-  return numberValue;
-}
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  transition: '0.6s',
-  cursor: "pointer",
-  fontSize: "16px",
+const AssetListItem = styled(ImageListItem)(({ theme }) => ({
+  backgroundColor: '#202020',
+  padding: theme.spacing(5),
+  borderRadius: '5px',
   border: '2px #202020 solid',
+  transition: 'all 0.3s',
+  cursor: 'pointer',
   '&:hover': {
-    border: "2px grey solid",
-    color: 'white'
+    border: '2px grey solid',
+  },
+  '&:hover .MuiImageListItemBar-root': {
+    display: 'block',
   },
 }));
 
 
+const querySchema = z.object({
+  categoryId: zodInputStringPipe(z.coerce.number()),
+  assetId: z.string().default(''),
+})
+
 export default function Home() {
-  const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
+  const [showAssetDrawer, setShowAssetDrawer] = useRecoilState(modelDrawerDisplayState);
   const router = useRouter();
-  const { categoryId, assetId } = router.query;
 
-  const safeCategoryId = processInput(categoryId);
-  const safeAssetId = processInput(assetId);
+  const safeQuery = useMemo(() => {
+    const result = querySchema.safeParse(router.query);
+
+    if (result.success) {
+      return result.data;
+    }
+
+    return undefined
+  }, [router.query])
 
 
-  // const { data: assetListItems } = useSWR<AssetListItem[]>(categoryId ? [`/api/assets?cid=${categoryId}`] : null, fetcher);
-  // const { data: assetDetails } = useSWR<AssetDetails>(assetId ? [`/api/assets/${assetId}`] : null, fetcher);
-  const assetListQry = trpc.assets.list.useQuery({ categoryId: safeCategoryId as number });
-  const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeAssetId as string });
-  const handleClick = (id: string) => {
-    router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
-  }
-  // 暫時註解 若有需要再開
-  // if(menuTreeId) {
-  //   if(!mainOptionsListItem) return <div>Loading</div>
-  //   console.log(mainOptionsListItem)
-  //   return(
-  //     <Box sx={{ flexGrow: 1 , p:5 }} >
-  //       <Box>
-  //         <Typography variant="h5" sx={{fontWeight:'bold', color:"#999"}}>
-  //           Categories
-  //         </Typography>
-  //       </Box>
-  //       <Grid container sx={{pt:5,px:1}} spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-  //         {mainOptionsListItem.children.map((item,index) => {
-  //           return(
-  //               <Grid xs={2} sm={4} md={4} key={index}
-  //                 sx={{
-  //                    transition:'all 0.3s',
-  //                    p:1.5
-  //                 }}
-  //                 onClick={() => handleClick(item.id)}
-  //               >
-  //                 <Item>{item.name}</Item>
-  //               </Grid>
-  //             )
-  //           }
-  //         )}
-  //       </Grid>
+  const assetListQry = trpc.assets.list.useQuery({ categoryId: safeQuery!.categoryId }, { enabled: !!safeQuery });
+  const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeQuery!.assetId }, { enabled: !!safeQuery });
 
-  //     </Box>
-  //   )
-  // }
 
   //Loading
-  if (assetListQry.isLoading) return (
-    <Grid container wrap="nowrap" sx={{ mx: 2, my: 2 }}>
-      <Box sx={{ width: '20%', marginRight: 1, my: 5 }}>
-        <Skeleton variant="rounded" width='100%' height={220} />
-      </Box>
-      <Box sx={{ width: '20%', marginRight: 1, my: 5 }}>
-        <Skeleton variant="rounded" width='100%' height={220} />
-      </Box>
-    </Grid>
+  if (assetListQry.isLoading) {
+    return <CircularIndeterminate />
+  };
 
-  );
+  //No Asset, 給一個找不到 item 的 empty Component
+  if (assetListQry.isSuccess && assetListQry.data.list.length === 0) {
+    return <EmptyState />
+  }
+
+  if (assetDetailQry.isError) {
+    return
+  }
+
   return (
     <>
       {
-        assetDetailQry.isSuccess && <ModelDrawer openDrawer={showDrawer} setOpenDrawer={setShowDrawer} assetItem={assetDetailQry.data.detail} />
+        assetDetailQry.isSuccess && <ModelDrawer openDrawer={showAssetDrawer} setOpenDrawer={setShowAssetDrawer} assetItem={assetDetailQry.data.detail} />
       }
 
       <ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
@@ -125,24 +87,14 @@ export default function Home() {
         </ImageListItem>
         {assetListQry.data?.list.map((item, _index) => {
           return (
-            <ImageListItem key={item.id}
-              sx={{
-                bgcolor: '#202020', p: 5, borderRadius: "5px", border: "2px #202020 solid", transition: 'all 0.3s', cursor: 'pointer',
-                ':hover': {
-                  border: "2px grey solid"
-                },
-                ':hover .MuiImageListItemBar-root': {
-                  display: "block"
-                }
-              }}
+            <AssetListItem key={item.id}
               onClick={() => {
                 router.query.assetId = item.id
                 router.push(router)
                 setTimeout(() => {
-                  setShowDrawer(true);
+                  setShowAssetDrawer(true);
                 }, 500)
-              }
-              }
+              }}
             >
               <img src={item.preview}
                 alt={item.name}
@@ -160,7 +112,7 @@ export default function Home() {
                   display: 'none'
                 }}
               />
-            </ImageListItem>
+            </AssetListItem>
           )
         })}
       </ImageList>
