@@ -1,16 +1,12 @@
-import React, { useMemo } from 'react';
-import { CircularProgress } from '@mui/material';
+import React, { useMemo, useState } from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
+import { Theme } from '@mui/material/styles';
 import { experimentalStyled as styled } from '@mui/material/styles';
-import Skeleton from '@mui/material/Skeleton';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { modelDrawerDisplayState, modelState } from '../atoms/fromTypes';
+import { useRecoilState } from 'recoil';
+import { modelDrawerDisplayState } from '../atoms/fromTypes';
 import { useRouter } from "next/router";
 import { CircularIndeterminate, EmptyState } from '../components/basic';
 import ModelDrawer from '../components/ModelDrawer';
@@ -18,6 +14,12 @@ import { trpc } from '../utils/trpc'
 import { zodInputStringPipe } from '../utils/util';
 import { z } from 'zod';
 
+const drawerWidth = 240;
+
+const transitionStyles = (theme: Theme) => theme.transitions.create(['marginRight'], {
+  easing: theme.transitions.easing.sharp,
+  duration: theme.transitions.duration.enteringScreen,
+});
 
 const AssetListItem = styled(ImageListItem)(({ theme }) => ({
   backgroundColor: '#202020',
@@ -41,7 +43,7 @@ const querySchema = z.object({
 })
 
 export default function Home() {
-  const [showAssetDrawer, setShowAssetDrawer] = useRecoilState(modelDrawerDisplayState);
+  const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const router = useRouter();
 
   const safeQuery = useMemo(() => {
@@ -56,7 +58,7 @@ export default function Home() {
 
 
   const assetListQry = trpc.assets.list.useQuery({ categoryId: safeQuery!.categoryId }, { enabled: !!safeQuery });
-  const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeQuery!.assetId }, { enabled: !!safeQuery });
+  // const assetDetailQry = trpc.assets.get.useQuery({ assetId: safeQuery!.assetId }, { enabled: !!safeQuery });
 
 
   //Loading
@@ -69,18 +71,32 @@ export default function Home() {
     return <EmptyState />
   }
 
-  if (assetDetailQry.isError) {
-    return
-  }
 
   return (
     <>
       {
-        assetDetailQry.isSuccess && <ModelDrawer openDrawer={showAssetDrawer} setOpenDrawer={setShowAssetDrawer} assetItem={assetDetailQry.data.detail} />
+        <ModelDrawer openDrawer={showAssetDrawer} setOpenDrawer={setShowAssetDrawer} assetId={safeQuery!.assetId} />
       }
 
-      <ImageList cols={5} gap={8} sx={{ mx: 2, my: 2 }} variant="standard" >
-        <ImageListItem key="Subheader" cols={5}>
+      <ImageList
+        cols={5}
+        gap={8}
+        sx={{
+          mx: 2,
+          my: 2,
+          marginRight: showAssetDrawer ? 62 : 2,
+          transition: transitionStyles,
+        }} variant="quilted" >  {/*todo:  add smooth transition*/}
+        <ImageListItem
+          key="Subheader"
+          cols={5}
+          sx={{
+            transition: (theme) => theme.transitions.create(['gridColumnEnd', 'gridColumnStart'], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+          }}
+        >
           <Typography variant="h5" sx={{ fontWeight: 'bolder', color: "#999", textTransform: "uppercase" }}>
             {assetListQry.data?.list[0]?.categoryName}
           </Typography>;
