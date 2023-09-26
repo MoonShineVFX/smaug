@@ -20,6 +20,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log(req.body);
+    req['preserved'] = { ...req.body };
     const folderPath = `${settings.STORAGE_ROOT}/${req.body.assetId}/`
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath);
@@ -68,18 +69,18 @@ async function handlePost(req: MulterApiRequest, res: NextApiResponse) {
   const representation: Prisma.RepresentationCreateInput = {
     id: reqId,
     name: filename,
-    type: req.body.type,
-    format: req.body.format,
+    type: req.preserved.representationType,
+    format: req.preserved.representationFormat,
     path: `${req.file.destination}/${req.file.filename}`,
     fileSize: req.file.size,
     asset: {
       connect: {
-        id: req.body.assetId
+        id: req.preserved.assetId
       }
     },
     uploader: {
       connect: {
-        id: req.body.uploaderId
+        id: req.preserved.uploaderId
       }
     }
   }
