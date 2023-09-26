@@ -31,6 +31,7 @@ enum RepresentationFormat {
   OBJ
   C4D
   UNREAL
+  USD
 }
 
 model Role {
