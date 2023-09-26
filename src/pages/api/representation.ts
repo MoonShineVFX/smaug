@@ -4,7 +4,7 @@ import { createId } from '@paralleldrive/cuid2'
 import multer from 'multer';
 import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { RepresentationType, Prisma } from '@prisma/client';
+import { RepresentationType, RepresentationFormat, Prisma } from '@prisma/client';
 import prisma from '../../client';
 import { z } from 'zod';
 import { settings } from '../../libs/common';
@@ -71,7 +71,9 @@ async function handlePost(req: MulterApiRequest, res: NextApiResponse) {
     name: filename,
     type: req.preserved.representationType,
     format: req.preserved.representationFormat,
-    path: `${req.file.destination}/${req.file.filename}`,
+    // type: RepresentationType.MODEL,
+    // format: RepresentationFormat.USD,
+    path: `${req.file.destination}/${req.file.filename}`, /*這裡要修正成 file-server 的 url*/
     fileSize: req.file.size,
     asset: {
       connect: {
