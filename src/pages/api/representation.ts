@@ -42,6 +42,12 @@ const upload = multer({ storage: storage });
 
 interface MulterApiRequest extends NextApiRequest {
   file: Express.Multer.File;
+  preserved: {
+    assetId: string;
+    uploaderId: string;
+    representationType: RepresentationType;
+    representationFormat: RepresentationFormat;
+  }
 }
 
 const uploadFile = expressWrapper(upload.single('file')) as any;
@@ -68,12 +74,10 @@ async function handlePost(req: MulterApiRequest, res: NextApiResponse) {
   const reqId = filename.substring(0, filename.length - req.file.originalname.length);
   const representation: Prisma.RepresentationCreateInput = {
     id: reqId,
-    name: filename,
+    name: req.file.originalname,
     type: req.preserved.representationType,
     format: req.preserved.representationFormat,
-    // type: RepresentationType.MODEL,
-    // format: RepresentationFormat.USD,
-    path: `${req.file.destination}/${req.file.filename}`, /*這裡要修正成 file-server 的 url*/
+    path: `${req.preserved.assetId}/${req.file.filename}`,
     fileSize: req.file.size,
     asset: {
       connect: {
