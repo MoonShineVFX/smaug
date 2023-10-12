@@ -103,3 +103,40 @@ export async function get(id: number) {
 
   return category;
 }
+
+
+export async function categoryTree(id: number) {
+  const category = await prisma.category.findUnique({
+    where: {
+      id: id,
+      isDeleted: false
+    }
+  })
+
+  if (!category) {
+    throw new Error("Category not found")
+  }
+
+  let parentIds: number[] = [];
+  const matches = category.path?.match(/\d+/g);
+  if (matches) {
+    parentIds = matches.map(Number);
+  }
+
+  let breadCrumb = '';
+  if (parentIds.length !== 0) {
+    const categories = await Promise.all(
+      parentIds.map(id =>
+        prisma.category.findUnique({
+          where: { id: id },
+          select: { name: true }
+        })
+      )
+    );
+    const categoriesName = categories.map(category => category ? category.name : 'null');
+    breadCrumb = categoriesName.join(' > ');
+  }
+
+  const { isDeleted, ...desiredAttributes } = category;
+  return { breadCrumb, ...desiredAttributes };
+}
