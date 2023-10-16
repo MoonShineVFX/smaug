@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { publicProcedure, router } from '../trpc';
-import { listByCategory } from '../database/asset';
+import { publicProcedure, protectedProcedure, router } from '../trpc';
+import { listByCategory, create as createAsset } from '../database/asset';
 import { assetDetail } from '../api/asset';
 
 export const assetRouter = router({
@@ -18,5 +18,19 @@ export const assetRouter = router({
       const { categoryId } = opts.input
       const assets = await listByCategory(categoryId)
       return { list: assets }
+    }),
+
+  create: protectedProcedure
+    .input(z.object({
+      name: z.string(),
+      categoryId: z.number(),
+      tags: z.array(z.string()),
+    }))
+    .mutation(async (opts) => {
+      const creatorId = opts.ctx.user.id
+      const { name, categoryId, tags } = opts.input
+      const asset = await createAsset({ name, categoryId, tags, creatorId })
+      return { asset }
     })
-}) 
+})
+

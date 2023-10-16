@@ -64,6 +64,14 @@ export interface AssetDetails {
   downloads: Array<{ id: string, name: string, format: string | null, fileSize: string }>;
 }
 
+//api/assets/ POST
+export interface AssetCreateParams {
+  name: string;
+  categoryId: number;
+  tags: Array<string>;
+  creatorId: string;
+}
+
 //api/menu
 export interface MenuListItem {
   id: string

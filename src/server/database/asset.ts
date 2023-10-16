@@ -1,6 +1,6 @@
 import { Prisma, RepresentationType } from "@prisma/client";
 import prisma from '../../client';
-import { AssetListItem } from "../../libs/types";
+import { AssetListItem, AssetCreateParams } from "../../libs/types";
 import { settings } from '../../libs/common';
 
 
@@ -103,4 +103,63 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
     }
   })
   return assetReturnItems;
+}
+
+export async function create(payload: AssetCreateParams){
+  const { name, categoryId, tags, creatorId } = payload;
+
+  // get tags ids from tags name
+  const tagsData = await prisma.tag.findMany({
+    where: {
+      name: {
+        in: tags,
+      },
+    },
+  });
+
+  // using tagsData and tags to find out what tags is not exist in tagsData
+  const tagsToCreate = tags.filter((tag) => {
+    return !tagsData.some((tagData) => {
+      return tagData.name === tag;
+    });
+  });
+
+  // create tags
+  const newTags = await prisma.tag.createMany({
+    data: tagsToCreate.map((tag) => {
+      return { name: tag };
+    }),
+    skipDuplicates: true,
+  });
+
+  // fetch tags again
+  const allTagsData = await prisma.tag.findMany({
+    where: {
+      name: {
+        in: tags,
+      },
+    },
+  });
+
+  const asset = await prisma.asset.create({
+    data: {
+      name: name,
+      category: {
+        connect: {
+          id: categoryId,
+        },
+      },
+      tags: {
+        connect: allTagsData,
+      },
+      creator: {
+        connect: {
+          id: creatorId,
+        },
+      },
+    },
+  });
+  const {isDeleted, ...assetWithoutIsDeleted} = asset;
+  return assetWithoutIsDeleted;
+  ;
 }
