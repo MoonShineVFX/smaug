@@ -126,8 +126,8 @@ const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
   };
   const menuTreeQry = trpc.menus.categories.useQuery({ menuId: mainMenuData.id });
 
-  if (menuTreeQry.isLoading) return <div>Loading</div>
-  if (menuTreeQry.error) return <div>Error</div>
+  if (menuTreeQry.isLoading) return <div>menuTreeQry-Loading</div>
+  if (menuTreeQry.isError) return <div>{menuTreeQry.error.message}</div>
   return (
     <>
       {
@@ -190,7 +190,7 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
             m: 1,
           }}>
             {
-              mainOptionsListItem.map((item, index) => {
+              mainOptionsListItem.map((item, _index) => {
                 return (
                   <Chip key={item.name} label={item.name} onClick={() => handleTagClick(item.id)} sx={{ m: .5, fontSize: '12px' }} />
                 )

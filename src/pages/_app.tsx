@@ -13,7 +13,6 @@ import darkThemeOptions from '../styles/theme/darkThemeOptions';
 import Head from 'next/head'
 import { RecoilRoot } from 'recoil';
 import { AuthProvider } from '../context/authContext';
-import type { AppType } from 'next/app';
 import { trpc } from '../utils/trpc';
 
 interface MyAppProps extends AppProps {

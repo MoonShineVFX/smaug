@@ -1,4 +1,8 @@
 import { JsonValue } from 'type-fest';
+import type { inferRouterOutputs } from '@trpc/server';
+import type { AppRouter } from '../server/routers/_app';
+type RouterOutput = inferRouterOutputs<AppRouter>;
+export type AssetDetailOutput = RouterOutput['assets']['get']['detail'];
 
 export type UserDisplayInfo = {
   id: string;
@@ -40,7 +44,7 @@ export interface LoginResponse {
 export interface AssetListItem {
   id: string
   name: string
-  preview: string | null
+  preview: string
   categoryName: string | null
   updateAt: Date | null
   createAt: Date
@@ -58,6 +62,14 @@ export interface AssetDetails {
   tags: Array<{ id: string, name: string }>;
   renders: Array<{ id: string, name: string, path: string }>;
   downloads: Array<{ id: string, name: string, format: string | null, fileSize: string }>;
+}
+
+//api/assets/ POST
+export interface AssetCreateParams {
+  name: string;
+  categoryId: number;
+  tags: Array<string>;
+  creatorId: string;
 }
 
 //api/menu

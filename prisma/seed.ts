@@ -138,7 +138,7 @@ async function main() {
       type: UserType.BOT,
     }
   })
-  console.log(`users "creator" created`)
+  console.log(`users "user" created`)
 
   // create menu
   const menuData = defaultMenus.map((menu, i) => {

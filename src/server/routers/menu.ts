@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { router, publicProcedure } from '../trpc';
 import { get, detail } from '../database/menu'
 import { menuTree } from '../database/menuTree'
+import { TRPCError } from '@trpc/server';
 
 export const menuRouter = router({
 
@@ -20,7 +21,15 @@ export const menuRouter = router({
     .input(z.object({ menuId: z.string() }))
     .query(async (opts) => {
       const { menuId } = opts.input
-      return { menuTree: await menuTree(menuId) }
+      try {
+        return { menuTree: await menuTree(menuId) }
+      }
+      catch (err) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: (err as Error).message,
+        })
+      }
     }),
 })
 

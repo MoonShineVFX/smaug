@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Card from '@mui/material/Card';
@@ -11,18 +11,20 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
 import CloseIcon from '@mui/icons-material/Close';
+import Grid from '@mui/material/Grid';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
 import { useRouter } from "next/router";
-import { useRecoilState } from 'recoil';
-import { modelDrawerDisplayState } from '../atoms/fromTypes';
+
 import { styled } from "@mui/material/styles";
+import { trpc } from "../utils/trpc";
+import { AssetDetailOutput } from '../libs/types';
+import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 
-import { AssetDetails } from '../libs/types';
-
-interface IModelDrawer {
-  assetItem?: AssetDetails;
-  open: boolean;
+interface IModelDrawerProps {
+  assetId: string | undefined;
+  openDrawer: boolean;
+  setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Props {
@@ -37,19 +39,41 @@ const ViewIconButton = styled(Button)<Props>((ViewIconButtonProps) => ({
   })
 }));
 
-export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
-  const [showDrawer, setShowDrawer] = useRecoilState(modelDrawerDisplayState);
+
+const AssetCardContent = styled(CardContent)(({ theme }) => ({
+  backgroundColor: '#333',
+  padding: theme.spacing(2),
+  '&:last-child': {
+    paddingBottom: theme.spacing(1),
+  },
+}));
+
+export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IModelDrawerProps) {
+
   const [isActive, setIsActive] = useState(false);
   const router = useRouter();
+  const assetDetailQry = trpc.assets.get.useQuery({ assetId: assetId ? assetId : "" }, { enabled: !!assetId });
 
+  if (assetId === undefined) {
+    return (openDrawer ? <EmptyState /> : <></>)
+  }
 
-  if (!assetItem) return <div>Loading</div>
-  console.log(assetItem)
+  if (assetDetailQry.isError) {
+    return <ErrorState />
+  }
+
+  if (assetDetailQry.isLoading) {
+    return (openDrawer ? <CircularIndeterminate /> : <></>)
+  }
+
+  if (assetDetailQry.isSuccess && assetDetailQry.data.detail === null) {
+    return <EmptyState />
+  }
 
   return (
     <Drawer
       anchor="right"
-      open={open}
+      open={openDrawer}
       variant="persistent"
       PaperProps={{
         sx: { width: '25%' }
@@ -70,8 +94,8 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
           <CardMedia
             component="img"
             height="280"
-            image={assetItem?.preview === "" ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : assetItem?.preview}
-            alt={assetItem?.name}
+            image={assetDetailQry.data.detail!.preview === "" ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : assetDetailQry.data.detail!.preview}
+            alt={assetDetailQry.data.detail!.name}
             sx={{ objectFit: "contain", bgcolor: "#202020", p: 2 }}
           />
           <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
@@ -81,10 +105,10 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
               size="small"
             >
               <ViewIconButton isActive={isActive} onClick={() => setIsActive(!isActive)} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-              {assetItem?.renders.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
+              {assetDetailQry.data.detail!.renders.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
             </ButtonGroup>
             <IconButton aria-label="close" onClick={() => {
-              setShowDrawer(false)
+              setOpenDrawer(false)
               setTimeout(() => {
                 router.query.assetId = [];
                 router.push(router)
@@ -95,41 +119,35 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
             </IconButton>
           </Box>
           {
-            assetItem?.renders.length > 0 ?
+            assetDetailQry.data.detail!.renders.length > 0 ?
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
               :
               <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
               </Box>
           }
-
-
-
         </div>
 
-        <CardContent sx={{ backgroundColor: '#333', px: 3 }}>
+        <AssetCardContent sx={{ backgroundColor: '#333', px: 2, py: 2 }}>
           <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bolder', textTransform: 'uppercase', mb: 0 }}>
-            {assetItem?.name}
-
-
+            {assetDetailQry.data.detail!.name}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ textTransform: '', letterSpacing: '', fontSize: 13 }}>
-            {assetItem?.categoryList?.replace(/\\/g, " > ").slice(0, -2)}
-          </Typography>
-
-
-        </CardContent>
-
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <Typography variant="body2" color="text.secondary" sx={{ textTransform: '', letterSpacing: '', fontSize: 13 }}>
+                {assetDetailQry.data.detail!.categoryList?.replace(/\\/g, " > ").slice(0, -2)}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>
+                Created at {assetDetailQry.data.detail!.createAt?.toLocaleString().substr(0, 10)} by {assetDetailQry.data.detail!.creator}
+              </Typography>
+            </Grid>
+          </Grid>
+        </AssetCardContent>
       </Card>
 
-
-      <Box sx={{ p: 3 }}>
-        <Box>
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>
-            Created at {assetItem?.createAt?.toLocaleString().substr(0, 10)} by {assetItem?.creator}
-          </Typography>
-        </Box>
-
+      <Box sx={{ p: 2 }}>
         <Box sx={{ pt: 3 }}>
           <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
             Tags
@@ -141,10 +159,10 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
             mt: 1,
           }}>
             {
-              assetItem?.tags?.map((item, index) => {
+              assetDetailQry.data.detail!.tags?.map((tag, _index) => {
                 return (
                   <Chip
-                    key={item.name} label={item.name}
+                    key={tag.name} label={tag.name}
                     onClick={() => {
                       //handleTagClick(item.id)
                     }}
@@ -155,30 +173,24 @@ export default function ModelDrawer({ assetItem, open }: IModelDrawer) {
 
           </Box>
         </Box>
+
         <Box sx={{ pt: 3 }}>
           <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
             Resource
           </Typography>
           <Box>
             {
-              assetItem?.downloads.length > 0 ?
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
+              assetDetailQry.data.detail!.downloads.length > 0 ?
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography> // TODO: Downloadable component
                 :
                 <Box sx={{ display: 'flex', justifyContent: "space-between" }}>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>There is no downloadable file now.</Typography>
                 </Box>
             }
-
           </Box>
         </Box>
 
-
-
-
-
       </Box>
-
-
     </Drawer>
   )
 }
