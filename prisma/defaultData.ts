@@ -46,64 +46,64 @@ export const defaultCategories = [
 ];
 
 
-export const defaultAssets = [
-  { category: "Accessories", name: "Hat", creator: 'admin' },
-  { category: "Fish", name: "Fish 001", creator: 'admin' },
-  { category: "Fish", name: "Fish 002", creator: 'admin' },
-  { category: "Building", name: "Building 1", creator: 'admin' },
-  { category: "Building", name: "Building 2", creator: 'admin' },
-]
+// export const defaultAssets = [
+//   { category: "Accessories", name: "Hat", creator: 'admin' },
+//   { category: "Fish", name: "Fish 001", creator: 'admin' },
+//   { category: "Fish", name: "Fish 002", creator: 'admin' },
+//   { category: "Building", name: "Building 1", creator: 'admin' },
+//   { category: "Building", name: "Building 2", creator: 'admin' },
+// ]
 
-export const defaultRepresentations = [
-  {
-    name: "Fish 001 FBX texture",
-    asset: "Fish 001",
-    format: RepresentationFormat.IMG,
-    type: RepresentationType.TEXTURE,
-    uploader: 'admin',
-    fileSize: 1233456789
-  },
-  {
-    name: "Fish 001 FBX",
-    asset: "Fish 001",
-    format: RepresentationFormat.FBX,
-    type: RepresentationType.MODEL,
-    uploader: 'admin',
-    texture: "Fish 001 FBX texture",
-    fileSize: 1234456789
-  },
-  {
-    name: "Fish 001 Preview",
-    asset: "Fish 001",
-    format: RepresentationFormat.IMG,
-    type: RepresentationType.PREVIEW,
-    uploader: 'admin',
-  },
-  {
-    name: "Fish 002 FBX texture",
-    asset: "Fish 002",
-    format: RepresentationFormat.IMG,
-    type: RepresentationType.TEXTURE,
-    uploader: 'admin',
-    fileSize: 1234456789
-  },
-  {
-    name: "Fish 002 FBX",
-    asset: "Fish 002",
-    format: RepresentationFormat.FBX,
-    type: RepresentationType.MODEL,
-    uploader: 'admin',
-    texture: "Fish 002 FBX texture",
-    fileSize: 1234456789
-  },
-  {
-    name: "Fish 002 Preview",
-    asset: "Fish 002",
-    format: RepresentationFormat.IMG,
-    type: RepresentationType.PREVIEW,
-    uploader: 'admin'
-  },
-]
+// export const defaultRepresentations = [
+//   {
+//     name: "Fish 001 FBX texture",
+//     asset: "Fish 001",
+//     format: RepresentationFormat.IMG,
+//     type: RepresentationType.TEXTURE,
+//     uploader: 'admin',
+//     fileSize: 1233456789
+//   },
+//   {
+//     name: "Fish 001 FBX",
+//     asset: "Fish 001",
+//     format: RepresentationFormat.FBX,
+//     type: RepresentationType.MODEL,
+//     uploader: 'admin',
+//     texture: "Fish 001 FBX texture",
+//     fileSize: 1234456789
+//   },
+//   {
+//     name: "Fish 001 Preview",
+//     asset: "Fish 001",
+//     format: RepresentationFormat.IMG,
+//     type: RepresentationType.PREVIEW,
+//     uploader: 'admin',
+//   },
+//   {
+//     name: "Fish 002 FBX texture",
+//     asset: "Fish 002",
+//     format: RepresentationFormat.IMG,
+//     type: RepresentationType.TEXTURE,
+//     uploader: 'admin',
+//     fileSize: 1234456789
+//   },
+//   {
+//     name: "Fish 002 FBX",
+//     asset: "Fish 002",
+//     format: RepresentationFormat.FBX,
+//     type: RepresentationType.MODEL,
+//     uploader: 'admin',
+//     texture: "Fish 002 FBX texture",
+//     fileSize: 1234456789
+//   },
+//   {
+//     name: "Fish 002 Preview",
+//     asset: "Fish 002",
+//     format: RepresentationFormat.IMG,
+//     type: RepresentationType.PREVIEW,
+//     uploader: 'admin'
+//   },
+// ]
 
 export const defaultTags = [
   { name: 'asus', creator: 'admin', assets: ["Hat"] },
@@ -114,7 +114,7 @@ export const defaultTags = [
 ]
 
 // source data
-export const sourceItems = ["Fish 001", "Fish 002"]
+// export const sourceItems = ["Fish 001", "Fish 002"]
 
 
 // menu
