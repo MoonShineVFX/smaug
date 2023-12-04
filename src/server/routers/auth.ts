@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { authenticate, getToken } from '../../libs/server/auth';
 import { removeToken } from '../database/auths';
 import { publicProcedure, router } from '../trpc';
+import { authenticateUser1 } from  '../../libs/server/auth';
+import { UserDisplayInfo } from '../../libs/types';
 
 
 export const authRouter = router({
@@ -17,7 +19,7 @@ export const authRouter = router({
       if (loginResponse) {
         // 在這裡設置 cookie
         const serializedCookie = cookie.serialize('authToken', loginResponse.token, {
-          httpOnly: true,
+          httpOnly: false,
           secure: process.env.NODE_ENV !== 'development',
           sameSite: 'strict',
           path: '/',
@@ -32,7 +34,10 @@ export const authRouter = router({
     }),
 
   logout: publicProcedure
-    .mutation(async (opts) => {
+    .input(z.object({
+      token: z.string(),
+    }))
+    .query(async (opts) => {
       const {req } = opts.ctx
       const token = getToken(req)
       if (token) {
@@ -41,5 +46,35 @@ export const authRouter = router({
       else {
         throw new Error("network error or token already removed?")
       }
-    })
+    }),
+  
+    userByToken: publicProcedure
+    .query(async (opts) => {
+      const {req } = opts.ctx
+      const token = getToken(req)
+      if (token) {
+        const raw_user = await authenticateUser1(token)
+        if (!raw_user) {
+          throw new Error("network error or token already removed?")
+        }
+        const { active, password, ...user } = raw_user
+        const userInfo: UserDisplayInfo = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          picture: 'noPicture.png',
+          account: user.account,
+          roleId: user.roleId,
+          roleName: user.role.name,
+          type: user.type,
+          updateAt: user.updateAt,
+          createAt: user.createAt,
+          extenData: user.extenData
+        }
+        return {user: userInfo}
+      }
+      else {
+        throw new Error("network error or token already removed?")
+      }
+    }),
 })

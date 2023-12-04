@@ -37,6 +37,7 @@ export const trpc = createTRPCNext<AppRouter>({
           // You can pass any HTTP headers you wish here
           async headers() {
             const token = getAuthCookie()
+            console.log("getAuthCookie token:", token)
             if (token) {
               return {
                 authorization: token,
