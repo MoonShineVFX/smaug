@@ -1,9 +1,10 @@
-import { Prisma, Representation } from "@prisma/client"
-import prisma from '../../client';
+import { Prisma } from "@prisma/client";
+import prisma from "../../client";
 
-
-export async function create(payload) {
-  console.log(`into representation create post`)
+export async function create(
+  payload: Prisma.RepresentationUncheckedCreateInput
+) {
+  console.log("into representation create post");
   const { name, type, format, path, fileSize, assetId, uploaderId } = payload;
   const representation: Prisma.RepresentationCreateInput = {
     name: name,
@@ -13,15 +14,15 @@ export async function create(payload) {
     fileSize: fileSize,
     asset: {
       connect: {
-        id: assetId
-      }
+        id: assetId,
+      },
     },
     uploader: {
       connect: {
-        id: uploaderId
-      }
-    }
-  }
+        id: uploaderId,
+      },
+    },
+  };
   const result = await prisma.representation.create({ data: representation });
   return result;
 }
