@@ -5,8 +5,9 @@ import { PrismaClient, UserType, Category, Representation, Asset, Tag } from '@p
 import { createId } from '@paralleldrive/cuid2'
 import { permission, rolesData } from '../src/libs/common'
 import { hashPassword } from '../src/libs/server/auth'
-import { defaultCategories, defaultAssets, defaultRepresentations, defaultTags, defaultMenus } from './defaultData'
-import { sourceItems } from './defaultData'
+import { defaultCategories, defaultTags, defaultMenus } from './defaultData'
+// import { defaultAssets, defaultRepresentations, } from './defaultData'
+// import { sourceItems } from './defaultData'
 
 
 // utitlties function
@@ -233,23 +234,23 @@ async function main() {
 
   // 建立 pathmap
   // create assets
-  const assetsData: Asset[] = defaultAssets.map((asset, i) => {
-    return {
-      id: createId(),
-      name: asset.name,
-      categoryId: categoryDict[asset.category].id,
-      creatorId: userAdmin.id,
-      createAt: faker.date.past(),
-      isDeleted: false,
-      updateAt: null
-    }
-  })
+  // const assetsData: Asset[] = defaultAssets.map((asset, i) => {
+  //   return {
+  //     id: createId(),
+  //     name: asset.name,
+  //     categoryId: categoryDict[asset.category].id,
+  //     creatorId: userAdmin.id,
+  //     createAt: faker.date.past(),
+  //     isDeleted: false,
+  //     updateAt: null
+  //   }
+  // })
 
-  const assetsDict: { [key: string]: Asset } = {}
-  for (let asset of assetsData) {
-    assetsDict[asset.name as string] = asset
-  }
-  await prisma.asset.createMany({ data: assetsData })
+  // const assetsDict: { [key: string]: Asset } = {}
+  // for (let asset of assetsData) {
+  //   assetsDict[asset.name as string] = asset
+  // }
+  // await prisma.asset.createMany({ data: assetsData })
 
   // create tags
   const tagsData: Tag[] = defaultTags.map((tag, i) => {
@@ -257,9 +258,9 @@ async function main() {
       id: createId(),
       name: tag.name,
       assets: {
-        connect: tag.assets.map((asset) => {
-          return { id: assetsDict[asset].id }
-        }),
+        // connect: tag.assets.map((asset) => {
+        //   return { id: assetsDict[asset].id }
+        // }),
       },
       createAt: faker.date.past(),
       updateAt: null
@@ -272,93 +273,93 @@ async function main() {
   console.log(`tags created`)
 
   // create representations
-  const representationsData: Representation[] = defaultRepresentations.map((rep, i) => {
-    return {
-      id: createId(),
-      name: rep.name,
-      format: rep.format,
-      type: rep.type,
-      assetId: assetsDict[rep.asset].id,
-      path: "",
-      uploaderId: userAdmin.id,
-      createAt: faker.date.past(),
-      updateAt: null,
-      textureId: null,
-      fileSize: rep.fileSize ? rep.fileSize : 0,
-    }
-  }
-  )
+  // const representationsData: Representation[] = defaultRepresentations.map((rep, i) => {
+  //   return {
+  //     id: createId(),
+  //     name: rep.name,
+  //     format: rep.format,
+  //     type: rep.type,
+  //     assetId: assetsDict[rep.asset].id,
+  //     path: "",
+  //     uploaderId: userAdmin.id,
+  //     createAt: faker.date.past(),
+  //     updateAt: null,
+  //     textureId: null,
+  //     fileSize: rep.fileSize ? rep.fileSize : 0,
+  //   }
+  // }
+  // )
 
-  const representationsDict: { [key: string]: Representation } = {}
-  for (let rep of representationsData) {
-    representationsDict[rep.name as string] = rep
-  }
+  // const representationsDict: { [key: string]: Representation } = {}
+  // for (let rep of representationsData) {
+  //   representationsDict[rep.name as string] = rep
+  // }
   // update representations relation
-  for (let defaultRep of defaultRepresentations) {
-    const rep = representationsDict[defaultRep.name]
-    if (defaultRep.texture) {
-      rep.textureId = representationsDict[defaultRep.texture].id
-    }
-  }
+  // for (let defaultRep of defaultRepresentations) {
+  //   const rep = representationsDict[defaultRep.name]
+  //   if (defaultRep.texture) {
+  //     rep.textureId = representationsDict[defaultRep.texture].id
+  //   }
+  // }
 
-  await prisma.representation.createMany({ data: representationsData })
-  console.log(`representations created`)
+  // await prisma.representation.createMany({ data: representationsData })
+  // console.log(`representations created`)
 
 
   // 操作檔案
-  const sourceFolder = process.env.SOURCE_DATA_FOLDER
+  // const sourceFolder = process.env.SOURCE_DATA_FOLDER
   // const dragonLair = process.env.DRAGON_LAIR
   // 其實我很想叫這個名字，但想想為了不要讓人誤會，還是改成 STORAGE_ROOT 這種無聊的名字吧
 
 
-  for (let item of sourceItems) {
-    const itemId = assetsDict[item].id
-    const itemName = replaceBankWithUnderscore(item)
+  // for (let item of sourceItems) {
+  //   const itemId = assetsDict[item].id
+  //   const itemName = replaceBankWithUnderscore(item)
 
-    const sourceAssetFolder = `${sourceFolder}/${itemName}`
-    const targetAssetFolder = `${storageRoot}/${itemId}`
+    // const sourceAssetFolder = `${sourceFolder}/${itemName}`
+    // const targetAssetFolder = `${storageRoot}/${itemId}`
 
-    const repPreviewId = representationsDict[`${item} Preview`].id
-    const repModelId = representationsDict[`${item} FBX`].id
-    const RepTextureId = representationsDict[`${item} FBX texture`].id
+    // const repPreviewId = representationsDict[`${item} Preview`].id
+    // const repModelId = representationsDict[`${item} FBX`].id
+    // const RepTextureId = representationsDict[`${item} FBX texture`].id
 
-    const sourceItemPreview = `${sourceAssetFolder}/${itemName}.png`
-    const sourceItemModel = `${sourceAssetFolder}/${itemName}.zip`
-    const sourceItemTexture = `${sourceAssetFolder}/${itemName}_texture.zip`
+    // const sourceItemPreview = `${sourceAssetFolder}/${itemName}.png`
+    // const sourceItemModel = `${sourceAssetFolder}/${itemName}.zip`
+    // const sourceItemTexture = `${sourceAssetFolder}/${itemName}_texture.zip`
 
-    const previewFile = `${itemId}/${repPreviewId}_preview.png`
-    const modelFile = `${itemId}/${repModelId}_model.zip`
-    const textureFile = `${itemId}/${RepTextureId}_texture.zip`
+    // const previewFile = `${itemId}/${repPreviewId}_preview.png`
+    // const modelFile = `${itemId}/${repModelId}_model.zip`
+    // const textureFile = `${itemId}/${RepTextureId}_texture.zip`
 
-    const targetPreviewFile = `${storageRoot}/${previewFile}`
-    const targetModelFile = `${storageRoot}/${modelFile}`
-    const targetTextureFile = `${storageRoot}/${textureFile}`
+    // const targetPreviewFile = `${storageRoot}/${previewFile}`
+    // const targetModelFile = `${storageRoot}/${modelFile}`
+    // const targetTextureFile = `${storageRoot}/${textureFile}`
 
     // update representation path
 
-    await prisma.representation.update({
-      where: { id: repPreviewId },
-      data: { path: previewFile }
-    })
-    await prisma.representation.update({
-      where: { id: repModelId },
-      data: { path: modelFile }
-    })
-    await prisma.representation.update({
-      where: { id: RepTextureId },
-      data: { path: textureFile }
-    })
+    // await prisma.representation.update({
+    //   where: { id: repPreviewId },
+    //   data: { path: previewFile }
+    // })
+    // await prisma.representation.update({
+    //   where: { id: repModelId },
+    //   data: { path: modelFile }
+    // })
+    // await prisma.representation.update({
+    //   where: { id: RepTextureId },
+    //   data: { path: textureFile }
+    // })
 
-    try {
-      fs.mkdirSync(targetAssetFolder, { recursive: true })
-      fs.copyFileSync(sourceItemPreview, targetPreviewFile)
-      fs.copyFileSync(sourceItemModel, targetModelFile)
-      fs.copyFileSync(sourceItemTexture, targetTextureFile)
-    }
-    catch (err) {
-      console.log(err)
-    }
-  }
+    // try {
+    //   fs.mkdirSync(targetAssetFolder, { recursive: true })
+    //   fs.copyFileSync(sourceItemPreview, targetPreviewFile)
+    //   fs.copyFileSync(sourceItemModel, targetModelFile)
+    //   fs.copyFileSync(sourceItemTexture, targetTextureFile)
+    // }
+    // catch (err) {
+    //   console.log(err)
+    // }
+  // }
 }
 
 main()
