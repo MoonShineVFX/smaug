@@ -163,3 +163,15 @@ export async function create(payload: AssetCreateParams){
   return assetWithoutIsDeleted;
   ;
 }
+
+export async function retire(assetId: string) {
+  const asset = await prisma.asset.update({
+    where: {
+      id: assetId,
+    },
+    data: {
+      isDeleted: true,
+    },
+  });
+  return asset.id;
+}

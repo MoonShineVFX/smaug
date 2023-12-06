@@ -28,6 +28,7 @@ export async function create(
   return result;
 }
 
+
 export async function deleteRepresentation(id: string) {
   const representation = await prisma.representation.findUnique({
     where: { id: id },
@@ -60,7 +61,11 @@ export async function deleteByAssetId(assetId: string) {
   if (!representations) {
     throw new Error("not found");
   }
-  const re = await prisma.representation.deleteMany({ where: { assetId: assetId } });
+  // update representations where deleted asset id, set isDeleted=true, return affect row count
+  const re = await prisma.representation.updateMany({
+    where: { assetId: assetId },
+    data: { isDeleted: true },
+  });
   return re.count;
 }
 

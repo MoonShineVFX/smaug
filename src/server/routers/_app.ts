@@ -2,8 +2,8 @@ import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 import { authRouter } from "./auth";
 import { assetRouter } from "./asset";
-import { menuRouter } from "./menu";
 import { categoryRouter } from "./category";
+import { menuRouter } from "./menu";
 import { representationRouter } from "./representation";
 
 export const appRouter = router({
