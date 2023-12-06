@@ -167,22 +167,30 @@ export async function authenticateUser(req: NextApiRequest, res: NextApiResponse
 }
 
 
-export async function authenticateUser1(token: string): Promise<User | null> {
-  console.log('Entering authenticateUser')
+export async function authenticateUser1(token: string) {
+  console.log("Entering authenticateUser");
   if (Boolean(token)) {
     // 用 token 查詢 authToken 資料表，找到對應的使用者
-    const authTokenObj = await prisma.authToken.findUnique(
-      {
-        where: { id: token },
-        include: { user: true }
-      });
-    // 將 user 資訊附加到 req 物件上
+    console.log("token: ", token);
+    const authTokenObj = await prisma.authToken.findUnique({
+      where: { id: token },
+      include: { 
+        user: { 
+          include: { 
+            role: {
+              select:{ name : true} 
+            } 
+          } 
+        },
+      },
+    });
+
     const user = authTokenObj ? authTokenObj.user : null;
-    console.log('Exist authenticateUser')
+    // console.log("user: ", user);
+    console.log("Exist authenticateUser");
     return user;
-  }
-  else {
-    console.log('Exist authenticateUser: No token')
+  } else {
+    console.log("Exist authenticateUser: No token");
     return null;
-  };
+  }
 }

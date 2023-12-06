@@ -94,6 +94,8 @@ model Representation {
   texture    Representation?       @relation("ModelTexture", fields: [textureId], references: [id])
   models     Representation[]      @relation("ModelTexture")
   fileSize   Int?                  @default(0) // 檔案大小
+  isDeleted  Boolean               @default(false)
+  isVisible  Boolean               @default(true)
 }
 
 model Category {
