@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Prisma, RepresentationType, RepresentationFormat } from '@prisma/client';
+import { RepresentationType, RepresentationFormat } from '@prisma/client';
 import { router, publicProcedure, protectedProcedure } from '../trpc';
 import { create, deleteRepresentation, detail, deleteByAssetId, get } from '../database/representation'
 import { TRPCError } from '@trpc/server';
