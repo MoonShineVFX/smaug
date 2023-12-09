@@ -32,7 +32,7 @@ export const assetRouter = router({
       const creatorId = opts.ctx.user.id
       const { name, categoryId, tags } = opts.input
       const asset = await createAsset({ name, categoryId, tags, creatorId })
-      return { asset: asset }
+      return { detail: asset }
     }),
 
   delete: protectedProcedure
