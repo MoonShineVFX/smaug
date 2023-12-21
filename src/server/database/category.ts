@@ -140,3 +140,44 @@ export async function categoryTree(id: number) {
   const { isDeleted, ...desiredAttributes } = category;
   return { breadCrumb, ...desiredAttributes };
 }
+
+
+export async function createCategory(createCategoryArgs: Prisma.CategoryCreateArgs['data']) {
+  
+    const newCategoryArgs = {
+      ...createCategoryArgs,
+      createAt: new Date(),
+    }
+  
+    // category create, then update path
+    const newCategory = await prisma.$transaction(async (tx) => {
+      const category = await tx.category.create({
+        data: newCategoryArgs
+      });
+  
+      let thePath: string;
+      if (newCategoryArgs.parentId) {
+        const parentCategory = await tx.category.findUnique({
+          where: {
+            id: newCategoryArgs.parentId
+          }
+        });
+        thePath = parentCategory ? `${parentCategory.path}/${category.id}` : `/${category.id}`;
+      } else {
+        thePath = `/${category.id}`;
+      }
+  
+      const updatedCategory = await tx.category.update({
+        data: {
+          path: thePath
+        },
+        where: {
+          id: category.id
+        }
+      });
+  
+      return updatedCategory;
+    })
+  
+    return newCategory;
+};

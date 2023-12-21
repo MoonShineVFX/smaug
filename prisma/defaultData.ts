@@ -42,7 +42,6 @@ export const defaultCategories = [
   { id: 38, path: "/24/38", name: "Tile", parent: "Surfaces", menu: "Home" },
   { id: 39, path: "/24/39", name: "Wood", parent: "Surfaces", menu: "Home" },
   { id: 40, path: "/24/40", name: "Other", parent: "Surfaces", menu: "Home" },
-  { id: 41, path: "/24/41", name: "Other", parent: "Surfaces", menu: "Home" },
 ];
 
 
