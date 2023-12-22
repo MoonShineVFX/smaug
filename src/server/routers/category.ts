@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { get, list, categoryTree, createCategory } from "../database/category";
 
 export const categoryRouter = router({
@@ -24,10 +24,10 @@ export const categoryRouter = router({
       return { detail: category };
     }),
   create: publicProcedure
-    .input(z.object({ name: z.string(), parentId: z.number(), menuId: z.string()}))
-    .query(async (opts) => {
-      const { name, parentId, menuId } = opts.input;
-      const category = await createCategory({ name, parentId, menuId });
+    .input(z.object({ name: z.string(), menuId: z.string(), parentId: z.number().optional() }))
+    .mutation(async (opts) => {
+      const { name, menuId, parentId } = opts.input;
+      const category = await createCategory(name, menuId, parentId,);
       return { detail: category };
     }),
 });
