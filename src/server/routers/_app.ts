@@ -21,7 +21,7 @@ export const appRouter = router({
     }),
   auth: authRouter,
   assets: assetRouter,
-  category: categoryRouter,
+  categories: categoryRouter,
   menus: menuRouter,
   representation: representationRouter,
 });

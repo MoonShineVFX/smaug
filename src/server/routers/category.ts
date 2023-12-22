@@ -1,12 +1,21 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
-import { get, list, categoryTree, createCategory } from "../database/category";
+import { get, getByName, list, categoryTree, createCategory } from "../database/category";
 
 export const categoryRouter = router({
   list: publicProcedure.query(async (opts) => {
     const categories = await list();
     return { list: categories };
   }),
+
+  getByName:
+    publicProcedure
+      .input(z.object({ name: z.string() }))
+      .query(async (opts) => {
+        const { name } = opts.input;
+        const categories = await getByName(name);
+        return { list: categories };
+      }),
 
   get: publicProcedure
     .input(z.object({ categoryId: z.number() }))

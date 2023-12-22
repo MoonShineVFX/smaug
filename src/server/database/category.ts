@@ -104,7 +104,15 @@ export async function get(id: number) {
   return category;
 }
 
+export async function getByName(name: string) {
+  const categories = await prisma.category.findMany({
+    where: {
+      name: name
+    }
+  })
 
+  return categories;
+}
 export async function categoryTree(id: number) {
   const category = await prisma.category.findUnique({
     where: {
