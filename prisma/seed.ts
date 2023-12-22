@@ -214,12 +214,14 @@ async function main() {
       id: cate.id,
       // iconName: cate.iconName,
       name: cate.name as string,
-      createAt: cate.createAt,
       isDeleted: cate.isDeleted,
       isVisible: cate.isVisible,
       parentId: cate.parentId,
       updateAt: null,
+      updateId: null,
       menuId: cate.menuId,
+      createAt: cate.createAt,
+      createId: userAdmin.id,
       path: cate.path
     }
   })
@@ -229,7 +231,7 @@ async function main() {
     await prisma.category.create({ data: category })
   }
   console.log(`categories created`)
-  await prisma.$executeRaw`ALTER SEQUENCE "Category_id_seq" RESTART WITH 41;` // 重設 id 開始值 postgresql 專用語法
+  await prisma.$executeRaw`ALTER SEQUENCE "Category_id_seq" RESTART WITH 40;` // 重設 id 開始值 postgresql 專用語法
 
 
   // 建立 pathmap

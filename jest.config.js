@@ -15,6 +15,10 @@ const customJestConfig = {
   moduleDirectories: ['node_modules', '<rootDir>/'],
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/singleton.ts'],
+  testMatch: [
+    "<rootDir>/src/__tests__/server/**/*.[jt]s?(x)", 
+    // "<rootDir>/src/__tests__/pages/**/*.[jt]s?(x)"
+  ],
   verbose: true,
   
 }
