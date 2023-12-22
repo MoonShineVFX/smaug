@@ -142,7 +142,7 @@ export async function categoryTree(id: number) {
 }
 
 
-export async function createCategory(name: string, menuId: string, parentId?: number,) {
+export async function createCategory(name: string, menuId: string, userId: string, parentId?: number,) {
 
     const categoryArgs:Prisma.CategoryCreateArgs['data'] = {
       name: name,
@@ -150,6 +150,7 @@ export async function createCategory(name: string, menuId: string, parentId?: nu
       menuId: menuId,
       isVisible: true,
       isDeleted: false,
+      createId: userId,
       // path: null,
       createAt: new Date(),
     }

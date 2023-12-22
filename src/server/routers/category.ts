@@ -23,11 +23,13 @@ export const categoryRouter = router({
       const category = await categoryTree(categoryId);
       return { detail: category };
     }),
-  create: publicProcedure
+
+  create: protectedProcedure
     .input(z.object({ name: z.string(), menuId: z.string(), parentId: z.number().optional() }))
     .mutation(async (opts) => {
+      const user = opts.ctx.user;
       const { name, menuId, parentId } = opts.input;
-      const category = await createCategory(name, menuId, parentId,);
+      const category = await createCategory(name, menuId, user.id, parentId,);
       return { detail: category };
     }),
 });

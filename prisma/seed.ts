@@ -214,12 +214,14 @@ async function main() {
       id: cate.id,
       // iconName: cate.iconName,
       name: cate.name as string,
-      createAt: cate.createAt,
       isDeleted: cate.isDeleted,
       isVisible: cate.isVisible,
       parentId: cate.parentId,
       updateAt: null,
+      updateId: null,
       menuId: cate.menuId,
+      createAt: cate.createAt,
+      createId: userAdmin.id,
       path: cate.path
     }
   })
