@@ -152,46 +152,64 @@ export async function categoryTree(id: number) {
 
 export async function createCategory(name: string, menuId: string, userId: string, parentId?: number,) {
 
-    const categoryArgs:Prisma.CategoryCreateArgs['data'] = {
-      name: name,
-      parentId: parentId,
-      menuId: menuId,
-      isVisible: true,
-      isDeleted: false,
-      createId: userId,
-      // path: null,
-      createAt: new Date(),
-    }
-  
-    // category create, then update path
-    const newCategory = await prisma.$transaction(async (tx) => {
-      const category = await tx.category.create({
-        data: categoryArgs
-      });
-  
-      let thePath: string;
-      if (categoryArgs.parentId) {
-        const parentCategory = await tx.category.findUnique({
-          where: {
-            id: categoryArgs.parentId
-          }
-        });
-        thePath = parentCategory ? `${parentCategory.path}/${category.id}` : `/${category.id}`;
-      } else {
-        thePath = `/${category.id}`;
-      }
-  
-      const updatedCategory = await tx.category.update({
-        data: {
-          path: thePath
-        },
+  const categoryArgs: Prisma.CategoryCreateArgs['data'] = {
+    name: name,
+    parentId: parentId,
+    menuId: menuId,
+    isVisible: true,
+    isDeleted: false,
+    createId: userId,
+    // path: null,
+    createAt: new Date(),
+  }
+
+  // category create, then update path
+  const newCategory = await prisma.$transaction(async (tx) => {
+    const category = await tx.category.create({
+      data: categoryArgs
+    });
+
+    let thePath: string;
+    if (categoryArgs.parentId) {
+      const parentCategory = await tx.category.findUnique({
         where: {
-          id: category.id
+          id: categoryArgs.parentId
         }
       });
-  
-      return updatedCategory;
-    })
-  
-    return newCategory;
+      thePath = parentCategory ? `${parentCategory.path}/${category.id}` : `/${category.id}`;
+    } else {
+      thePath = `/${category.id}`;
+    }
+
+    const updatedCategory = await tx.category.update({
+      data: {
+        path: thePath
+      },
+      where: {
+        id: category.id
+      }
+    });
+
+    return updatedCategory;
+  })
+
+  return newCategory;
 };
+
+
+export async function getByNameAndParent(name: string, parent_name: string | undefined, menuId: string) {
+
+  const categories = await prisma.category.findMany({
+    where: {
+      name: name,
+      menuId: menuId,
+      ...(parent_name && {
+        parent: {
+          name: parent_name
+        }
+      })
+    }
+  })
+
+  return categories;
+}

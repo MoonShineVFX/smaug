@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
-import { get, getByName, list, categoryTree, createCategory } from "../database/category";
+import { get, getByName, getByNameAndParent, list, categoryTree, createCategory } from "../database/category";
 
 export const categoryRouter = router({
   list: publicProcedure.query(async (opts) => {
@@ -14,6 +14,15 @@ export const categoryRouter = router({
       .query(async (opts) => {
         const { name } = opts.input;
         const categories = await getByName(name);
+        return { list: categories };
+      }),
+
+  getByNameAndParent:
+    publicProcedure
+      .input(z.object({ name: z.string(), parent: z.string().optional(), menuId: z.string() }))
+      .query(async (opts) => {
+        const { name, parent, menuId } = opts.input;
+        const categories = await getByNameAndParent(name, parent, menuId);
         return { list: categories };
       }),
 
