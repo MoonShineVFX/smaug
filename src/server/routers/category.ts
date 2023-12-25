@@ -19,10 +19,11 @@ export const categoryRouter = router({
 
   getByNameAndParent:
     publicProcedure
-      .input(z.object({ name: z.string(), parent: z.string().optional(), menuId: z.string() }))
+      .input(z.object({ name: z.string(), parent: z.union([z.string(), z.null()]).optional(), menuId: z.string() }))
       .query(async (opts) => {
         const { name, parent, menuId } = opts.input;
-        const categories = await getByNameAndParent(name, parent, menuId);
+        const fix_parent = parent === null ? undefined : parent;
+        const categories = await getByNameAndParent(name, fix_parent, menuId);
         return { list: categories };
       }),
 
