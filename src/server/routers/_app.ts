@@ -26,7 +26,7 @@ export const appRouter = router({
   categories: categoryRouter,
   menus: menuRouter,
   representation: representationRouter,
-  tegs: tagRouter
+  tags: tagRouter
 });
 
 export type AppRouter = typeof appRouter;
