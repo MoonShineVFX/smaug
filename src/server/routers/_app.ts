@@ -5,6 +5,8 @@ import { assetRouter } from "./asset";
 import { categoryRouter } from "./category";
 import { menuRouter } from "./menu";
 import { representationRouter } from "./representation";
+import { tagRouter } from "./tags";
+
 
 export const appRouter = router({
   hello: publicProcedure
@@ -24,6 +26,7 @@ export const appRouter = router({
   categories: categoryRouter,
   menus: menuRouter,
   representation: representationRouter,
+  tegs: tagRouter
 });
 
 export type AppRouter = typeof appRouter;
