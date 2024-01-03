@@ -158,6 +158,7 @@ interface ITagsListItem {
   id: string;
   name: string;
 }
+
 const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseForTag) => {
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
@@ -169,7 +170,8 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
     console.log('click')
     router.push({ pathname: '/tags', query: { id } }, undefined, { shallow: true });
   }
-  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags`] : null, fetcher);
+  // const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags`] : null, fetcher);
+  const tagsQry = trpc.tags.list.useQuery();
 
   if (!mainOptionsListItem) return <div>Loading</div>
   return (
