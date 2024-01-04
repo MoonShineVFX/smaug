@@ -13,7 +13,10 @@ const menuReturnField: Prisma.MenuSelect = {
 
 export async function get() {
   const menus = await prisma.menu.findMany({
-    select: menuReturnField
+    select: menuReturnField,
+    orderBy: {
+      sortOrder: 'asc',
+    }
   })
 
   if (menus.length === 0) {

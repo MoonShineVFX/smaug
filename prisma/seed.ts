@@ -255,24 +255,24 @@ async function main() {
   // await prisma.asset.createMany({ data: assetsData })
 
   // create tags
-  const tagsData: Tag[] = defaultTags.map((tag, i) => {
-    return {
-      id: createId(),
-      name: tag.name,
-      assets: {
-        // connect: tag.assets.map((asset) => {
-        //   return { id: assetsDict[asset].id }
-        // }),
-      },
-      createAt: faker.date.past(),
-      updateAt: null
-    }
-  })
+  // const tagsData: Tag[] = defaultTags.map((tag, i) => {
+  //   return {
+  //     id: createId(),
+  //     name: tag.name,
+  //     assets: {
+  //       // connect: tag.assets.map((asset) => {
+  //       //   return { id: assetsDict[asset].id }
+  //       // }),
+  //     },
+  //     createAt: faker.date.past(),
+  //     updateAt: null
+  //   }
+  // })
 
-  for (let tagData of tagsData) {
-    await prisma.tag.create({ data: tagData })
-  }
-  console.log(`tags created`)
+  // for (let tagData of tagsData) {
+  //   await prisma.tag.create({ data: tagData })
+  // }
+  // console.log(`tags created`)
 
   // create representations
   // const representationsData: Representation[] = defaultRepresentations.map((rep, i) => {
@@ -318,49 +318,49 @@ async function main() {
   //   const itemId = assetsDict[item].id
   //   const itemName = replaceBankWithUnderscore(item)
 
-    // const sourceAssetFolder = `${sourceFolder}/${itemName}`
-    // const targetAssetFolder = `${storageRoot}/${itemId}`
+  // const sourceAssetFolder = `${sourceFolder}/${itemName}`
+  // const targetAssetFolder = `${storageRoot}/${itemId}`
 
-    // const repPreviewId = representationsDict[`${item} Preview`].id
-    // const repModelId = representationsDict[`${item} FBX`].id
-    // const RepTextureId = representationsDict[`${item} FBX texture`].id
+  // const repPreviewId = representationsDict[`${item} Preview`].id
+  // const repModelId = representationsDict[`${item} FBX`].id
+  // const RepTextureId = representationsDict[`${item} FBX texture`].id
 
-    // const sourceItemPreview = `${sourceAssetFolder}/${itemName}.png`
-    // const sourceItemModel = `${sourceAssetFolder}/${itemName}.zip`
-    // const sourceItemTexture = `${sourceAssetFolder}/${itemName}_texture.zip`
+  // const sourceItemPreview = `${sourceAssetFolder}/${itemName}.png`
+  // const sourceItemModel = `${sourceAssetFolder}/${itemName}.zip`
+  // const sourceItemTexture = `${sourceAssetFolder}/${itemName}_texture.zip`
 
-    // const previewFile = `${itemId}/${repPreviewId}_preview.png`
-    // const modelFile = `${itemId}/${repModelId}_model.zip`
-    // const textureFile = `${itemId}/${RepTextureId}_texture.zip`
+  // const previewFile = `${itemId}/${repPreviewId}_preview.png`
+  // const modelFile = `${itemId}/${repModelId}_model.zip`
+  // const textureFile = `${itemId}/${RepTextureId}_texture.zip`
 
-    // const targetPreviewFile = `${storageRoot}/${previewFile}`
-    // const targetModelFile = `${storageRoot}/${modelFile}`
-    // const targetTextureFile = `${storageRoot}/${textureFile}`
+  // const targetPreviewFile = `${storageRoot}/${previewFile}`
+  // const targetModelFile = `${storageRoot}/${modelFile}`
+  // const targetTextureFile = `${storageRoot}/${textureFile}`
 
-    // update representation path
+  // update representation path
 
-    // await prisma.representation.update({
-    //   where: { id: repPreviewId },
-    //   data: { path: previewFile }
-    // })
-    // await prisma.representation.update({
-    //   where: { id: repModelId },
-    //   data: { path: modelFile }
-    // })
-    // await prisma.representation.update({
-    //   where: { id: RepTextureId },
-    //   data: { path: textureFile }
-    // })
+  // await prisma.representation.update({
+  //   where: { id: repPreviewId },
+  //   data: { path: previewFile }
+  // })
+  // await prisma.representation.update({
+  //   where: { id: repModelId },
+  //   data: { path: modelFile }
+  // })
+  // await prisma.representation.update({
+  //   where: { id: RepTextureId },
+  //   data: { path: textureFile }
+  // })
 
-    // try {
-    //   fs.mkdirSync(targetAssetFolder, { recursive: true })
-    //   fs.copyFileSync(sourceItemPreview, targetPreviewFile)
-    //   fs.copyFileSync(sourceItemModel, targetModelFile)
-    //   fs.copyFileSync(sourceItemTexture, targetTextureFile)
-    // }
-    // catch (err) {
-    //   console.log(err)
-    // }
+  // try {
+  //   fs.mkdirSync(targetAssetFolder, { recursive: true })
+  //   fs.copyFileSync(sourceItemPreview, targetPreviewFile)
+  //   fs.copyFileSync(sourceItemModel, targetModelFile)
+  //   fs.copyFileSync(sourceItemTexture, targetTextureFile)
+  // }
+  // catch (err) {
+  //   console.log(err)
+  // }
   // }
 }
 

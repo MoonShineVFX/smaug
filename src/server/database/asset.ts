@@ -17,7 +17,7 @@ export async function get(assetId: string) {
       }
     }
   )
-  if (! asset) {
+  if (!asset) {
     return asset;
   }
 
@@ -38,14 +38,14 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
   }
 
   if (category.path === null) {
-    throw new Error("Category Should be null")
+    throw new Error("data crupted")
   }
 
   const assets = await prisma.asset.findMany({
     where: {
       category: {
         path: {
-          startsWith: category.path
+          startsWith: category.path + "/"
         }
       },
       isDeleted: false
@@ -105,7 +105,7 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
   return assetReturnItems;
 }
 
-export async function create(payload: AssetCreateParams){
+export async function create(payload: AssetCreateParams) {
   const { name, categoryId, tags, creatorId } = payload;
 
   // get tags ids from tags name
@@ -159,7 +159,7 @@ export async function create(payload: AssetCreateParams){
       },
     },
   });
-  const {isDeleted, ...assetWithoutIsDeleted} = asset;
+  const { isDeleted, ...assetWithoutIsDeleted } = asset;
   return assetWithoutIsDeleted;
   ;
 }

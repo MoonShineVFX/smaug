@@ -1,36 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
+import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import ListItem from '@mui/material/ListItem';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import Collapse from '@mui/material/Collapse';
 import List from '@mui/material/List';
 import Chip from '@mui/material/Chip';
-import Box, { BoxProps } from '@mui/material/Box';
-import { mainList, memberList, tagList } from './listItemData'
+import Box from '@mui/material/Box';
+
 import { MdViewModule, MdLabel, } from 'react-icons/md';
-import * as FontAwesome from "react-icons/fa";
 import { useRouter } from "next/router";
-import { fetchData } from '../libs/client/fetchFunction';
-import useSWR from "swr";
 import Icon from '@mui/material/Icon';
-import NextLink from 'next/link'
-import { Link as MUILink } from '@mui/material';
 import { trpc } from '../utils/trpc';
 
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+// const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 
-interface typesListData {
-  id: string;
-  title: string;
-  iconname?: 'ViewModule' | 'Label';
-  subitems?: { id: string, name: string }[]
-}
+// interface typesListData {
+//   id: string;
+//   title: string;
+//   iconname?: 'ViewModule' | 'Label';
+//   subitems?: { id: string, name: string }[]
+// }
 
 
 const components = {
@@ -113,12 +105,12 @@ interface ImainMenuData {
   id: string;
   name: string;
 }
-interface IListItem {
-  iconName: string;
-  name: string;
-  children: any[];
-  message?: string;
-}
+// interface IListItem {
+//   iconName: string;
+//   name: string;
+//   children: any[];
+//   message?: string;
+// }
 const CustomListWithCollapse = ({ mainMenuData }: ICustomListWithCollapse) => {
   const [open, setOpen] = useState(true);
   const handleClick = () => {
@@ -158,6 +150,7 @@ interface ITagsListItem {
   id: string;
   name: string;
 }
+
 const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseForTag) => {
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
@@ -169,9 +162,11 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
     console.log('click')
     router.push({ pathname: '/tags', query: { id } }, undefined, { shallow: true });
   }
-  const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags`] : null, fetcher);
+  // const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags`] : null, fetcher);
+  const tagsQry = trpc.tags.list.useQuery();
 
-  if (!mainOptionsListItem) return <div>Loading</div>
+  if (tagsQry.isLoading) return <div>Loading</div>
+  if (tagsQry.isError) return <div>{tagsQry.error.message}</div>
   return (
     <CustomerNav>
       <ListItemButton onClick={handleClick}>
@@ -190,7 +185,7 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
             m: 1,
           }}>
             {
-              mainOptionsListItem.map((item, _index) => {
+              tagsQry.data?.list.map((item, _index) => {
                 return (
                   <Chip key={item.name} label={item.name} onClick={() => handleTagClick(item.id)} sx={{ m: .5, fontSize: '12px' }} />
                 )
@@ -209,9 +204,9 @@ interface IMainListItems {
 }
 export const MainListItems = ({ mainMenuData }: IMainListItems) => {
   return (
-
-    <CustomListWithCollapse mainMenuData={mainMenuData} />
-
+    mainMenuData ?
+      <CustomListWithCollapse mainMenuData={mainMenuData} /> :
+      <></>
   );
 }
 interface ITagListItems {
@@ -226,24 +221,24 @@ export const TagListItems = ({ mainMenuData }: ITagListItems) => {
   );
 }
 
-export const MemberListItems = () => {
-  return (
-    <CustomerNav>
-      <ListSubheader component="div" inset>
-        會員功能（如有登入)
-      </ListSubheader>
-      {
-        memberList.map((item, index) => {
-          return (
-            <ListItemButton key={index}>
-              <ListItemIcon>
-                <AssignmentIcon />
-              </ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItemButton>
-          )
-        })
-      }
-    </CustomerNav>
-  )
-}
+// export const MemberListItems = () => {
+//   return (
+//     <CustomerNav>
+//       <ListSubheader component="div" inset>
+//         會員功能（如有登入)
+//       </ListSubheader>
+//       {
+//         memberList.map((item, index) => {
+//           return (
+//             <ListItemButton key={index}> 
+//               <ListItemIcon>
+//                 <AssignmentIcon />
+//               </ListItemIcon>
+//               <ListItemText primary={item.title} />
+//             </ListItemButton>
+//           )
+//         })
+//       }
+//     </CustomerNav>
+//   )
+// }
