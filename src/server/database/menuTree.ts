@@ -1,6 +1,6 @@
 import { Category } from '@prisma/client';
 import prisma from '../../client';
-import { MenuWithCategoriesResponse, CategoryTree } from '../../libs/types';
+import { CategoryTree } from '../../libs/types';
 import { getByMenuId as cateByMenuId } from './category';
 
 
@@ -12,7 +12,7 @@ export async function menuTree(id: string) {
     },
   })
   if (!menu || menu.isDeleted || !menu.isVisible) {
-    throw new Error("Menu Categories not found")
+    throw new Error("Menu not found")
   }
 
   const categories = await cateByMenuId(menuId)
