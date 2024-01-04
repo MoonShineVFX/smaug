@@ -104,13 +104,13 @@ export const defaultCategories = [
 //   },
 // ]
 
-export const defaultTags = [
-  { name: 'asus', creator: 'admin', assets: ["Hat"] },
-  { name: 'rog', creator: 'admin', assets: ["Hat"] },
-  { name: 'taiwan', creator: 'admin', assets: ["Fish 001", "Fish 002"] },
-  { name: "cyperpunk", creator: "admin", assets: ["Building 1"] },
-  { name: "east", creator: "admin", assets: ["Building 2"] },
-]
+// export const defaultTags = [
+//   { name: 'asus', creator: 'admin', assets: ["Hat"] },
+//   { name: 'rog', creator: 'admin', assets: ["Hat"] },
+//   { name: 'taiwan', creator: 'admin', assets: ["Fish 001", "Fish 002"] },
+//   { name: "cyperpunk", creator: "admin", assets: ["Building 1"] },
+//   { name: "east", creator: "admin", assets: ["Building 2"] },
+// ]
 
 // source data
 // export const sourceItems = ["Fish 001", "Fish 002"]
