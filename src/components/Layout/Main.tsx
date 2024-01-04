@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Header from '../Header';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 
 import MuiDrawer from '@mui/material/Drawer';
@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import List from '@mui/material/List';
-import { MainListItems, TagListItems, MemberListItems } from '../listItems';
+import { MainListItems, TagListItems } from '../listItems';
 
 
 import NextLink from 'next/link'
@@ -21,7 +21,6 @@ import { Link as MUILink } from '@mui/material';
 // import useSWR from "swr";
 import { MenuListItem } from '../../libs/types';
 import { trpc } from '../../utils/trpc';
-import { OpenWithRounded } from '@mui/icons-material';
 
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
