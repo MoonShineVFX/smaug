@@ -22,7 +22,7 @@ const transitionStyles = (theme: Theme) => theme.transitions.create(['marginRigh
 
 const AssetListItem = styled(ImageListItem)(({ theme }) => ({
   backgroundColor: '#202020',
-  padding: theme.spacing(5),
+  padding: theme.spacing(0),
   borderRadius: '5px',
   border: '2px #202020 solid',
   transition: 'all 0.3s',
@@ -114,8 +114,7 @@ export default function Home() {
               <img src={item.preview}
                 alt={item.name}
                 loading="lazy"
-                style={{ borderRadius: "5px", objectFit: 'contain', aspectRatio: 1 / 1 }}
-
+                style={{ borderRadius: "5px", objectFit: 'cover', aspectRatio: 1 / 1 }}
               />
               <ImageListItemBar
                 title={item.name}
