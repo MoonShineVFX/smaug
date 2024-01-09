@@ -186,7 +186,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse<Asset[] | an
     },
     createAt: new Date(),
     creator: { connect: { id: currentUser.id } }, // Consider fetching this from a session or a JWT for an authenticated user
-    tags: tags ? { connect: tags.map(tagId => ({ id: tagId })) } : undefined,
+    tags: tags ? { connect: tags.map((tagId: string) => ({ id: tagId })) } : undefined,
   };
 
   const createdAsset = await prisma.asset.create({

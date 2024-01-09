@@ -6,7 +6,6 @@ import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { RepresentationType, RepresentationFormat, Prisma } from '@prisma/client';
 import prisma from '../../client';
-import { z } from 'zod';
 import { settings } from '../../libs/common';
 
 export const config = {
@@ -15,12 +14,24 @@ export const config = {
   }
 }
 
+
+interface MulterApiRequest extends NextApiRequest {
+  file: Express.Multer.File;
+  preserved: {
+    assetId: string;
+    uploaderId: string;
+    representationType: RepresentationType;
+    representationFormat: RepresentationFormat;
+  }
+}
+
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log(req.body);
-    req['preserved'] = { ...req.body };
+    const reqWithPreserved = req as unknown as MulterApiRequest;
+    reqWithPreserved['preserved'] = { ...req.body };
     const folderPath = `${settings.STORAGE_ROOT}/${req.body.assetId}/`
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath);
@@ -40,15 +51,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-interface MulterApiRequest extends NextApiRequest {
-  file: Express.Multer.File;
-  preserved: {
-    assetId: string;
-    uploaderId: string;
-    representationType: RepresentationType;
-    representationFormat: RepresentationFormat;
-  }
-}
 
 const uploadFile = expressWrapper(upload.single('file')) as any;
 router.use(uploadFile);

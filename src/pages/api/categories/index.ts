@@ -111,18 +111,23 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Category[] | 
 }
 
 
+interface NextApiRequestWithUser extends NextApiRequest {
+  user: any // 你可以將 `any` 替換為你的 `User` 型別
+}
+
 async function handlePost(req: NextApiRequest, res: NextApiResponse<Category[] | any>): Promise<void> {
-  if (!req.headers) {
+  const requestWithUser = req as NextApiRequestWithUser;
+  if (!requestWithUser.headers) {
     res.status(401).json({ message: "Unauthorized" })
     return
   }
 
-  if(req.user === null) {
+  if(requestWithUser.user === null) {
     res.status(401).json({ message: "Unauthorized" })
     return
   }
 
-  const { name, parentId, menuId } = req.body
+  const { name, parentId, menuId } = requestWithUser.body
 
   if (!name || !menuId) {
     res.status(400).json({ message: "Bad Request" })
@@ -135,7 +140,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse<Category[] |
         name,
         parentId,
         isDeleted: false,
-        menuId: menuId
+        menuId: menuId,
+        creator: requestWithUser.user.id,
       },
     }) as Category
     res.status(201).json(newCategory)
