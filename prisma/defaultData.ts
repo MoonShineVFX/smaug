@@ -119,7 +119,8 @@ export const defaultCategories = [
 // menu
 export const defaultMenus = [
   { name: 'Home', iconName: "menu", sortOrder: 1, isVisible: true, isDeleted: false, isProtected: false },
-  { name: 'Resources', iconName: "PublishedWithChanges", sortOrder: 2, isVisible: true, isDeleted: false, isProtected: false },
-  { name: 'Tags', iconName: "label", sortOrder: 3, isVisible: true, isDeleted: false, isProtected: false },
-  { name: 'Favorite', iconName: "favorite", sortOrder: 4, isVisible: true, isDeleted: false, isProtected: true },
-  { name: 'Download', iconName: "star", sortOrder: 5, isVisible: false, isDeleted: false, isProtected: true }]
+  { name: 'Resources', iconName: "published_with_changes", sortOrder: 2, isVisible: true, isDeleted: false, isProtected: false },
+  // { name: 'Tags', iconName: "label", sortOrder: 3, isVisible: true, isDeleted: false, isProtected: false },
+  // { name: 'Favorite', iconName: "favorite", sortOrder: 4, isVisible: true, isDeleted: false, isProtected: true },
+  // { name: 'Download', iconName: "star", sortOrder: 5, isVisible: false, isDeleted: false, isProtected: true }
+]

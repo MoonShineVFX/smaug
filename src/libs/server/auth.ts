@@ -11,7 +11,7 @@ type IAuthToken = {
 };
 
 type IUserWithTokens = User & {
-  role: { name: string };
+  roles: { name: string }[];
   authTokens: IAuthToken[];
 };
 
@@ -58,8 +58,7 @@ export async function authenticate(credential: LoginParams): Promise<LoginRespon
       email: user.email,
       picture: 'noPicture.png',
       account: user.account,
-      roleId: user.roleId,
-      roleName: user.role.name,
+      roles: user.roles,
       type: user.type,
       updateAt: user.updateAt,
       createAt: user.createAt,
@@ -85,7 +84,7 @@ export async function findUserByAccount(account: string): Promise<IUserWithToken
           id: true
         },
       },
-      role: {
+      roles: {
         select: {
           name: true
         }
@@ -177,7 +176,7 @@ export async function authenticateUser1(token: string) {
       include: { 
         user: { 
           include: { 
-            role: {
+            roles: {
               select:{ name : true} 
             } 
           } 
