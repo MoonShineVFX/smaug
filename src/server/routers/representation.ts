@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { RepresentationType, RepresentationFormat } from '@prisma/client';
+import { RepresentationType, RepresentationFormat, RepresentationUsage } from '@prisma/client';
 import { router, publicProcedure, protectedProcedure } from '../trpc';
 import { create, deleteRepresentation, detail, deleteByAssetId, get } from '../database/representation'
 import { TRPCError } from '@trpc/server';
@@ -19,6 +19,7 @@ export const representationRouter = router({
       name: z.string(),
       path: z.string(),
       format: z.nativeEnum(RepresentationFormat),
+      usage: z.nativeEnum(RepresentationUsage),
       type: z.nativeEnum(RepresentationType),
       assetId: z.string(),
       uploaderId: z.string(),
@@ -26,11 +27,12 @@ export const representationRouter = router({
       fileSize: z.number().optional().nullable(),
     }))
     .mutation(async (opts) => {
-      const { name, path, format, type, assetId, uploaderId, textureId, fileSize } = opts.input
+      const { name, path, format, type, assetId, usage, uploaderId, textureId, fileSize } = opts.input
       const representation = await create({
         name: name,
         path: path,
         format: format,
+        usage: usage,
         type: type,
         assetId: assetId,
         uploaderId: uploaderId,

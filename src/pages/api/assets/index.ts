@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRouter } from 'next-connect';
 import type { Asset } from '@prisma/client';
-import { RepresentationType, Prisma } from '@prisma/client';
+import { RepresentationType, Prisma, RepresentationUsage } from '@prisma/client';
 import { authenticateUser } from '../../../libs/server/auth';
 import prisma from '../../../client';
 import { AssetListItem } from '../../../libs/types';
@@ -78,7 +78,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
       },
       representations: {
         where: {
-          type: RepresentationType.PREVIEW,
+          type: RepresentationUsage.THUMBNAIL,
         },
         orderBy: {
           createAt: Prisma.SortOrder.desc,

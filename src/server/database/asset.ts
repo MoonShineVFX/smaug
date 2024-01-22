@@ -1,4 +1,4 @@
-import { Prisma, RepresentationType } from "@prisma/client";
+import { Prisma, RepresentationType, RepresentationUsage } from "@prisma/client";
 import prisma from '../../client';
 import { AssetListItem, AssetCreateParams } from "../../libs/types";
 import { settings } from '../../libs/common';
@@ -61,7 +61,7 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
       },
       representations: {
         where: {
-          type: RepresentationType.PREVIEW,
+          usage: RepresentationUsage.THUMBNAIL,
         },
         orderBy: {
           createAt: Prisma.SortOrder.desc,

@@ -6,12 +6,13 @@ export async function create(
   payload: Prisma.RepresentationUncheckedCreateInput
 ) {
   console.log("into representation create post");
-  const { name, type, format, path, fileSize, assetId, uploaderId } = payload;
+  const { name, type, format, path, usage, fileSize, assetId, uploaderId } = payload;
   const representation: Prisma.RepresentationCreateInput = {
     name: name,
     type: type,
     format: format,
     path: path,
+    usage: usage,
     fileSize: fileSize,
     asset: {
       connect: {

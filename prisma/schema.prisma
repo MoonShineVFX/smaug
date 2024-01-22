@@ -38,6 +38,7 @@ enum RepresentationUsage {
   PREVIEW
   RENDER
   DOWNLOAD
+  DETAIL_BG
 }
 
 enum AssetAccessLevel {

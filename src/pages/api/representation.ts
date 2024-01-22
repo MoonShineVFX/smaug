@@ -4,7 +4,7 @@ import { createId } from '@paralleldrive/cuid2'
 import multer from 'multer';
 import { createRouter, expressWrapper } from 'next-connect';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { RepresentationType, RepresentationFormat, Prisma } from '@prisma/client';
+import { RepresentationType, RepresentationFormat, Prisma, RepresentationUsage } from '@prisma/client';
 import prisma from '../../client';
 import { settings } from '../../libs/common';
 
@@ -20,6 +20,7 @@ interface MulterApiRequest extends NextApiRequest {
   preserved: {
     assetId: string;
     uploaderId: string;
+    representationUsage: RepresentationUsage;
     representationType: RepresentationType;
     representationFormat: RepresentationFormat;
   }
@@ -78,6 +79,7 @@ async function handlePost(req: MulterApiRequest, res: NextApiResponse) {
     id: reqId,
     name: req.file.originalname,
     type: req.preserved.representationType,
+    usage: req.preserved.representationUsage,
     format: req.preserved.representationFormat,
     path: `${req.preserved.assetId}/${req.file.filename}`,
     fileSize: req.file.size,

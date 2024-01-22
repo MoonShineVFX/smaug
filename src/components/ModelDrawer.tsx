@@ -94,7 +94,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
           <CardMedia
             component="img"
             height="280"
-            image={assetDetailQry.data.detail!.preview === "" ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : assetDetailQry.data.detail!.preview}
+            image={assetDetailQry.data.detail!.thumbnail === "" ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : assetDetailQry.data.detail!.thumbnail}
             alt={assetDetailQry.data.detail!.name}
             sx={{ objectFit: "contain", bgcolor: "#202020", p: 2 }}
           />
@@ -105,7 +105,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
               size="small"
             >
               <ViewIconButton isActive={isActive} onClick={() => setIsActive(!isActive)} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-              {assetDetailQry.data.detail!.renders.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
+              {assetDetailQry.data.detail!.previews.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
             </ButtonGroup>
             <IconButton aria-label="close" onClick={() => {
               setOpenDrawer(false)
@@ -119,7 +119,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
             </IconButton>
           </Box>
           {
-            assetDetailQry.data.detail!.renders.length > 0 ?
+            assetDetailQry.data.detail!.previews.length > 0 ?
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
               :
               <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>

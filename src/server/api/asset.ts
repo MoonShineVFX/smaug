@@ -1,4 +1,4 @@
-import { Prisma, Category, RepresentationType } from '@prisma/client';
+import { Prisma, Category, RepresentationType, RepresentationUsage } from '@prisma/client';
 import * as assetRepo from '../database/asset';
 import * as categoryRepo from '../database/category';
 import util from '../../utils/util';
@@ -34,33 +34,33 @@ export async function assetDetail(assetId: string) {
 
   const assetReturn = {
     id: asset!.id,
-    preview: "",
+    thumbnail: "",
     name: asset!.name,
     categoryList: categoryList,
     updateAt: asset!.updateAt,
     createAt: asset!.createAt,
     creator: asset!.creator.name,
     tags: asset!.tags,
-    renders: new Array(),
+    previews: new Array(),
     downloads: new Array(),
   }
 
   asset.representations.forEach((element, _index) => {
-    switch (element.type) {
-      case RepresentationType.PREVIEW: {
-        if (element.path !== null) assetReturn.preview = element.path;
+    switch (element.usage) {
+      case RepresentationUsage.THUMBNAIL: {
+        if (element.path !== null) assetReturn.thumbnail = element.path;
         break;
       }
-      case RepresentationType.RENDER: {
-        const render = {
+      case RepresentationUsage.PREVIEW: {
+        const preview = {
           id: element.id,
           name: element.name,
           path: element.path ? element.path : '',
         }
-        assetReturn.renders.push(render)
+        assetReturn.previews.push(preview)
         break;
       }
-      case RepresentationType.MODEL: {
+      case RepresentationUsage.DOWNLOAD: {
         const download = {
           id: element.id,
           name: element.name,

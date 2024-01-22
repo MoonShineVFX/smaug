@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Asset } from '@prisma/client';
-import { RepresentationType } from '@prisma/client';
+import { RepresentationType, RepresentationUsage } from '@prisma/client';
 import prisma from '../../../client';
 import util from '../../../utils/util';
 import { AssetDetails } from '../../../libs/types';
@@ -97,21 +97,24 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Asset[] | any
     }
 
     representations.forEach((element, index) => {
-      switch (element.type) {
-        case RepresentationType.PREVIEW: {
+      switch (element.usage) {
+        case RepresentationUsage.THUMBNAIL: {
           if (element.path !== null) assetReturn.preview = element.path;
           break;
         }
-        case RepresentationType.RENDER: {
-          const render = {
-            id: element.id,
-            name: element.name,
-            path: element.path ? element.path : '',
+        case RepresentationUsage.PREVIEW: {
+          if (element.type === RepresentationType.RENDER) {
+            const render = {
+              id: element.id,
+              name: element.name,
+              path: element.path ? element.path : '',
+            }
+            assetReturn.renders.push(render)
+            break;
           }
-          assetReturn.renders.push(render)
-          break;
         }
-        case RepresentationType.MODEL: {
+        case RepresentationUsage.DOWNLOAD: {
+          if (element.type !== RepresentationType.MODEL) break;
           const download = {
             id: element.id,
             name: element.name,
