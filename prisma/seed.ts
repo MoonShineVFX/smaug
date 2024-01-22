@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import path from 'path'
 import { faker } from '@faker-js/faker/locale/zh_TW'
-import { PrismaClient, UserType, Category } from '@prisma/client'
+import { PrismaClient, UserType, Category, AssetAccessLevel } from '@prisma/client'
 // import { createId } from '@paralleldrive/cuid2'
 import { permission, rolesData } from '../src/libs/common'
 import { hashPassword } from '../src/libs/server/auth'
@@ -66,7 +66,7 @@ async function main() {
       return {
         codeName: arg[0],
         name: arg[1],
-        createAt: faker.date.past(),
+        createAt: new Date(),
       }
     })
   })
@@ -81,7 +81,10 @@ async function main() {
         connect: roleItem.permissions.map((permissionItem) => {
           return { codeName: permissionItem }
         })
-      }
+      },
+      accessLevels: roleItem.accessLevels.map(level => 
+        AssetAccessLevel[level as keyof typeof AssetAccessLevel]
+      )
     }
   })
   for (let rolePermission of rolePermissions) {
@@ -102,7 +105,9 @@ async function main() {
       account: 'admin',
       password: await hashPassword('admin'),
       email: 'admin@moonshine.tw',
-      roleId: roleAdmin.id,
+      roles: {
+        connect: { id: roleAdmin.id }
+      },
       type: UserType.BOT,
     }
   })
@@ -119,7 +124,9 @@ async function main() {
       account: 'creator',
       password: await hashPassword('creator'),
       email: 'creator@moonshine.tw',
-      roleId: roleCreator.id,
+      roles:{
+        connect: { id: roleCreator.id }
+      },
       type: UserType.BOT,
     }
   })
@@ -136,7 +143,9 @@ async function main() {
       account: 'user',
       password: await hashPassword('user'),
       email: 'user@moonshine.tw',
-      roleId: roleUser.id,
+      roles: {
+        connect: { id: roleUser.id }
+      },
       type: UserType.BOT,
     }
   })

@@ -16,7 +16,6 @@ enum UserType {
 }
 
 enum RepresentationType {
-  PREVIEW
   RENDER
   MODEL
   TEXTURE
@@ -34,14 +33,28 @@ enum RepresentationFormat {
   USD
 }
 
+enum RepresentationUsage {
+  THUMBNAIL
+  PREVIEW
+  RENDER
+  DOWNLOAD
+}
+
+enum AssetAccessLevel {
+  INTERNAL
+  EXTERNAL
+  RESTRICTED
+}
+
 model Role {
-  id          String       @id @default(cuid())
-  name        String       @unique
-  users       User[]
-  createAt    DateTime     @default(now())
-  updateAt    DateTime?    @updatedAt
-  isDeleted   Boolean      @default(false)
-  permissions Permission[]
+  id           String             @id @default(cuid())
+  name         String             @unique
+  users        User[]
+  createAt     DateTime           @default(now())
+  updateAt     DateTime?          @updatedAt
+  isDeleted    Boolean            @default(false)
+  permissions  Permission[]
+  accessLevels AssetAccessLevel[]
 }
 
 model User {
@@ -50,8 +63,7 @@ model User {
   account                String           @unique
   password               String
   name                   String
-  roleId                 String
-  role                   Role             @relation(fields: [roleId], references: [id])
+  roles                  Role[]
   type                   UserType         @default(HUMAN)
   createdAssets          Asset[]
   uploadedRepresentation Representation[]
@@ -67,7 +79,9 @@ model User {
 // 資產
 model Asset {
   id              String           @id @default(cuid())
+  assetLevel      AssetAccessLevel @default(INTERNAL)
   name            String
+  description     String           @default("")
   creatorId       String
   creator         User             @relation(fields: [creatorId], references: [id])
   representations Representation[]
@@ -76,16 +90,19 @@ model Asset {
   tags            Tag[]
   createAt        DateTime         @default(now())
   updateAt        DateTime?        @updatedAt
+  isVisible       Boolean          @default(true)
   isDeleted       Boolean          @default(false)
+  meta            Json             @default("{}")
 }
 
-// 資產可以有多種格式，代表模型的檔案格式
+// 資產在網站應用中呈現的方式
 model Representation {
   id         String                @id @default(cuid())
   name       String
   path       String
-  format     RepresentationFormat?
+  format     RepresentationFormat? // 因為主要都是壓縮檔，所以要知道是哪種格式
   type       RepresentationType
+  usage      RepresentationUsage // 用在網頁上的哪一部份。例如：縮圖、預覽、下載、背景圖之類的
   assetId    String
   asset      Asset                 @relation(fields: [assetId], references: [id])
   uploaderId String
@@ -98,6 +115,7 @@ model Representation {
   fileSize   Int?                  @default(0) // 檔案大小
   isDeleted  Boolean               @default(false)
   isVisible  Boolean               @default(true)
+  meta       Json                  @default("{}")
 }
 
 model Category {

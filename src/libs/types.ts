@@ -10,8 +10,7 @@ export type UserDisplayInfo = {
   email: string;
   picture: string;
   account: string;
-  roleId: string;
-  roleName: string;
+  roles: Array<{ name: string }>;
   type: string;
   updateAt: Date | null;
   createAt: Date;
