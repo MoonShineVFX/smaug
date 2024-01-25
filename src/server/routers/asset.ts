@@ -26,12 +26,13 @@ export const assetRouter = router({
     .input(z.object({
       name: z.string(),
       categoryId: z.number(),
+      description: z.string(),
       tags: z.array(z.string()),
     }))
     .mutation(async (opts) => {
       const creatorId = opts.ctx.user.id
-      const { name, categoryId, tags } = opts.input
-      const asset = await createAsset({ name, categoryId, tags, creatorId })
+      const { name, categoryId, description, tags } = opts.input
+      const asset = await createAsset({ name, categoryId, description, tags, creatorId })
       return { detail: asset }
     }),
 

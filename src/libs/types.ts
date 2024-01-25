@@ -67,6 +67,7 @@ export interface AssetDetails {
 export interface AssetCreateParams {
   name: string;
   categoryId: number;
+  description: string;
   tags: Array<string>;
   creatorId: string;
 }

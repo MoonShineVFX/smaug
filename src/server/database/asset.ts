@@ -106,7 +106,7 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
 }
 
 export async function create(payload: AssetCreateParams) {
-  const { name, categoryId, tags, creatorId } = payload;
+  const { name, categoryId, description, tags, creatorId } = payload;
 
   // get tags ids from tags name
   const tagsData = await prisma.tag.findMany({
@@ -144,6 +144,7 @@ export async function create(payload: AssetCreateParams) {
   const asset = await prisma.asset.create({
     data: {
       name: name,
+      description: description,
       category: {
         connect: {
           id: categoryId,
