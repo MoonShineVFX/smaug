@@ -19,6 +19,7 @@ enum RepresentationType {
   RENDER
   MODEL
   TEXTURE
+  GAME_ASSET
 }
 
 enum RepresentationFormat {
@@ -31,12 +32,12 @@ enum RepresentationFormat {
   C4D
   UNREAL
   USD
+  UNITY
 }
 
 enum RepresentationUsage {
   THUMBNAIL
   PREVIEW
-  RENDER
   DOWNLOAD
   DETAIL_BG
 }
