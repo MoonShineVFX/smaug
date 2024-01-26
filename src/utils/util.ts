@@ -1,23 +1,24 @@
 
 import { z, ZodTypeAny } from 'zod';
 const util = {
-    /**
-     * @param {number} bytes
-     * @return {number} - 小數兩位
-     */
-formatBytes:(bytes: number, decimals = 2) => {
+  /**
+   * @param {number} bytes
+   * @return {number} - 小數兩位
+   */
+  formatBytes: (bytes: BigInt | number, decimals = 2) => {
 
-        if (bytes === 0) return '0B';
+    if (bytes === 0) return '0B';
 
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const numBytes = Number(bytes)
+    const i = Math.floor(Math.log(numBytes) / Math.log(k));
 
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    return `${parseFloat((numBytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 
 
-    }
+  }
 }
 export default util;
 
