@@ -20,6 +20,7 @@ import { styled } from "@mui/material/styles";
 import { trpc } from "../utils/trpc";
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 import { NonNullableAssetDetailOutput } from '../libs/types';
+import { Tag } from '@prisma/client';
 
 interface IModelDrawerProps {
   assetId: string | undefined;
@@ -53,15 +54,16 @@ interface AssetInfoProps {
   assetDetail: NonNullableAssetDetailOutput;
 }
 
-
 const AssetInfo = ({ assetDetail }: AssetInfoProps) => {
   return (
     < AssetCardContent sx={{ backgroundColor: '#333', px: 2, py: 2 }
     }>
-      <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bolder', textTransform: 'uppercase', mb: 0 }}>
+      <Typography gutterBottom={true} variant="h5" component="div" sx={{ fontWeight: 'bolder', textTransform: 'uppercase', mb: 0 }}>
         {assetDetail.name}
       </Typography>
-      {/* 這猶要加 assetDetail.descript */}
+      <Typography variant="body1" component="div" sx={{ py: 0.5, fontWeight: 'bolder', textTransform: 'uppercase', mb: 0, minHeight: '1em', }}>
+        {assetDetail.description === "" ? " " : assetDetail.description}
+      </Typography>
       <Grid container justifyContent="space-between">
         <Grid item>
           <Typography variant="body2" color="text.secondary" sx={{ textTransform: '', letterSpacing: '', fontSize: 13 }}>
@@ -79,47 +81,86 @@ const AssetInfo = ({ assetDetail }: AssetInfoProps) => {
 }
 
 
-const AssetPreviewArea = ({ assetDetail }: AssetInfoProps) => {
+const TagsComponent = ({ tags }: { tags: NonNullableAssetDetailOutput["tags"] }) => {
   return (
-    <div style={{ position: "relative" }}>
-      <CardMedia  // preview area
-        component="img"
-        height="280"
-        image={assetDetail.thumbnail === "" ? '/no-images.jpg' : assetDetail.thumbnail}
-        alt={assetDetail.name}
-        sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
-      />
-      <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
-        <ButtonGroup
-          variant="contained"
-          color="primary"
-          size="small"
-        >
-          <ViewIconButton isActive={true} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-          {assetDetail.previews.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
-        </ButtonGroup>
-        <IconButton aria-label="close" onClick={() => {
-          //setOpenDrawer(false)
-          //setTimeout(() => {
-          //  router.query.assetId = [];
-          //  router.push(router)
-          //}, 500)
+    <Box sx={{ px: 2, backgroundColor: '#333', borderTop: "solid", borderColor: "#666", borderWidth: "thin" }}>
+      <Box sx={{ py: 3 }}>
+        <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
+          Tags
+        </Typography>
 
-        }}>
-          <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
-        </IconButton>
-      </Box>
-      {
-        assetDetail.previews.length > 0 ?
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
+        {tags.length == 0 ?
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'center' }}>No Tags Yet</Typography>
           :
-          <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
+          <Box sx={{
+            display: 'flex',
+            flexWrap: "wrap",
+            p: 2,
+            mt: 1,
+          }}>
+            {tags.map((tag, _index) => {
+              return (
+                <Chip
+                  key={tag.id} label={tag.name}
+                  onClick={() => {
+                    console.log(`${tag.name} is pressed`)
+                  }}
+                  sx={{ m: .5, fontSize: 13 }} />
+              )
+            })}
           </Box>
-      }
-    </div>
+        }
+
+      </Box>
+    </Box>
   )
 }
+
+
+const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOutput["downloads"] }) => {
+
+  return (
+    <Box sx={{ px: 2 }}>
+      <Box sx={{ pt: 3 }}>
+        <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
+          Resource
+        </Typography>
+        <Box>
+          {
+            downloads.length == 0 ?
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>No Downloadable File Now</Typography>
+              :
+              <Box sx={{ display: 'flex', justifyContent: "space-between" }}>
+                {downloads.map((download, _index) => {
+                  return (
+                    <>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>{download.format}</Typography>
+                      <Box sx={{ flexGrow: 1, textAlign: "right" }} >
+                      <Button
+                        key={download.id}
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        sx={{ m: .5, fontSize: 13 }}
+                        href={download.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {`${download.name}`}
+                      </Button>
+                      </Box>
+                    </>
+                  )
+                })
+                }
+              </Box>
+          }
+        </Box>
+      </Box>
+    </Box>
+  )
+}
+
 
 export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IModelDrawerProps) {
 
@@ -205,51 +246,8 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
       </Card >
 
       <AssetInfo assetDetail={assetDetail} />
-
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ pt: 3 }}>
-          <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
-            Tags
-          </Typography>
-          <Box sx={{
-            display: 'flex',
-            flexWrap: "wrap",
-            p: 0,
-            mt: 1,
-          }}>
-            {
-              assetDetailQry.data.detail!.tags?.map((tag, _index) => {
-                return (
-                  <Chip
-                    key={tag.name} label={tag.name}
-                    onClick={() => {
-                      //handleTagClick(item.id)
-                    }}
-                    sx={{ m: .5, fontSize: 13 }} />
-                )
-              })
-            }
-
-          </Box>
-        </Box>
-
-        <Box sx={{ pt: 3 }}>
-          <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
-            Resource
-          </Typography>
-          <Box>
-            {
-              assetDetailQry.data.detail!.downloads.length > 0 ?
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography> // TODO: Downloadable component
-                :
-                <Box sx={{ display: 'flex', justifyContent: "space-between" }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>There is no downloadable file now.</Typography>
-                </Box>
-            }
-          </Box>
-        </Box>
-
-      </Box>
+      <TagsComponent tags={assetDetail.tags} />
+      <DownloadComponent downloads={assetDetail.downloads} />
     </Drawer >
   )
 }

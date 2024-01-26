@@ -1,4 +1,4 @@
-import { Category, RepresentationUsage } from '@prisma/client';
+import { Category, RepresentationUsage, Representation } from '@prisma/client';
 import * as assetRepo from '../database/asset';
 import * as categoryRepo from '../database/category';
 import util from '../../utils/util';
@@ -6,6 +6,10 @@ import { settings } from '../../libs/common';
 const {
   formatBytes,
 } = util;
+
+type FERepresentation = Omit<Representation, 'isDeleted' | 'isVisible'> & {
+  filesize: string;
+};
 
 
 export async function assetDetail(assetId: string) {
@@ -36,13 +40,14 @@ export async function assetDetail(assetId: string) {
     id: asset!.id,
     thumbnail: "",
     name: asset!.name,
+    description: asset!.description,
     categoryList: categoryList,
     updateAt: asset!.updateAt,
     createAt: asset!.createAt,
     creator: asset!.creator.name,
     tags: asset!.tags,
-    previews: new Array(),
-    downloads: new Array(),
+    previews: new Array<FERepresentation>(),
+    downloads: new Array<FERepresentation>(),
   }
 
   asset.representations.forEach((element, _index) => {
@@ -52,22 +57,24 @@ export async function assetDetail(assetId: string) {
         break;
       }
       case RepresentationUsage.PREVIEW: {
+        const { isVisible, isDeleted, ...feRepresentation } = element;
         const preview = {
-          id: element.id,
-          name: element.name,
-          path: element.path ? `${settings.RESOURCE_URL}${element.path}${element.path}` : '',
+          ...feRepresentation,
+          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
+          filesize: formatBytes(element.fileSize ? element.fileSize : 0),
         }
         assetReturn.previews.push(preview)
         break;
       }
       case RepresentationUsage.DOWNLOAD: {
+
+        const { isDeleted, isVisible, ...feRepresentation } = element;
         const download = {
-          id: element.id,
-          name: element.name,
-          format: element.format,
-          fileSize: formatBytes(element.fileSize ? element.fileSize : 0),
+          ...feRepresentation,
           path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
+          filesize: formatBytes(element.fileSize ? element.fileSize : 0),
         }
+
         assetReturn.downloads.push(download)
         break;
       }
