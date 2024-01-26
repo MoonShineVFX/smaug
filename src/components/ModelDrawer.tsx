@@ -61,6 +61,7 @@ const AssetInfo = ({ assetDetail }: AssetInfoProps) => {
       <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bolder', textTransform: 'uppercase', mb: 0 }}>
         {assetDetail.name}
       </Typography>
+      {/* 這猶要加 assetDetail.descript */}
       <Grid container justifyContent="space-between">
         <Grid item>
           <Typography variant="body2" color="text.secondary" sx={{ textTransform: '', letterSpacing: '', fontSize: 13 }}>
