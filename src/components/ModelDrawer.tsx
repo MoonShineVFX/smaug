@@ -95,7 +95,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
             height="280"
             image={assetDetailQry.data.detail!.thumbnail === "" ? '/no-image.jpg' : assetDetailQry.data.detail!.thumbnail}
             alt={assetDetailQry.data.detail!.name}
-            sx={{ objectFit: "contain", bgcolor: "#202020", p: 2 }}
+            sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
           />
           <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
             <ButtonGroup
@@ -114,7 +114,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
               }, 500)
 
             }}>
-              <CloseIcon /> {/* 關閉按鈕*/}
+              <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
             </IconButton>
           </Box>
           {
@@ -179,7 +179,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
           </Typography>
           <Box>
             {
-              assetDetailQry.data.detail!.downloads.length > 0 ?
+              assetDetailQry.data.detail!.resources.length > 0 ?
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography> // TODO: Downloadable component
                 :
                 <Box sx={{ display: 'flex', justifyContent: "space-between" }}>

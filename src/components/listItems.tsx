@@ -165,7 +165,7 @@ const CustomListWithCollapseForTag = ({ mainMenuData }: ICustomListWithCollapseF
   // const { data: mainOptionsListItem } = useSWR(mainMenuData ? [`/api/tags`] : null, fetcher);
   const tagsQry = trpc.tags.list.useQuery();
 
-  if (tagsQry.isLoading) return <div>Loading</div>
+  if (tagsQry.isLoading) return <div>Loading Tags...</div>
   if (tagsQry.isError) return <div>{tagsQry.error.message}</div>
   return (
     <CustomerNav>

@@ -1,8 +1,8 @@
-import { Prisma, Category, RepresentationType, RepresentationUsage } from '@prisma/client';
+import { Category, RepresentationUsage } from '@prisma/client';
 import * as assetRepo from '../database/asset';
 import * as categoryRepo from '../database/category';
 import util from '../../utils/util';
-
+import { settings } from '../../libs/common';
 const {
   formatBytes,
 } = util;
@@ -55,7 +55,7 @@ export async function assetDetail(assetId: string) {
         const preview = {
           id: element.id,
           name: element.name,
-          path: element.path ? element.path : '',
+          path: element.path ? `${settings.RESOURCE_URL}${element.path}${element.path}` : '',
         }
         assetReturn.previews.push(preview)
         break;
@@ -66,6 +66,7 @@ export async function assetDetail(assetId: string) {
           name: element.name,
           format: element.format,
           fileSize: formatBytes(element.fileSize ? element.fileSize : 0),
+          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
         }
         assetReturn.downloads.push(download)
         break;

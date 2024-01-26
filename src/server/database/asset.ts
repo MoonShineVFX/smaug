@@ -87,7 +87,7 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
         path = "/no-image.jpg";
       }
       else {
-        path = `${settings.RESOURCE_URL}/${asset.representations[0].path}`;
+        path = `${settings.RESOURCE_URL}${asset.representations[0].path}`;
       }
     } catch (error) {
       path = "/no-image.jpg";
