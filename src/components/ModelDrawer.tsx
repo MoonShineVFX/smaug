@@ -85,7 +85,7 @@ const AssetPreviewArea = ({ assetDetail }: AssetInfoProps) => {
       <CardMedia  // preview area
         component="img"
         height="280"
-        image={assetDetail.preview === "" ? 'images/no-images.jpg' : assetDetail.preview}
+        image={assetDetail.thumbnail === "" ? '/no-images.jpg' : assetDetail.thumbnail}
         alt={assetDetail.name}
         sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
       />
@@ -96,7 +96,7 @@ const AssetPreviewArea = ({ assetDetail }: AssetInfoProps) => {
           size="small"
         >
           <ViewIconButton isActive={true} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-          {assetDetail.renders.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
+          {assetDetail.previews.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
         </ButtonGroup>
         <IconButton aria-label="close" onClick={() => {
           //setOpenDrawer(false)
@@ -110,7 +110,7 @@ const AssetPreviewArea = ({ assetDetail }: AssetInfoProps) => {
         </IconButton>
       </Box>
       {
-        assetDetail.renders.length > 0 ?
+        assetDetail.previews.length > 0 ?
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
           :
           <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
@@ -239,7 +239,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
           </Typography>
           <Box>
             {
-              assetDetailQry.data.detail!.resources.length > 0 ?
+              assetDetailQry.data.detail!.downloads.length > 0 ?
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography> // TODO: Downloadable component
                 :
                 <Box sx={{ display: 'flex', justifyContent: "space-between" }}>
