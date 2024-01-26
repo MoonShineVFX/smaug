@@ -18,7 +18,6 @@ import { useRouter } from "next/router";
 
 import { styled } from "@mui/material/styles";
 import { trpc } from "../utils/trpc";
-import { AssetDetailOutput } from '../libs/types';
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 
 interface IModelDrawerProps {
@@ -91,10 +90,10 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
 
       <Card sx={{}}>
         <div style={{ position: "relative" }}>
-          <CardMedia
+          <CardMedia  // preview area
             component="img"
             height="280"
-            image={assetDetailQry.data.detail!.thumbnail === "" ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/No_image_available_500_x_500.svg/1200px-No_image_available_500_x_500.svg.png' : assetDetailQry.data.detail!.thumbnail}
+            image={assetDetailQry.data.detail!.thumbnail === "" ? '/no-image.jpg' : assetDetailQry.data.detail!.thumbnail}
             alt={assetDetailQry.data.detail!.name}
             sx={{ objectFit: "contain", bgcolor: "#202020", p: 2 }}
           />
@@ -115,7 +114,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
               }, 500)
 
             }}>
-              <CloseIcon />
+              <CloseIcon /> {/* 關閉按鈕*/}
             </IconButton>
           </Box>
           {
@@ -145,7 +144,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
             </Grid>
           </Grid>
         </AssetCardContent>
-      </Card>
+      </Card >
 
       <Box sx={{ p: 2 }}>
         <Box sx={{ pt: 3 }}>
@@ -191,6 +190,6 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
         </Box>
 
       </Box>
-    </Drawer>
+    </Drawer >
   )
 }
