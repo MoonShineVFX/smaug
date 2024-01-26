@@ -135,8 +135,8 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
   return (
     <Box sx={{ px: 2 }}>
       <Box sx={{ pt: 3 }}>
-        <Typography variant="h6" color="text.secondary" sx={{ fontSize: 18 }}>
-          Resource
+        <Typography variant="h6" color="text.primary" sx={{ fontSize: 18 }}>
+          Download
         </Typography>
         <Box>
           {
