@@ -79,6 +79,47 @@ const AssetInfo = ({ assetDetail }: AssetInfoProps) => {
 }
 
 
+const AssetPreviewArea = ({ assetDetail }: AssetInfoProps) => {
+  return (
+    <div style={{ position: "relative" }}>
+      <CardMedia  // preview area
+        component="img"
+        height="280"
+        image={assetDetail.preview === "" ? 'images/no-images.jpg' : assetDetail.preview}
+        alt={assetDetail.name}
+        sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
+      />
+      <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
+        <ButtonGroup
+          variant="contained"
+          color="primary"
+          size="small"
+        >
+          <ViewIconButton isActive={true} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
+          {assetDetail.renders.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
+        </ButtonGroup>
+        <IconButton aria-label="close" onClick={() => {
+          //setOpenDrawer(false)
+          //setTimeout(() => {
+          //  router.query.assetId = [];
+          //  router.push(router)
+          //}, 500)
+
+        }}>
+          <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
+        </IconButton>
+      </Box>
+      {
+        assetDetail.renders.length > 0 ?
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
+          :
+          <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
+          </Box>
+      }
+    </div>
+  )
+}
 
 export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IModelDrawerProps) {
 
