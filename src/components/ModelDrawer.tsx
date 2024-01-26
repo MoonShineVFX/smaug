@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import { trpc } from "../utils/trpc";
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
+import { NonNullableAssetDetailOutput } from '../libs/types';
 
 interface IModelDrawerProps {
   assetId: string | undefined;
@@ -47,6 +48,37 @@ const AssetCardContent = styled(CardContent)(({ theme }) => ({
   },
 }));
 
+
+interface AssetInfoProps {
+  assetDetail: NonNullableAssetDetailOutput;
+}
+
+
+const AssetInfo = ({ assetDetail }: AssetInfoProps) => {
+  return (
+    < AssetCardContent sx={{ backgroundColor: '#333', px: 2, py: 2 }
+    }>
+      <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bolder', textTransform: 'uppercase', mb: 0 }}>
+        {assetDetail.name}
+      </Typography>
+      <Grid container justifyContent="space-between">
+        <Grid item>
+          <Typography variant="body2" color="text.secondary" sx={{ textTransform: '', letterSpacing: '', fontSize: 13 }}>
+            {assetDetail.categoryList?.replace(/\\/g, " > ").slice(0, -2)}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>
+            Created at {assetDetail.createAt?.toLocaleString().substr(0, 10)} by {assetDetail.creator}
+          </Typography>
+        </Grid>
+      </Grid>
+    </AssetCardContent >
+  )
+}
+
+
+
 export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IModelDrawerProps) {
 
   const [isActive, setIsActive] = useState(false);
@@ -68,6 +100,8 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
   if (assetDetailQry.isSuccess && assetDetailQry.data.detail === null) {
     return <EmptyState />
   }
+
+  const assetDetail = assetDetailQry.data.detail as NonNullableAssetDetailOutput;
 
   return (
     <Drawer
@@ -126,25 +160,9 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
               </Box>
           }
         </div>
-
-        <AssetCardContent sx={{ backgroundColor: '#333', px: 2, py: 2 }}>
-          <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: 'bolder', textTransform: 'uppercase', mb: 0 }}>
-            {assetDetailQry.data.detail!.name}
-          </Typography>
-          <Grid container justifyContent="space-between">
-            <Grid item>
-              <Typography variant="body2" color="text.secondary" sx={{ textTransform: '', letterSpacing: '', fontSize: 13 }}>
-                {assetDetailQry.data.detail!.categoryList?.replace(/\\/g, " > ").slice(0, -2)}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>
-                Created at {assetDetailQry.data.detail!.createAt?.toLocaleString().substr(0, 10)} by {assetDetailQry.data.detail!.creator}
-              </Typography>
-            </Grid>
-          </Grid>
-        </AssetCardContent>
       </Card >
+
+      <AssetInfo assetDetail={assetDetail} />
 
       <Box sx={{ p: 2 }}>
         <Box sx={{ pt: 3 }}>
