@@ -12,6 +12,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Chip from '@mui/material/Chip';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid';
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
 import { useRouter } from "next/router";
@@ -20,7 +21,7 @@ import { styled } from "@mui/material/styles";
 import { trpc } from "../utils/trpc";
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 import { NonNullableAssetDetailOutput } from '../libs/types';
-import { Tag } from '@prisma/client';
+import { RepresentationFormat, Tag } from '@prisma/client';
 
 interface IModelDrawerProps {
   assetId: string | undefined;
@@ -118,6 +119,18 @@ const TagsComponent = ({ tags }: { tags: NonNullableAssetDetailOutput["tags"] })
 
 
 const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOutput["downloads"] }) => {
+  const formatNames: { [key in RepresentationFormat]: string } = {
+    [RepresentationFormat.MAX]: "3ds Max",
+    [RepresentationFormat.MB]: "Maya",
+    [RepresentationFormat.FBX]: "FBX",
+    [RepresentationFormat.OBJ]: "OBJ",
+    [RepresentationFormat.C4D]: "Cinema 4D",
+    [RepresentationFormat.UNREAL]: "UAsset",
+    [RepresentationFormat.UNITY]: "Unity Pakage",
+    [RepresentationFormat.USD]: "USD",
+    [RepresentationFormat.IMG]: "Image",
+    [RepresentationFormat.GLB]: "GLB",
+  };
 
   return (
     <Box sx={{ px: 2 }}>
@@ -127,33 +140,27 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
         </Typography>
         <Box>
           {
-            downloads.length == 0 ?
+            downloads.length === 0 ?
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>No Downloadable File Now</Typography>
               :
-              <Box sx={{ display: 'flex', justifyContent: "space-between" }}>
-                {downloads.map((download, _index) => {
-                  return (
-                    <>
-                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>{download.format}</Typography>
-                      <Box sx={{ flexGrow: 1, textAlign: "right" }} >
-                      <Button
-                        key={download.id}
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        sx={{ m: .5, fontSize: 13 }}
-                        href={download.path}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {`${download.name}`}
-                      </Button>
-                      </Box>
-                    </>
-                  )
-                })
-                }
-              </Box>
+              downloads.map((download, index) => (
+                <Box key={download.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
+                    {`${formatNames[download.format!]} ${download.filesize}`}
+                  </Typography>
+                  <IconButton
+                    aria-label="download"
+                    size="large"
+                    sx={{ fontSize: 13, borderRadius: 2 }}
+                    href={download.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    下載
+                    <ArrowCircleDownIcon fontSize="medium" sx={{ marginLeft: 1, paddingBottom: "1px" }} />
+                  </IconButton>
+                </Box>
+              ))
           }
         </Box>
       </Box>
