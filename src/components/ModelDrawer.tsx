@@ -51,6 +51,79 @@ const AssetCardContent = styled(CardContent)(({ theme }) => ({
 }));
 
 
+interface PreviewProps {
+  assetDetail: NonNullableAssetDetailOutput;
+  isActive: boolean;
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const PreviewComponent = ({ assetDetail, isActive, setIsActive, setOpenDrawer }: PreviewProps) => {
+  const router = useRouter();
+
+  return (
+    <>
+      <Toolbar
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          px: [1]
+        }}
+      >
+      </Toolbar>
+
+      <Card sx={{}}>
+        <div style={{ position: "relative" }}>
+          <CardMedia  // preview area
+            component="img"
+            height="280"
+            image={assetDetail.thumbnail === "" ? '/no-image.jpg' : assetDetail.thumbnail}
+            alt={assetDetail.name}
+            sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
+          />
+          <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
+            <ButtonGroup
+              variant="contained"
+              color="primary"
+              size="small"
+            >
+              <ViewIconButton isActive={isActive} onClick={() => setIsActive(!isActive)} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
+              {assetDetail.previews.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
+            </ButtonGroup>
+            <IconButton aria-label="close" onClick={() => {
+              setOpenDrawer(false)
+              setTimeout(() => {
+                const { assetId, ...queryNoAssetId } = router.query;
+                router.push(
+                  {
+                    pathname: router.pathname,
+                    query: queryNoAssetId,
+                  },
+                  undefined,
+                  { shallow: true }
+                )
+              }, 500)
+
+            }}>
+              <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
+            </IconButton>
+          </Box>
+          {
+            assetDetail.previews.length > 0 ?
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
+              :
+              <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
+              </Box>
+          }
+        </div>
+      </Card >
+    </>
+  )
+}
+
+
 interface AssetInfoProps {
   assetDetail: NonNullableAssetDetailOutput;
 }
@@ -125,7 +198,7 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
     [RepresentationFormat.FBX]: "FBX",
     [RepresentationFormat.OBJ]: "OBJ",
     [RepresentationFormat.C4D]: "Cinema 4D",
-    [RepresentationFormat.UNREAL]: "UAsset",
+    [RepresentationFormat.UNREAL]: "Unreal Engine Asset",
     [RepresentationFormat.UNITY]: "Unity Pakage",
     [RepresentationFormat.USD]: "USD",
     [RepresentationFormat.IMG]: "Image",
@@ -135,29 +208,33 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
   return (
     <Box sx={{ px: 2 }}>
       <Box sx={{ pt: 3 }}>
-        <Typography variant="h6" color="text.primary" sx={{ fontSize: 18 }}>
+        <Typography variant="h5" color="text.primary" >
           Download
         </Typography>
         <Box>
           {
             downloads.length === 0 ?
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>No Downloadable File Now</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', my: 1 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
+                  No Downloadable File Now
+                </Typography>
+              </Box>
               :
               downloads.map((download, index) => (
-                <Box key={download.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
+                <Box key={download.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, borderBottom: "solid", borderWidth: "1px", borderColor: "#ccc" }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
                     {`${formatNames[download.format!]} ${download.filesize}`}
                   </Typography>
                   <IconButton
                     aria-label="download"
                     size="large"
-                    sx={{ fontSize: 13, borderRadius: 2 }}
+                    sx={{ fontSize: 16, borderRadius: "6%", marginBottom: 1, p: 1 }}
                     href={download.path}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     下載
-                    <ArrowCircleDownIcon fontSize="medium" sx={{ marginLeft: 1, paddingBottom: "1px" }} />
+                    <ArrowCircleDownIcon fontSize="large" sx={{ marginLeft: 1 }} />
                   </IconButton>
                 </Box>
               ))
@@ -202,63 +279,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
         sx: { width: '25%' }
       }}
     >
-      <Toolbar
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          px: [1]
-        }}
-      >
-      </Toolbar>
-
-      <Card sx={{}}>
-        <div style={{ position: "relative" }}>
-          <CardMedia  // preview area
-            component="img"
-            height="280"
-            image={assetDetailQry.data.detail!.thumbnail === "" ? '/no-image.jpg' : assetDetailQry.data.detail!.thumbnail}
-            alt={assetDetailQry.data.detail!.name}
-            sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
-          />
-          <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
-            <ButtonGroup
-              variant="contained"
-              color="primary"
-              size="small"
-            >
-              <ViewIconButton isActive={isActive} onClick={() => setIsActive(!isActive)} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-              {assetDetailQry.data.detail!.previews.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
-            </ButtonGroup>
-            <IconButton aria-label="close" onClick={() => {
-              setOpenDrawer(false)
-              setTimeout(() => {
-                const { assetId, ...queryNoAssetId } = router.query;
-                router.push(
-                  {
-                    pathname: router.pathname,
-                    query: queryNoAssetId,
-                  },
-                  undefined,
-                  { shallow: true }
-                )
-              }, 500)
-
-            }}>
-              <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
-            </IconButton>
-          </Box>
-          {
-            assetDetailQry.data.detail!.previews.length > 0 ?
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
-              :
-              <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
-              </Box>
-          }
-        </div>
-      </Card >
-
+      <PreviewComponent assetDetail={assetDetail} isActive={isActive} setIsActive={setIsActive} setOpenDrawer={setOpenDrawer} />
       <AssetInfo assetDetail={assetDetail} />
       <TagsComponent tags={assetDetail.tags} />
       <DownloadComponent downloads={assetDetail.downloads} />
