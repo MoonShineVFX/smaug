@@ -233,8 +233,15 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
             <IconButton aria-label="close" onClick={() => {
               setOpenDrawer(false)
               setTimeout(() => {
-                router.query.assetId = [];
-                router.push(router)
+                const { assetId, ...queryNoAssetId } = router.query;
+                router.push(
+                  {
+                    pathname: router.pathname,
+                    query: queryNoAssetId,
+                  },
+                  undefined,
+                  { shallow: true }
+                )
               }, 500)
 
             }}>
