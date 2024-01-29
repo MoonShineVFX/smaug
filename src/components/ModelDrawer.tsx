@@ -165,14 +165,6 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
             <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
           </IconButton>
         </Box>
-        {
-          previews.length > 0 ?
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
-            :
-            <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
-            </Box>
-        }
       </Card >
     </>
   )
