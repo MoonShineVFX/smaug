@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from "next/router";
+import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -9,7 +10,7 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
+// import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
@@ -117,64 +118,67 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
   }
 
   return (
-    <>
-      <Toolbar
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          padding: 0,
-          margin: 0,
-        }}
-      >
-      </Toolbar>
-
-      <Card sx={{ position: "relative" }}>
+    <Box>
+      <Card sx={{ position: "relative", width: "100%", minHeight: '360px' }}>
         <Swiper
-          navigation={true}
+          modules={[Navigation]}
+          navigation
           spaceBetween={50}
           slidesPerView={1}
-          style={{ height: '25em' }}
+          onSlideChange={() => console.log('slide change')}
+          onSwiper={(swiper) => console.log(swiper)}
+          style={{ position: 'absolute', width: "100%", height: "100%", objectFit: "cover", top: '64px' }}
         >
           {
             thumbPlusRenders.map((picPeperesentation, _) => {
               return (
-                <SwiperSlide key={picPeperesentation.id}>
-                  <img src={picPeperesentation.path} alt={picPeperesentation.name} />
+                <SwiperSlide key={picPeperesentation.id} style={{ height: "100%" }}>
+                  <img src={picPeperesentation.path} alt={picPeperesentation.name} style={{ objectFit: "cover", height: '100%', width: "100%", zIndex: 1 }} />
                 </SwiperSlide>
               )
             })
           }
         </Swiper>
-        <CardActions sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
-          <ButtonGroup
-            variant="contained"
-            color="primary"
-            size="small"
-          >
-            <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-            <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>
-            <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>
-          </ButtonGroup>
-          <IconButton aria-label="close" onClick={() => {
-            setOpenDrawer(false)
-            setTimeout(() => {
-              const { assetId, ...queryNoAssetId } = router.query;
-              router.push(
-                {
-                  pathname: router.pathname,
-                  query: queryNoAssetId,
-                },
-                undefined,
-                { shallow: true }
-              )
-            }, 500)
-          }}>
-            <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
-          </IconButton>
-        </CardActions>
+
+        <Toolbar
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: "100%",
+            marginTop: 8,
+            zIndex: 2,
+          }}
+        >
+          <CardActions sx={{ position: 'absolute', width: '100%', justifyContent: 'space-between', paddingLeft: 0, paddingRight: 6 }}>
+            <ButtonGroup
+              variant="contained"
+              color="primary"
+              size="small"
+            >
+              <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
+              <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>
+              <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>
+            </ButtonGroup>
+            <IconButton aria-label="close" onClick={() => {
+              setOpenDrawer(false)
+              setTimeout(() => {
+                const { assetId, ...queryNoAssetId } = router.query;
+                router.push(
+                  {
+                    pathname: router.pathname,
+                    query: queryNoAssetId,
+                  },
+                  undefined,
+                  { shallow: true }
+                )
+              }, 500)
+            }}>
+              <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
+            </IconButton>
+          </CardActions>
+        </Toolbar>
       </Card >
-    </>
+    </Box >
   )
 }
 
@@ -333,7 +337,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
       open={openDrawer}
       variant="persistent"
       PaperProps={{
-        sx: { width: '25%' }
+        sx: { width: '25%', minWidth: '360px' }
       }}
     >
       <PreviewComponent assetDetail={assetDetail} setOpenDrawer={setOpenDrawer} />
