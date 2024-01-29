@@ -7,7 +7,7 @@ const {
   formatBytes,
 } = util;
 
-type FERepresentation = Omit<Representation, 'isDeleted' | 'isVisible'> & {
+export type FERepresentation = Omit<Representation, 'isDeleted' | 'isVisible'> & {
   filesize: string;
 };
 
@@ -46,43 +46,28 @@ export async function assetDetail(assetId: string) {
     createAt: asset!.createAt,
     creator: asset!.creator.name,
     tags: asset!.tags,
-    previews: new Array<FERepresentation>(),
-    downloads: new Array<FERepresentation>(),
+    representations: new Array<FERepresentation>(),
+    // previews: new Array<FERepresentation>(),
+    // downloads: new Array<FERepresentation>(),
   }
 
   asset.representations.forEach((element, _index) => {
     switch (element.usage) {
       case RepresentationUsage.THUMBNAIL: {
-        if (element.path !== null) assetReturn.thumbnail = element.path;
-        break;
-      }
-      case RepresentationUsage.PREVIEW: {
-        const { isVisible, isDeleted, ...feRepresentation } = element;
-        const preview = {
-          ...feRepresentation,
-          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
-          filesize: formatBytes(element.fileSize ? element.fileSize : 0),
-        }
-        assetReturn.previews.push(preview)
-        break;
-      }
-      case RepresentationUsage.DOWNLOAD: {
-
-        const { isDeleted, isVisible, ...feRepresentation } = element;
-        const download = {
-          ...feRepresentation,
-          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
-          filesize: formatBytes(element.fileSize ? element.fileSize : 0),
-        }
-
-        assetReturn.downloads.push(download)
+        if (element.path !== null) assetReturn.thumbnail = `${settings.RESOURCE_URL}${element.path}`;
         break;
       }
       default: {
-        break;
+        const { isVisible, isDeleted, ...feRepresentation } = element;
+        const representation = {
+          ...feRepresentation,
+          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
+          filesize: formatBytes(element.fileSize ? element.fileSize : 0),
+        }
+        assetReturn.representations.push(representation)
       }
     }
-  });
+  }); // Move the closing parenthesis here
 
   return assetReturn;
 }

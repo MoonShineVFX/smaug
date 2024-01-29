@@ -21,7 +21,7 @@ import { styled } from "@mui/material/styles";
 import { trpc } from "../utils/trpc";
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 import { NonNullableAssetDetailOutput } from '../libs/types';
-import { RepresentationFormat, Tag } from '@prisma/client';
+import { RepresentationFormat, RepresentationType, RepresentationUsage, Tag } from '@prisma/client';
 
 interface IModelDrawerProps {
   assetId: string | undefined;
@@ -60,6 +60,7 @@ interface PreviewProps {
 
 const PreviewComponent = ({ assetDetail, isActive, setIsActive, setOpenDrawer }: PreviewProps) => {
   const router = useRouter();
+  const sliderShowRepre = [assetDetail.thumbnail, ...assetDetail.representations]
 
   return (
     <>
@@ -191,7 +192,7 @@ const TagsComponent = ({ tags }: { tags: NonNullableAssetDetailOutput["tags"] })
 }
 
 
-const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOutput["downloads"] }) => {
+const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOutput["representations"] }) => {
   const formatNames: { [key in RepresentationFormat]: string } = {
     [RepresentationFormat.MAX]: "3ds Max",
     [RepresentationFormat.MB]: "Maya",
@@ -269,6 +270,8 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
   }
 
   const assetDetail = assetDetailQry.data.detail as NonNullableAssetDetailOutput;
+  const previews = assetDetail.representations.filter((representation) => representation.usage === RepresentationUsage.PREVIEW);
+  const dlowloads = assetDetail.representations.filter((representation) => representation.usage === RepresentationUsage.DOWNLOAD);
 
   return (
     <Drawer
@@ -282,7 +285,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
       <PreviewComponent assetDetail={assetDetail} isActive={isActive} setIsActive={setIsActive} setOpenDrawer={setOpenDrawer} />
       <AssetInfo assetDetail={assetDetail} />
       <TagsComponent tags={assetDetail.tags} />
-      <DownloadComponent downloads={assetDetail.downloads} />
+      <DownloadComponent downloads={dlowloads} />
     </Drawer >
   )
 }
