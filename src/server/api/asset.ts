@@ -55,13 +55,12 @@ export async function assetDetail(assetId: string) {
     switch (element.usage) {
       case RepresentationUsage.THUMBNAIL: {
         if (element.path !== null) assetReturn.thumbnail = `${settings.RESOURCE_URL}${element.path}`;
-        break;
       }
       default: {
         const { isVisible, isDeleted, ...feRepresentation } = element;
         const representation = {
           ...feRepresentation,
-          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '',
+          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '/no-image.jpg',
           filesize: formatBytes(element.fileSize ? element.fileSize : 0),
         }
         assetReturn.representations.push(representation)

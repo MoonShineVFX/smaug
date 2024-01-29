@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from "next/router";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 import { styled } from "@mui/material/styles";
 import Drawer from '@mui/material/Drawer';
@@ -24,6 +27,7 @@ import { trpc } from "../utils/trpc";
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 import { NonNullableAssetDetailOutput } from '../libs/types';
 import { RepresentationFormat, RepresentationType, RepresentationUsage } from '@prisma/client';
+import { CardActions } from '@mui/material';
 
 interface IModelDrawerProps {
   assetId: string | undefined;
@@ -68,17 +72,17 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
   const router = useRouter();
   const [viewState, setViewState] = useState<ViewState>({ isRender: true, is3D: false, isTexture: false });
 
-  const previews = assetDetail.representations.filter((representation) => representation.usage === RepresentationUsage.PREVIEW);
+  const previews = assetDetail.representations.filter((representation) => { return representation.usage === RepresentationUsage.PREVIEW });
   const thumbnail = previews.filter((preview) => {
-    preview.usage === RepresentationUsage.THUMBNAIL &&
+    return preview.usage === RepresentationUsage.THUMBNAIL &&
       preview.type === RepresentationType.RENDER &&
       preview.format === RepresentationFormat.IMG
   });
-  const renders = previews.filter((preview) => { preview.type === RepresentationType.RENDER && preview.format === RepresentationFormat.IMG });
+  const renders = previews.filter((preview) => { return preview.type === RepresentationType.RENDER && preview.format === RepresentationFormat.IMG });
   const thumbPlusRenders = [...thumbnail, ...renders]
-  const textures = previews.filter((preview) => { preview.type === RepresentationType.TEXTURE && preview.format === RepresentationFormat.IMG });
+  const textures = previews.filter((preview) => { return preview.type === RepresentationType.TEXTURE && preview.format === RepresentationFormat.IMG });
   const preview3d = previews.filter((preview) => {
-    preview.type === RepresentationType.MODEL &&
+    return preview.type === RepresentationType.MODEL &&
       preview.format === RepresentationFormat.GLB
   });
 
@@ -126,26 +130,31 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
       </Toolbar>
 
       <Card sx={{ position: "relative" }}>
-        <CardMedia  // preview area
-          component="img"
-          height="280"
-          image={assetDetail.thumbnail === "" ? '/no-image.jpg' : assetDetail.thumbnail}
-          alt={assetDetail.name}
-          sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
-        />
-        <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
+        <Swiper
+          navigation={true}
+          spaceBetween={50}
+          slidesPerView={1}
+          style={{ height: '25em' }}
+        >
+          {
+            thumbPlusRenders.map((picPeperesentation, _) => {
+              return (
+                <SwiperSlide key={picPeperesentation.id}>
+                  <img src={picPeperesentation.path} alt={picPeperesentation.name} />
+                </SwiperSlide>
+              )
+            })
+          }
+        </Swiper>
+        <CardActions sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
           <ButtonGroup
             variant="contained"
             color="primary"
             size="small"
           >
-            {shouldDisplayRenderIcon(viewState) &&
-              <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>}
-            {shouldDislapyTextureIcon(viewState) &&
-              <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>}
-            {shouldDisplay3DIcon(viewState) &&
-              <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
-
+            <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
+            <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>
+            <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>
           </ButtonGroup>
           <IconButton aria-label="close" onClick={() => {
             setOpenDrawer(false)
@@ -160,11 +169,10 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
                 { shallow: true }
               )
             }, 500)
-
           }}>
             <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
           </IconButton>
-        </Box>
+        </CardActions>
       </Card >
     </>
   )
