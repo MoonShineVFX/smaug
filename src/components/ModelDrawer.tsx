@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useRouter } from "next/router";
+
+import { styled } from "@mui/material/styles";
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Card from '@mui/material/Card';
@@ -13,15 +16,14 @@ import Chip from '@mui/material/Chip';
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Grid';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import TextureOutlinedIcon from '@mui/icons-material/TextureOutlined';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
-import { useRouter } from "next/router";
 
-import { styled } from "@mui/material/styles";
 import { trpc } from "../utils/trpc";
 import { CircularIndeterminate, EmptyState, ErrorState } from './basic';
 import { NonNullableAssetDetailOutput } from '../libs/types';
-import { RepresentationFormat, RepresentationType, RepresentationUsage, Tag } from '@prisma/client';
+import { RepresentationFormat, RepresentationType, RepresentationUsage } from '@prisma/client';
 
 interface IModelDrawerProps {
   assetId: string | undefined;
@@ -53,14 +55,62 @@ const AssetCardContent = styled(CardContent)(({ theme }) => ({
 
 interface PreviewProps {
   assetDetail: NonNullableAssetDetailOutput;
-  isActive: boolean;
-  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenDrawer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PreviewComponent = ({ assetDetail, isActive, setIsActive, setOpenDrawer }: PreviewProps) => {
+interface ViewState {
+  isRender: boolean;
+  is3D: boolean;
+  isTexture: boolean;
+}
+
+const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
   const router = useRouter();
-  const sliderShowRepre = [assetDetail.thumbnail, ...assetDetail.representations]
+  const [viewState, setViewState] = useState<ViewState>({ isRender: true, is3D: false, isTexture: false });
+
+  const previews = assetDetail.representations.filter((representation) => representation.usage === RepresentationUsage.PREVIEW);
+  const thumbnail = previews.filter((preview) => {
+    preview.usage === RepresentationUsage.THUMBNAIL &&
+      preview.type === RepresentationType.RENDER &&
+      preview.format === RepresentationFormat.IMG
+  });
+  const renders = previews.filter((preview) => { preview.type === RepresentationType.RENDER && preview.format === RepresentationFormat.IMG });
+  const thumbPlusRenders = [...thumbnail, ...renders]
+  const textures = previews.filter((preview) => { preview.type === RepresentationType.TEXTURE && preview.format === RepresentationFormat.IMG });
+  const preview3d = previews.filter((preview) => {
+    preview.type === RepresentationType.MODEL &&
+      preview.format === RepresentationFormat.GLB
+  });
+
+  const onRenderClick = () => {
+    setViewState({ isRender: true, is3D: false, isTexture: false })
+  }
+  const onTextureClick = () => {
+    setViewState({ isRender: false, is3D: false, isTexture: true })
+  }
+  const on3DClick = () => {
+    setViewState({ isRender: false, is3D: true, isTexture: false })
+  }
+
+  const shouldDisplayRenderIcon = (viewState: ViewState) => {
+    if (viewState.isRender && !viewState.is3D && !viewState.isTexture) {
+      return false;
+    }
+
+    if (!viewState.isRender) {
+      return false;
+    }
+
+    return true
+  }
+
+  const shouldDislapyTextureIcon = (viewState: ViewState) => {
+    return viewState.isTexture
+  }
+
+  const shouldDisplay3DIcon = (viewState: ViewState) => {
+    return viewState.is3D
+  }
 
   return (
     <>
@@ -69,56 +119,60 @@ const PreviewComponent = ({ assetDetail, isActive, setIsActive, setOpenDrawer }:
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
-          px: [1]
+          padding: 0,
+          margin: 0,
         }}
       >
       </Toolbar>
 
-      <Card sx={{}}>
-        <div style={{ position: "relative" }}>
-          <CardMedia  // preview area
-            component="img"
-            height="280"
-            image={assetDetail.thumbnail === "" ? '/no-image.jpg' : assetDetail.thumbnail}
-            alt={assetDetail.name}
-            sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
-          />
-          <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
-            <ButtonGroup
-              variant="contained"
-              color="primary"
-              size="small"
-            >
-              <ViewIconButton isActive={isActive} onClick={() => setIsActive(!isActive)} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-              {assetDetail.previews.length > 0 && <ViewIconButton ><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
-            </ButtonGroup>
-            <IconButton aria-label="close" onClick={() => {
-              setOpenDrawer(false)
-              setTimeout(() => {
-                const { assetId, ...queryNoAssetId } = router.query;
-                router.push(
-                  {
-                    pathname: router.pathname,
-                    query: queryNoAssetId,
-                  },
-                  undefined,
-                  { shallow: true }
-                )
-              }, 500)
+      <Card sx={{ position: "relative" }}>
+        <CardMedia  // preview area
+          component="img"
+          height="280"
+          image={assetDetail.thumbnail === "" ? '/no-image.jpg' : assetDetail.thumbnail}
+          alt={assetDetail.name}
+          sx={{ objectFit: "cover", bgcolor: "#202020", p: 0, width: '100%', hight: '100%' }}
+        />
+        <Box sx={{ position: 'absolute', width: '100%', px: 2, top: '10px', display: 'flex', justifyContent: "space-between" }}>
+          <ButtonGroup
+            variant="contained"
+            color="primary"
+            size="small"
+          >
+            {shouldDisplayRenderIcon(viewState) &&
+              <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>}
+            {shouldDislapyTextureIcon(viewState) &&
+              <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>}
+            {shouldDisplay3DIcon(viewState) &&
+              <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
 
-            }}>
-              <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
-            </IconButton>
-          </Box>
-          {
-            assetDetail.previews.length > 0 ?
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
-              :
-              <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
-              </Box>
-          }
-        </div>
+          </ButtonGroup>
+          <IconButton aria-label="close" onClick={() => {
+            setOpenDrawer(false)
+            setTimeout(() => {
+              const { assetId, ...queryNoAssetId } = router.query;
+              router.push(
+                {
+                  pathname: router.pathname,
+                  query: queryNoAssetId,
+                },
+                undefined,
+                { shallow: true }
+              )
+            }, 500)
+
+          }}>
+            <CloseIcon /> {/* 關閉 Drawer 按鈕*/}
+          </IconButton>
+        </Box>
+        {
+          previews.length > 0 ?
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Loading</Typography>
+            :
+            <Box sx={{ position: 'absolute', width: '100%', px: 2, bottom: '10px', display: 'flex', justifyContent: "space-between" }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12, textAlign: 'right' }}>Render Images : 0</Typography>
+            </Box>
+        }
       </Card >
     </>
   )
@@ -200,7 +254,7 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
     [RepresentationFormat.OBJ]: "OBJ",
     [RepresentationFormat.C4D]: "Cinema 4D",
     [RepresentationFormat.UNREAL]: "Unreal Engine Asset",
-    [RepresentationFormat.UNITY]: "Unity Pakage",
+    [RepresentationFormat.UNITY]: "Unity Package",
     [RepresentationFormat.USD]: "USD",
     [RepresentationFormat.IMG]: "Image",
     [RepresentationFormat.GLB]: "GLB",
@@ -221,7 +275,7 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
                 </Typography>
               </Box>
               :
-              downloads.map((download, index) => (
+              downloads.map((download, _) => (
                 <Box key={download.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, borderBottom: "solid", borderWidth: "1px", borderColor: "#ccc" }}>
                   <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
                     {`${formatNames[download.format!]} ${download.filesize}`}
@@ -282,7 +336,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
         sx: { width: '25%' }
       }}
     >
-      <PreviewComponent assetDetail={assetDetail} isActive={isActive} setIsActive={setIsActive} setOpenDrawer={setOpenDrawer} />
+      <PreviewComponent assetDetail={assetDetail} setOpenDrawer={setOpenDrawer} />
       <AssetInfo assetDetail={assetDetail} />
       <TagsComponent tags={assetDetail.tags} />
       <DownloadComponent downloads={dlowloads} />
