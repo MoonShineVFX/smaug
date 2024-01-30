@@ -139,7 +139,20 @@ export default function Main({ children }: { children: React.ReactNode }) {
         </Toolbar>
         <Divider />
 
-        <List component="nav" >
+        <List component="nav" sx={{
+          overflowY: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '0.5em',
+            padding: 0,
+          },
+          '&::-webkit-scrollbar-thumb': {
+            padding: 0,
+            margin: 0,
+            width: '0.4em',
+            backgroundColor: '#555',
+            borderRadius: '2px'
+          }
+        }}>
           {
             menuListQry.data.menus.map((item: MenuListItem, index) => {
               const { id, name } = item
