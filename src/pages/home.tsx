@@ -23,6 +23,10 @@ const transitionStyles = (theme: Theme) => theme.transitions.create(['marginRigh
 const AssetListItem = styled(ImageListItem)(({ theme }) => ({
   backgroundColor: '#202020',
   padding: theme.spacing(0),
+  minHeight: '220px',
+  minWidth: '220px',
+  maxHeight: '320px',
+  maxWidth: '320px',
   borderRadius: '5px',
   border: '2px #202020 solid',
   transition: 'all 0.3s',
