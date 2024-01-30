@@ -9,8 +9,6 @@ import { styled } from "@mui/material/styles";
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-// import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
@@ -139,7 +137,6 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
             })
           }
         </Swiper>
-
         <Toolbar
           sx={{
             display: 'flex',
@@ -155,9 +152,12 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
               color="primary"
               size="small"
             >
-              <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>
-              <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>
-              <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>
+              {shouldDisplayRenderIcon(viewState) &&
+                <ViewIconButton isActive={viewState.isRender} onClick={onRenderClick} ><ImageOutlinedIcon fontSize="small" /></ViewIconButton>}
+              {shouldDislapyTextureIcon(viewState) &&
+                <ViewIconButton isActive={viewState.isTexture} onClick={onTextureClick} ><TextureOutlinedIcon fontSize="small" /></ViewIconButton>}
+              {shouldDisplay3DIcon(viewState) &&
+                <ViewIconButton isActive={viewState.is3D} onClick={on3DClick}><ViewInArOutlinedIcon fontSize="small" /></ViewIconButton>}
             </ButtonGroup>
             <IconButton aria-label="close" onClick={() => {
               setOpenDrawer(false)
@@ -306,8 +306,6 @@ const DownloadComponent = ({ downloads }: { downloads: NonNullableAssetDetailOut
 
 
 export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IModelDrawerProps) {
-
-  const [isActive, setIsActive] = useState(false);
   const router = useRouter();
   const assetDetailQry = trpc.assets.get.useQuery({ assetId: assetId ? assetId : "" }, { enabled: !!assetId });
 
@@ -328,7 +326,6 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
   }
 
   const assetDetail = assetDetailQry.data.detail as NonNullableAssetDetailOutput;
-  const previews = assetDetail.representations.filter((representation) => representation.usage === RepresentationUsage.PREVIEW);
   const dlowloads = assetDetail.representations.filter((representation) => representation.usage === RepresentationUsage.DOWNLOAD);
 
   return (
