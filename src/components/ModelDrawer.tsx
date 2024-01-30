@@ -49,7 +49,7 @@ const ViewIconButton = styled(Button)<Props>((ViewIconButtonProps) => ({
 }));
 
 
-const AssetCardContent = styled(CardContent)(({ theme }) => ({
+const AssetCardContent = styled(Box)(({ theme }) => ({
   backgroundColor: '#333',
   padding: theme.spacing(2),
   '&:last-child': {
@@ -118,22 +118,22 @@ const PreviewComponent = ({ assetDetail, setOpenDrawer }: PreviewProps) => {
   }
 
   return (
-    <Box>
-      <Card sx={{ position: "relative", width: "100%", minHeight: '360px' }}>
+    <Box sx={{ minHeight: '360px' }}>
+      <Card sx={{ position: "relative", width: "100%", height: "100%" }}>
         <Swiper
           modules={[Navigation]}
-          navigation
+          navigation={true}
           spaceBetween={50}
           slidesPerView={1}
           onSlideChange={() => console.log('slide change')}
           onSwiper={(swiper) => console.log(swiper)}
-          style={{ position: 'absolute', width: "100%", height: "100%", objectFit: "cover", top: '64px' }}
+          style={{ position: 'absolute', width: "100%", height: "100%", objectFit: "contain" }}
         >
           {
             thumbPlusRenders.map((picPeperesentation, _) => {
               return (
                 <SwiperSlide key={picPeperesentation.id} style={{ height: "100%" }}>
-                  <img src={picPeperesentation.path} alt={picPeperesentation.name} style={{ objectFit: "cover", height: '100%', width: "100%", zIndex: 1 }} />
+                  <img src={picPeperesentation.path} alt={picPeperesentation.name} style={{ objectFit: "contain", height: '100%', width: "100%", paddingTop: "14px", zIndex: 1 }} />
                 </SwiperSlide>
               )
             })
@@ -337,7 +337,7 @@ export default function ModelDrawer({ assetId, openDrawer, setOpenDrawer }: IMod
       open={openDrawer}
       variant="persistent"
       PaperProps={{
-        sx: { width: '25%', minWidth: '360px' }
+        sx: { minWidth: '460px', maxWidth: '460px' }
       }}
     >
       <PreviewComponent assetDetail={assetDetail} setOpenDrawer={setOpenDrawer} />
