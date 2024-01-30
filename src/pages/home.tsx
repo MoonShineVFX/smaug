@@ -104,8 +104,15 @@ export default function Home() {
           return (
             <AssetListItem key={item.id}
               onClick={() => {
-                router.query.assetId = item.id
-                router.push(router)
+                const newQuery = { ...router.query, assetId: item.id }
+                router.push(
+                  {
+                    pathname: router.pathname,
+                    query: newQuery,
+                  },
+                  undefined,
+                  { shallow: true }
+                )
                 setTimeout(() => {
                   setShowAssetDrawer(true);
                 }, 500)

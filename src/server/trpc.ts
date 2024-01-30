@@ -22,10 +22,21 @@ const isAuthed = t.middleware((opts) => {
     },
   });
 });
-/**
- * Export reusable router and procedure helpers
- * that can be used throughout the router
- */
+
+const isPermitted = t.middleware((opts) => {
+  // 目前這個中間件沒有實際功能。
+  // 未來可以在這裡添加權限檢查邏輯。
+  const { ctx } = opts;
+  const is_permitted = true;
+  return opts.next({
+    ctx: {
+      ...ctx,
+      is_permitted: is_permitted,
+    },
+  });
+});
+
 export const router = t.router;
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(isAuthed);
+export const permittedProcedure = t.procedure.use(isAuthed).use(isPermitted);

@@ -3,6 +3,8 @@ import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from '../server/routers/_app';
 type RouterOutput = inferRouterOutputs<AppRouter>;
 export type AssetDetailOutput = RouterOutput['assets']['get']['detail'];
+export type NonNullableAssetDetailOutput = Exclude<AssetDetailOutput, null>;
+
 
 export type UserDisplayInfo = {
   id: string;
@@ -50,7 +52,7 @@ export interface AssetListItem {
 }
 
 // api/assets/[assetId].ts
-export interface AssetDetails {
+export interface AssetDetail {
   id: string;
   preview: string;
   name: string;
@@ -60,7 +62,7 @@ export interface AssetDetails {
   creator: string;
   tags: Array<{ id: string, name: string }>;
   renders: Array<{ id: string, name: string, path: string }>;
-  downloads: Array<{ id: string, name: string, format: string | null, fileSize: string }>;
+  resources: Array<{ id: string, name: string, format: string | null, fileSize: string }>;
 }
 
 //api/assets/ POST

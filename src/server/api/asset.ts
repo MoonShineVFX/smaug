@@ -1,11 +1,15 @@
-import { Prisma, Category, RepresentationType, RepresentationUsage } from '@prisma/client';
+import { Category, RepresentationUsage, Representation } from '@prisma/client';
 import * as assetRepo from '../database/asset';
 import * as categoryRepo from '../database/category';
 import util from '../../utils/util';
-
+import { settings } from '../../libs/common';
 const {
   formatBytes,
 } = util;
+
+export type FERepresentation = Omit<Representation, 'isDeleted' | 'isVisible'> & {
+  filesize: string;
+};
 
 
 export async function assetDetail(assetId: string) {
@@ -36,45 +40,33 @@ export async function assetDetail(assetId: string) {
     id: asset!.id,
     thumbnail: "",
     name: asset!.name,
+    description: asset!.description,
     categoryList: categoryList,
     updateAt: asset!.updateAt,
     createAt: asset!.createAt,
     creator: asset!.creator.name,
     tags: asset!.tags,
-    previews: new Array(),
-    downloads: new Array(),
+    representations: new Array<FERepresentation>(),
+    // previews: new Array<FERepresentation>(),
+    // downloads: new Array<FERepresentation>(),
   }
 
   asset.representations.forEach((element, _index) => {
     switch (element.usage) {
       case RepresentationUsage.THUMBNAIL: {
-        if (element.path !== null) assetReturn.thumbnail = element.path;
-        break;
-      }
-      case RepresentationUsage.PREVIEW: {
-        const preview = {
-          id: element.id,
-          name: element.name,
-          path: element.path ? element.path : '',
-        }
-        assetReturn.previews.push(preview)
-        break;
-      }
-      case RepresentationUsage.DOWNLOAD: {
-        const download = {
-          id: element.id,
-          name: element.name,
-          format: element.format,
-          fileSize: formatBytes(element.fileSize ? element.fileSize : 0),
-        }
-        assetReturn.downloads.push(download)
-        break;
+        if (element.path !== null) assetReturn.thumbnail = `${settings.RESOURCE_URL}${element.path}`;
       }
       default: {
-        break;
+        const { isVisible, isDeleted, ...feRepresentation } = element;
+        const representation = {
+          ...feRepresentation,
+          path: element.path ? `${settings.RESOURCE_URL}${element.path}` : '/no-image.jpg',
+          filesize: formatBytes(element.fileSize ? element.fileSize : 0),
+        }
+        assetReturn.representations.push(representation)
       }
     }
-  });
+  }); // Move the closing parenthesis here
 
   return assetReturn;
 }
