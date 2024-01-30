@@ -44,9 +44,10 @@ export async function listByCategory(categortId: number): Promise<AssetListItem[
   const assets = await prisma.asset.findMany({
     where: {
       category: {
-        path: {
-          startsWith: category.path + "/"
-        }
+        OR: [
+          { path: { startsWith: "/" + category.id + "/" } },
+          { path: { endsWith: "/" + category.id } }
+        ]
       },
       isDeleted: false
     },
