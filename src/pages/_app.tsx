@@ -42,11 +42,11 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
               rel="stylesheet"
               href="https://fonts.googleapis.com/icon?family=Material+Icons"
             />
-            <meta property="og:site_name" content="SMAUG" />
+            <meta property="og:site_name" content="Galaxy" />
             <meta property="og:image" content="/card.png" />
-            <meta name="description" content="SMAUG Asset HomePage" />
+            <meta name="description" content="Galaxy Asset HomePage" />
             <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-            <title>SMAUG</title>
+            <title>Galaxy</title>
           </Head>
           <AuthProvider>
             <Main>
