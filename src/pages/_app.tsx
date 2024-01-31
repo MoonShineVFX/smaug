@@ -7,7 +7,7 @@ import type { AppProps } from 'next/app';
 import * as React from 'react';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
-import Main from '../components/Layout/Main'
+import MainLayout from '../components/Layout/Main'
 import createEmotionCache from '../utils/createEmotionCache';
 import darkThemeOptions from '../styles/theme/darkThemeOptions';
 import Head from 'next/head'
@@ -49,9 +49,9 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
             <title>Galaxy</title>
           </Head>
           <AuthProvider>
-            <Main>
+            <MainLayout>
               <Component {...pageProps} />
-            </Main>
+            </MainLayout>
           </AuthProvider>
         </RecoilRoot>
       </ThemeProvider>

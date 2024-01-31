@@ -1,9 +1,6 @@
 import { JsonValue } from 'type-fest';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from '../server/routers/_app';
-type RouterOutput = inferRouterOutputs<AppRouter>;
-export type AssetDetailOutput = RouterOutput['assets']['get']['detail'];
-export type NonNullableAssetDetailOutput = Exclude<AssetDetailOutput, null>;
 
 
 export type UserDisplayInfo = {
@@ -74,12 +71,6 @@ export interface AssetCreateParams {
   creatorId: string;
 }
 
-//api/menu
-export interface MenuListItem {
-  id: string
-  name: string
-}
-
 //api/menuTree/[menuId]
 
 export type CategoryTree = {
@@ -95,3 +86,9 @@ export interface MenuWithCategoriesResponse {
   children: CategoryTree[];
 
 }
+
+type RouterOutput = inferRouterOutputs<AppRouter>;
+export type AssetDetailOutput = RouterOutput['assets']['get']['detail'];
+export type MenusAllOutput = RouterOutput['menus']['all'];
+export type MenusTreeOutput = RouterOutput['menus']['categories'];
+export type NonNullableAssetDetailOutput = Exclude<AssetDetailOutput, null>;

@@ -1,33 +1,31 @@
+import Image from 'next/image'
+import NextLink from "next/link";
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
-import Header from "../Header";
 import { styled } from "@mui/material/styles";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Image from 'next/image'
-
 import MenuIcon from "@mui/icons-material/Menu";
-
 import List from "@mui/material/List";
-import { MainListItems, TagListItems } from "../listItems";
-
-import NextLink from "next/link";
+// import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Link as MUILink } from "@mui/material";
-// import useSWR from "swr";
-import { MenuListItem } from "../../libs/types";
+
+
+import Header from "../Header";
+import { MainListItems } from "../ListItems";
 import { trpc } from "../../utils/trpc";
 
-const drawerWidth: number = 240;
+import { MenusTreeOutput } from '../../libs/types';
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-// const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const drawerWidth: number = 240;
+
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
@@ -45,6 +43,8 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
+
+
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -71,7 +71,8 @@ const Drawer = styled(MuiDrawer, {
   },
 }));
 
-export default function Main({ children }: { children: React.ReactNode }) {
+
+export default function MainLayout({ menusTree, children }: { menusTree: MenusTreeOutput[], children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -120,17 +121,14 @@ export default function Main({ children }: { children: React.ReactNode }) {
           }}
         >
           {/* <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton> */}
+            <ChevronLeftIcon />
+          </IconButton> */}
           <Typography
             component="h1"
             variant="h6"
             color="inherit"
             sx={{ flexGrow: 1 }}
           >
-            {/* <Link href="/" style={{ textDecoration: 'none', color:'white' }}>
-                SMAUG
-              </Link> */}
             <NextLink href="/" passHref style={{ textDecoration: "none" }}>
               <MUILink
                 variant="body2"
@@ -143,8 +141,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
                   "&:hover": { color: "#eee", letterSpacing: "1px" },
                 }}
               >
-                <Image src="/galaxy_logo_180px.png" alt="Galaxy" width={134} height={40} style={{ marginTop: "8px", marginLeft: "8px" }} />
-                {/* SMAUG */}
+                <Image src="/galaxy_logo_180px.png" alt="Galaxy" width={134} height={40} style={{ marginTop: "8px", marginLeft: "8px" }} /> {/*LOGO*/}
               </MUILink>
             </NextLink>
           </Typography>
@@ -156,23 +153,21 @@ export default function Main({ children }: { children: React.ReactNode }) {
           sx={{
             overflowY: "auto",
             "&::-webkit-scrollbar": {
-              width: "0.5em",
+              width: "8px",
               padding: 0,
+              margin: 0,
             },
             "&::-webkit-scrollbar-thumb": {
               padding: 0,
               margin: 0,
-              width: "0.4em",
+              width: "5px",
               backgroundColor: "#555",
               borderRadius: "2px",
             },
           }}
         >
-          {menuListQry.data.menus.map((item: MenuListItem, index) => {
-            const { id, name } = item;
-            return name === "Tags" ? (
-              <TagListItems key={index} mainMenuData={item} />
-            ) : (
+          {menuListQry.data.menus.map((item, index) => {
+            return (
               <MainListItems key={index} mainMenuData={item} />
             );
           })}
