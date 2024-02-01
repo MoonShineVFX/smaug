@@ -30,7 +30,6 @@ const Item = styled(Paper)(({ theme }) => ({
   },
 }));
 export default function Index() {
-  // const [currentModel, setCurrentModel] = useRecoilState(modelState);
   const model = useRecoilValue(modelState);
   const router = useRouter();
   const [menuId, setMenuId] = useState('');
@@ -38,23 +37,22 @@ export default function Index() {
   const handleClick = (id: number) => {
     router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
   }
-  // const { data: menuListItems } = useSWR<MenuListItem[]>('/api/menus', fetcher);
-  const menuListItemsQry = trpc.menus.all.useQuery();
 
-  // const firstMenu = menuListItemsQry.data.menus[0]
+  const menuAllQry = trpc.menus.all.useQuery();
   const menuTreeQry = trpc.menus.categories.useQuery({ menuId: menuId });
 
   useEffect(() => {
-    if (menuListItemsQry.isSuccess && menuListItemsQry.data.menus.length > 0) {
-      setMenuId(menuListItemsQry.data.menus[0].id); // 更新 state 變量
+    if (menuAllQry.isSuccess && menuAllQry.data.menus.length > 0) {
+      setMenuId(menuAllQry.data.menus[0].id); // 更新 state 變量
     }
-  }, [menuListItemsQry.isSuccess, menuListItemsQry.data]);
+  }, [menuAllQry.isSuccess, menuAllQry.data]);
 
-  if (menuListItemsQry.error) {
-    return (<div>Error!!</div>)
-  }
-  if (!menuListItemsQry.isSuccess) {
+  if (!menuAllQry.isSuccess) {
     return (<div>Loading</div>)
+  }
+  
+  if (menuAllQry.error) {
+    return (<div>Error!!</div>)
   }
 
   if (menuTreeQry.isLoading) return <div>Loading</div>

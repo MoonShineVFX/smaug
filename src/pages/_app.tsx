@@ -7,7 +7,7 @@ import type { AppProps } from 'next/app';
 import * as React from 'react';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
-import Main from '../components/Layout/Main'
+import MainLayout from '../components/Layout/Main'
 import createEmotionCache from '../utils/createEmotionCache';
 import darkThemeOptions from '../styles/theme/darkThemeOptions';
 import Head from 'next/head'
@@ -42,16 +42,16 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props: { Component: any; emo
               rel="stylesheet"
               href="https://fonts.googleapis.com/icon?family=Material+Icons"
             />
-            <meta property="og:site_name" content="SMAUG" />
+            <meta property="og:site_name" content="Galaxy" />
             <meta property="og:image" content="/card.png" />
-            <meta name="description" content="SMAUG Asset HomePage" />
+            <meta name="description" content="Galaxy Asset HomePage" />
             <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-            <title>SMAUG</title>
+            <title>Galaxy</title>
           </Head>
           <AuthProvider>
-            <Main>
+            <MainLayout>
               <Component {...pageProps} />
-            </Main>
+            </MainLayout>
           </AuthProvider>
         </RecoilRoot>
       </ThemeProvider>
