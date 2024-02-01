@@ -44,13 +44,13 @@ const CollapseTree = ({ child, open, isVisible }: ICollapseTree) => {
   const router = useRouter();
   const [subOpen, setSubOpen] = useState(0);
   const handleClick = (id: number) => {
+    router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
     if (subOpen === id) {
       setSubOpen(id)
-      return
-    }
-    router.push({ pathname: '/home', query: { categoryId: id } }, undefined, { shallow: true });
-    setSubOpen(id)
+    } else
+      setSubOpen(id)
   }
+
   return (
 
     <Collapse in={open} timeout="auto" unmountOnExit>
